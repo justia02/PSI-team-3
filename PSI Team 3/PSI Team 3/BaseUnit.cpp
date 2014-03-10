@@ -2,7 +2,7 @@
 
 // there needs to be a player given in the constructor as parameter soo the player1 boolean can be set for the unit 
 // this way we can keep track of which unit is from which player.
-BaseUnit::BaseUnit(core::vector3d<float> pos/*, Player player*/)
+BaseUnit::BaseUnit(irr::core::vector3d<float> pos/*, Player player*/)
 {
 	position = pos;
 	health = 100;

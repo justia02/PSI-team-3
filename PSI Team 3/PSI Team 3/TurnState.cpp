@@ -15,12 +15,12 @@ TurnState::TurnState(IrrlichtDevice* device)
 
 TurnState::~TurnState(void)
 {
+
 }
 
 void TurnState::TurnActive()
 {
 	
-
 }
 
 void TurnState::TurnPassive()
