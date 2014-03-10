@@ -68,11 +68,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseUnit.cpp" />
+    <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="TurnState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseUnit.h" />
+    <ClInclude Include="game.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="TurnState.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\psibranch3irrlicht\source\Irrlicht\Irrlicht10.0.vcxproj">
