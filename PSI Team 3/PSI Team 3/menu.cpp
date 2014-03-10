@@ -16,6 +16,16 @@ enum
     GUI_ID_HOST_GAME
 };
 
+void setSkinTransparency(s32 alpha, irr::gui::IGUISkin * skin)
+{
+    for (s32 i=0; i<irr::gui::EGDC_COUNT ; ++i)
+    {
+        video::SColor col = skin->getColor((EGUI_DEFAULT_COLOR)i);
+        col.setAlpha(alpha);
+        skin->setColor((EGUI_DEFAULT_COLOR)i, col);
+    }
+}
+
 class MyEventReceiver : public IEventReceiver
 {
 public:
@@ -50,7 +60,7 @@ public:
             }
         }
 
-        return false;
+        return false; 
     }
 
 	private:
@@ -67,13 +77,16 @@ menu::menu(void)
 	smgr = device->getSceneManager();
 	guienv = device->getGUIEnvironment();
 
-	 std::string text;
+	 
 
 	 //wchar_t* text2 = new wchar_t[100];
 	 //guienv->addEditBox(text2,rect<s32>(160,300, 480,325 + 32),true);
 
      guienv->addButton(rect<s32>(160,100,480,150 + 32), 0, GUI_ID_JOIN_GAME, L"Join Game", L"Joins a game");
 	 guienv->addButton(rect<s32>(160,200,480,250 + 32), 0, GUI_ID_HOST_GAME, L"Host Game", L"Hosts a game");
+
+	 text = L"add text here";
+	 guienv->addStaticText(text, rect<s32>(160,25,480,50), true);
 
 	 SAppContext context;
     context.device = device;
@@ -82,7 +95,7 @@ menu::menu(void)
 	 MyEventReceiver receiver = MyEventReceiver(context);
 
     // And tell the device to use our custom event receiver.
-    device->setEventReceiver(&receiver);
+    //device->setEventReceiver(&receiver);
 }
 
 
@@ -92,7 +105,7 @@ menu::~menu(void)
 
 int menu::run(void)
 {
-		while (device->run())
+		while (device->run() && driver)
 		{
 
 			//device->run();

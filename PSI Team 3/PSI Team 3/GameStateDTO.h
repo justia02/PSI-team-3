@@ -1,4 +1,5 @@
 // Authors: Sonja Kopf, Tomasz Zaremba
+/*
 #include <BaseUnit.h>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -30,4 +31,5 @@ public:
 	void setPlayer1Turn(bool player1Turn) { this->player1Turn = player1Turn; }
 	bool getPlayer1Turn() { return player1Turn; }
 
-}
+};
+*/

@@ -1,7 +1,7 @@
 #pragma once
 #include <irrlicht.h>
-#include "mapterrain.h";
-#include <iostream>;
+#include "mapterrain.h"
+#include <iostream>
 
 using namespace irr;
 
@@ -20,7 +20,7 @@ public:
 	ISceneManager* smgr;
 	IGUIEnvironment* guienv;
 
-	const wchar_t* text2;
+	const wchar_t *text;
 
 	menu(void);
 	~menu(void);

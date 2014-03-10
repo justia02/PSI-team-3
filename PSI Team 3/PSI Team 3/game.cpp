@@ -1,4 +1,5 @@
 #include "game.h"
+/*
 
 void game::hostGame() {
 	networkUtilities->setPortNumber(8);
@@ -33,28 +34,28 @@ BaseUnit* game::initializeUnits() {
 
 void game::passTurn() {
 
-	gameStateDTO->setPlayer1Turn(!gameStateDTO->getPlayer1Turn());
-	networkUtilities->setBuffer(gameStateDTO->serialize());
-	networkUtilities->sendData();
+	//gameStateDTO->setPlayer1Turn(!gameStateDTO->getPlayer1Turn());
+	//networkUtilities->setBuffer(gameStateDTO->serialize());
+	//networkUtilities->sendData();
 
 }
 
 void game::receiveGameState() {
 
-	networkUtilities->receiveData();
-	deserialize();
+	//networkUtilities->receiveData();
+	//deserialize();
 
 }
 
 game::game(void)
 {
 
-	networkUtilities = new NonRealtimeNetworkingUtilities();
-	gameStateDTO = new GameStateDTO(4);
-	gameStateDTO->setUnits(initializeUnits());
+	//networkUtilities = new NonRealtimeNetworkingUtilities();
+	//gameStateDTO = new GameStateDTO(4);
+	//gameStateDTO->setUnits(initializeUnits());
 
 	//camera 
-	 smgr->addCameraSceneNode(0, vector3df(0,7,-8), vector3df(0,0,0));
+	 //smgr->addCameraSceneNode(0, vector3df(0,7,-8), vector3df(0,0,0));
 
 
 	 //make a new terrain
@@ -66,4 +67,4 @@ game::~game(void)
 {
 }
 
-
+*/

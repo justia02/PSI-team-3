@@ -1,4 +1,5 @@
 // Authors: Sonja Kopf, Tomasz Zaremba
+/*
 #include <iostream>
 #include <fstream>
 #include <GameStateDTO.h>
@@ -66,3 +67,4 @@ char* GameStateDTO::serialize() {
 	return buffer;
 
 }
+*/
