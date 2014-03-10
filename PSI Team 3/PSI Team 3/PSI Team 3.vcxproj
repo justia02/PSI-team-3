@@ -70,12 +70,16 @@
     <ClCompile Include="BaseUnit.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="mapterrain.cpp" />
+    <ClCompile Include="menu.cpp" />
     <ClCompile Include="TurnState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseUnit.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="mapterrain.h" />
+    <ClInclude Include="menu.h" />
     <ClInclude Include="TurnState.h" />
   </ItemGroup>
   <ItemGroup>

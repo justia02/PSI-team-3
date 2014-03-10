@@ -1,0 +1,110 @@
+#include "menu.h"
+
+
+// Declare a structure to hold some context for the event receiver so that it
+// has it available inside its OnEvent() method.
+struct SAppContext
+{
+    IrrlichtDevice *device;
+    s32             counter;
+};
+
+// Define some values that we'll use to identify individual GUI controls.
+enum
+{
+    GUI_ID_JOIN_GAME,
+    GUI_ID_HOST_GAME
+};
+
+class MyEventReceiver : public IEventReceiver
+{
+public:
+    MyEventReceiver(SAppContext & context) : Context(context){ }
+
+    virtual bool OnEvent(const SEvent& event)
+    {
+        if (event.EventType == EET_GUI_EVENT)
+        {
+            s32 id = event.GUIEvent.Caller->getID();
+            IGUIEnvironment* env = Context.device->getGUIEnvironment();
+
+            switch(event.GUIEvent.EventType)
+            {
+				 
+				case EGET_BUTTON_CLICKED:
+                switch(id)
+                {
+                case GUI_ID_JOIN_GAME:
+                    
+                    return true;
+
+                case GUI_ID_HOST_GAME:
+                    {
+						Context.device->drop();
+                    }
+                    return true;
+                default:
+                    return false;
+                }
+                break;
+            }
+        }
+
+        return false;
+    }
+
+	private:
+    SAppContext & Context;
+};
+
+menu::menu(void)
+{
+	device = createDevice( video::EDT_OPENGL, dimension2d<u32>(640, 480), 16, false, false, false, 0);
+
+	device->setWindowCaption(L"PSI TEAM 3 - Checkers Game");
+
+	driver = device->getVideoDriver();
+	smgr = device->getSceneManager();
+	guienv = device->getGUIEnvironment();
+
+	 std::string text;
+
+	 //wchar_t* text2 = new wchar_t[100];
+	 //guienv->addEditBox(text2,rect<s32>(160,300, 480,325 + 32),true);
+
+     guienv->addButton(rect<s32>(160,100,480,150 + 32), 0, GUI_ID_JOIN_GAME, L"Join Game", L"Joins a game");
+	 guienv->addButton(rect<s32>(160,200,480,250 + 32), 0, GUI_ID_HOST_GAME, L"Host Game", L"Hosts a game");
+
+	 SAppContext context;
+    context.device = device;
+    context.counter = 0;
+
+	 MyEventReceiver receiver = MyEventReceiver(context);
+
+    // And tell the device to use our custom event receiver.
+    device->setEventReceiver(&receiver);
+}
+
+
+menu::~menu(void)
+{
+}
+
+int menu::run(void)
+{
+		while (device->run())
+		{
+
+			//device->run();
+			driver->beginScene(true, true, SColor(255,100,101,140));
+			smgr->drawAll();
+			guienv->drawAll();
+			driver->endScene();
+		}
+
+		return 0;
+	
+}
+
+
+			

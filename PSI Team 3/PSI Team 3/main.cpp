@@ -1,5 +1,5 @@
 #include <irrlicht.h>
-#include "game.h" 
+#include "menu.h" 
 
 using namespace irr;
 
@@ -13,8 +13,8 @@ using namespace irr;
 
 int main ()
 {
-
-	game Game = game();
+	//test
+	menu Game = menu();
 	Game.run();
 
 }

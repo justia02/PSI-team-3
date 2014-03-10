@@ -1,5 +1,6 @@
 #pragma once
 #include <irrlicht.h>
+#include "mapterrain.h";
 
 using namespace irr;
 
@@ -13,15 +14,11 @@ using namespace gui;
 class game
 {
 public:
-	IrrlichtDevice *device;
-
-	IVideoDriver* driver;
-	ISceneManager* smgr;
-	IGUIEnvironment* guienv;
 
 	game(void);
+	game(IrrlichtDevice* device, ISceneManager* smgr, IGUIEnvironment* guienv);
 	~game(void);
 
-	int run(void);
+	
 };
 
