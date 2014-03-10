@@ -43,7 +43,7 @@ int main ()
 
 
 	//camera 
-	smgr->addCameraSceneNode(0, vector3df(0,7,-8), vector3df(0,0,0));
+	scene::ICameraSceneNode* camera = smgr->addCameraSceneNode(0, vector3df(0,7,-8), vector3df(0,0,0));
 
 	while(device->run())
 	{
