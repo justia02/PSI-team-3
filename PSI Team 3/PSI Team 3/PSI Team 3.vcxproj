@@ -37,10 +37,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\ChrisJustiana\Desktop\Chris\School\Jaar 3\semester 2\PSY BUGT\Irrlicht engine 2 GIT\include;$(IncludePath)</IncludePath>
+    <IncludePath>../../../psibranch3irrlicht/include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LibraryPath>C:\Users\ChrisJustiana\Desktop\Chris\School\Jaar 3\semester 2\PSY BUGT\Irrlicht engine 2 GIT\lib\Win32-visualstudio;$(LibraryPath)</LibraryPath>
+    <LibraryPath>../../../psibranch3irrlicht/lib/Win32-visualstudio;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -50,7 +50,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -67,17 +67,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Irrlicht engine 2 GIT\source\Irrlicht\Irrlicht10.0.vcxproj">
-      <Project>{e08e042a-6c45-411b-92be-3cc31331019f}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="BaseUnit.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseUnit.h" />
     <ClInclude Include="main.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\psibranch3irrlicht\source\Irrlicht\Irrlicht10.0.vcxproj">
+      <Project>{e08e042a-6c45-411b-92be-3cc31331019f}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
