@@ -31,17 +31,19 @@ int main ()
 	ISceneManager* smgr = device->getSceneManager();
 	IGUIEnvironment* guienv = device->getGUIEnvironment();
 
-	/*code to load a map
-	device->getFileSystem()->addFileArchive("../../media/map-20kdm2.pk3");
-	scene::IAnimatedMesh* mesh = smgr->getMesh("20kdm2.bsp");
-	scene::ISceneNode* node = 0;
+	//code to load a map  ../media/map.irrmesh
+	IAnimatedMesh* mesh = smgr->getMesh("../media/map.irrmesh");
+	if (!mesh)
+	{
+		device->drop();
+		return 1;
+	}
+	IAnimatedMeshSceneNode* node = smgr->addAnimatedMeshSceneNode( mesh );
 
-	if (mesh)
-		node = smgr->addOctreeSceneNode(mesh->getMesh(0), 0, -1, 1024);
-	*/
+
 
 	//camera 
-	smgr->addCameraSceneNodeFPS();
+	smgr->addCameraSceneNode(0, vector3df(0,7,-8), vector3df(0,0,0));
 
 	while(device->run())
 	{
