@@ -1,6 +1,6 @@
 #pragma once
 #include <irrlicht.h>
-#include "mapterrain.h";
+#include "mapterrain.h"
 #include <NonRealtimeNetworkingUtilities.h>
 #include <BaseUnit.h>
 #include <GameStateDTO.h>

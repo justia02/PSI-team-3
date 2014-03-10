@@ -37,7 +37,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>../../../psibranch3irrlicht/include;$(IncludePath)</IncludePath>
+    <IncludePath>../../../psibranch3irrlicht/source/boost_lib;.;../../../psibranch3irrlicht/source/Irrlicht;../../../psibranch3irrlicht/include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LibraryPath>../../../psibranch3irrlicht/lib/Win32-visualstudio;$(LibraryPath)</LibraryPath>
