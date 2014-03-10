@@ -1,20 +1,19 @@
 #pragma once
 #include <vector3d.h>
 
-namespace core = irr::core;
-
 class BaseUnit
 {
 public:
 	int maxDistance;
 	int health;
 	int damage;
-	core::vector3d<float> position;
+	irr::core::vector3d<float> position;
 
 	bool selected;
 	bool player1;
 
-	BaseUnit(core::vector3d<float> position);
+	BaseUnit(irr::core::vector3d<float> position);
+	BaseUnit();
 	~BaseUnit(void);
 
 	void MoveLeft(float distance);
