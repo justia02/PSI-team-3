@@ -1,6 +1,8 @@
 #include "menu.h"
 
 
+
+
 // Declare a structure to hold some context for the event receiver so that it
 // has it available inside its OnEvent() method.
 struct SAppContext
@@ -98,6 +100,27 @@ menu::menu(void)
     //device->setEventReceiver(&receiver);
 }
 
+void menu::hostGame() {
+	networkUtilities->setPortNumber(8);
+	networkUtilities->openServerSocket();
+	networkUtilities->acceptClient();
+}
+
+void menu::joinGame(char* ipAddress) {
+	networkUtilities->openClientSocket(ipAddress);
+}
+
+void menu::receiveData() {
+
+	networkUtilities->receiveData();
+	printf(networkUtilities->getBuffer());
+}
+
+void menu::sendData() {
+
+	networkUtilities->setBuffer("Congratulations, you received some data!");
+	networkUtilities->sendData();
+}
 
 menu::~menu(void)
 {
