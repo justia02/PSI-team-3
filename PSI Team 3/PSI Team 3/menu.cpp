@@ -1,6 +1,5 @@
 #include "menu.h"
-
-
+#include <iostream>
 
 
 // Declare a structure to hold some context for the event receiver so that it
@@ -11,7 +10,7 @@ struct SAppContext
     s32             counter;
 };
 
-// Define some values that we'll use to identify individual GUI controls.
+// Define values to identify join game and host game buttons
 enum
 {
     GUI_ID_JOIN_GAME,
@@ -44,21 +43,23 @@ public:
             {
 				 
 				case EGET_BUTTON_CLICKED:
-                switch(id)
-                {
-                case GUI_ID_JOIN_GAME:
-                    
-                    return true;
+					switch(id)
+					{
+					case GUI_ID_JOIN_GAME:
+						printf ("Join Game Button was clicked.");
+						return true;
 
-                case GUI_ID_HOST_GAME:
-                    {
-						Context.device->drop();
-                    }
-                    return true;
-                default:
-                    return false;
-                }
-                break;
+					case GUI_ID_HOST_GAME:
+						printf ("Host Game Button was clicked.");
+						// Context.device->drop();
+						return true;
+					default:
+						break;
+					}
+					break;
+
+				default:
+					break;
             }
         }
 
@@ -71,15 +72,15 @@ public:
 
 menu::menu(void)
 {
-	device = createDevice( video::EDT_OPENGL, dimension2d<u32>(640, 480), 16, false, false, false, 0);
+	device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(640, 480));
+	//device = createDevice( video::EDT_OPENGL, dimension2d<u32>(640, 480), 16, false, false, false, 0);
 
-	device->setWindowCaption(L"PSI TEAM 3 - Checkers Game");
+	device->setWindowCaption(L"PSI TEAM 3");
+	device->setResizable(false);
 
 	driver = device->getVideoDriver();
 	smgr = device->getSceneManager();
 	guienv = device->getGUIEnvironment();
-
-	 
 
 	 //wchar_t* text2 = new wchar_t[100];
 	 //guienv->addEditBox(text2,rect<s32>(160,300, 480,325 + 32),true);
@@ -91,18 +92,15 @@ menu::menu(void)
 	 guienv->addStaticText(text, rect<s32>(160,25,480,50), true);
 
 	 SAppContext context;
-    context.device = device;
-    context.counter = 0;
+	 context.device = device;
+     context.counter = 0;
 
-	 MyEventReceiver receiver = MyEventReceiver(context);
+	 MyEventReceiver receiver(context);
 
-    // And tell the device to use our custom event receiver.
-    //device->setEventReceiver(&receiver);
+     // And tell the device to use our custom event receiver.
+     device->setEventReceiver(&receiver);
 
-	 // establish network connection
-	 //networkUtilities = new NonRealtimeNetworkingUtilities();
-	 //hostGame();
-	 //receiveData();
+	 networkUtilities = new NonRealtimeNetworkingUtilities();
 }
 
 void menu::hostGame() {
@@ -135,19 +133,48 @@ menu::~menu(void)
 
 int menu::run(void)
 {
+		/*
 		while (device->run() && driver)
 		{
+			 if (device->isWindowActive())
+			 {
 
 			//device->run();
-			driver->beginScene(true, true, SColor(255,100,101,140));
-			smgr->drawAll();
+			driver->beginScene(true, true, SColor(0,200,200,200));
+			//smgr->drawAll();
 			guienv->drawAll();
 			driver->endScene();
+			 }
 		}
+		device->drop();
+		*/
+		
 
+		// temporary console menu to establish connection
+		bool correctInput = false;
+
+		int option;
+		char* ipadress = new char[1];
+
+		while (!correctInput) {
+			std::cout << "welcome! would you like to host(1) a game or join(2) a game or quit(3)?";
+			std::cin >> option;
+
+			if (option == 1) {
+				hostGame();
+
+			} else if (option == 2) {
+
+				std::cout << "Please enter the IP adress of your opponent";
+				std::cin >> ipadress;
+				joinGame(ipadress);
+			} else if (option = 3) {
+				return 1;
+			}
+		}
+		
 		return 0;
-	
+
+		// TODO launch map from here
+
 }
-
-
-			

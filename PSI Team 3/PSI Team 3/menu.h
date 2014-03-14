@@ -17,7 +17,6 @@ class menu
 {
 public:
 	IrrlichtDevice *device;
-
 	IVideoDriver* driver;
 	ISceneManager* smgr;
 	IGUIEnvironment* guienv;
