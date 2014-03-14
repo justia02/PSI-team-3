@@ -95,10 +95,12 @@ menu::menu(void)
 	 context.device = device;
      context.counter = 0;
 
+	 menudone = false;
+
 	 MyEventReceiver receiver(context);
 
      // And tell the device to use our custom event receiver.
-     device->setEventReceiver(&receiver);
+     //device->setEventReceiver(&receiver);
 
 	 networkUtilities = new NonRealtimeNetworkingUtilities();
 }
@@ -133,7 +135,11 @@ menu::~menu(void)
 
 int menu::run(void)
 {
-		/*
+
+	//if (menudone == false){
+		init();
+	//}
+	//else{
 		while (device->run() && driver)
 		{
 			 if (device->isWindowActive())
@@ -141,40 +147,52 @@ int menu::run(void)
 
 			//device->run();
 			driver->beginScene(true, true, SColor(0,200,200,200));
-			//smgr->drawAll();
+			smgr->drawAll();
 			guienv->drawAll();
 			driver->endScene();
 			 }
 		}
-		device->drop();
-		*/
+		//device->drop();
+		
+		
+	//}
 		
 
-		// temporary console menu to establish connection
-		bool correctInput = false;
+		// TODO launch map from here
+	return 0;
 
+}
+
+void menu::init(void)
+{
+	// temporary console menu to establish connection
+	
 		int option;
 		char* ipadress = new char[1];
 
-		while (!correctInput) {
+		while (true) {
 			std::cout << "welcome! would you like to host(1) a game or join(2) a game or quit(3)?";
 			std::cin >> option;
 
 			if (option == 1) {
 				hostGame();
+				menudone = true;
+				break;
 
 			} else if (option == 2) {
 
 				std::cout << "Please enter the IP adress of your opponent";
 				std::cin >> ipadress;
 				joinGame(ipadress);
+				menudone = true;
+				break;
 			} else if (option = 3) {
-				return 1;
+				menudone = true;
+				break;
+				//return 1;
 			}
 		}
 		
-		return 0;
-
-		// TODO launch map from here
+		//return 0;
 
 }
