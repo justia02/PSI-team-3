@@ -1,7 +1,8 @@
 #include <irrlicht.h>
+#include "PlayerCamera.h"
+#include <vector3d.h>
 
 using namespace irr;
-
 
 using namespace core;
 using namespace scene;
@@ -12,13 +13,14 @@ using namespace gui;
 
 #ifdef _IRR_WINDOWS_
 #pragma comment(lib, "Irrlicht.lib")
-#pragma comment(linker, "/subsystem:windows /ENTRY:mainCRTStartup")
+//#pragma comment(linker, "/subsystem:windows /ENTRY:mainCRTStartup")
 #endif
 
 
 int main ()
 {
-
+	PlayerCamera test = PlayerCamera();
+	vector3d<float> testpos = vector3d<float>(0.0, 0.0, 0.0);
 	IrrlichtDevice *device =
 	createDevice( video::EDT_OPENGL, dimension2d<u32>(640, 480), 16, false, false, false, 0);
 
@@ -55,7 +57,16 @@ int main ()
 		call everything is presented on the screen.
 		*/
 		driver->beginScene(true, true, SColor(255,100,101,140));
-
+		test.setCameraPos(device, testpos);
+		if(testpos.Z < 4 && testpos.X < 4){
+			testpos.Z += 0.002;
+			//testpos.X += 0.0025;
+		}
+		else {
+			testpos.Z = -4;
+			//testpos.X = -4;
+		}
+		//test.setCameraPos(device, vector3d<float>(-10.0, 7.0, 0.0));
 		smgr->drawAll();
 		guienv->drawAll();
 
