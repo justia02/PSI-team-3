@@ -37,10 +37,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>..\..\..\psibranch3irrlicht\include;$(IncludePath)</IncludePath>
+    <IncludePath>../../../psibranch3irrlicht/source/boost_lib;.;../../../psibranch3irrlicht/source/Irrlicht;../../../psibranch3irrlicht/include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LibraryPath>..\..\..\psibranch3irrlicht\lib\Win32-visualstudio;$(LibraryPath)</LibraryPath>
+    <LibraryPath>../../../psibranch3irrlicht/lib/Win32-visualstudio;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -67,16 +67,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\psibranch3irrlicht\source\Irrlicht\NonRealtimeNetworkingUtilities.cpp" />
     <ClCompile Include="BaseUnit.cpp" />
+    <ClCompile Include="game.cpp" />
+    <ClCompile Include="GameStateDTO.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="PlayerCamera.cpp" />
+    <ClCompile Include="mapterrain.cpp" />
+    <ClCompile Include="menu.cpp" />
+    <ClCompile Include="TurnState.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\psibranch3irrlicht\source\Irrlicht\NonRealtimeNetworkingUtilities.h" />
     <ClInclude Include="BaseUnit.h" />
+    <ClInclude Include="game.h" />
+    <ClInclude Include="GameStateDTO.h" />
     <ClInclude Include="main.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="PlayerCamera.h" />
+    <ClInclude Include="mapterrain.h" />
+    <ClInclude Include="menu.h" />
+    <ClInclude Include="TurnState.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\psibranch3irrlicht\source\Irrlicht\Irrlicht10.0.vcxproj">
