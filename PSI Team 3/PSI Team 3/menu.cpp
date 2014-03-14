@@ -98,6 +98,11 @@ menu::menu(void)
 
     // And tell the device to use our custom event receiver.
     //device->setEventReceiver(&receiver);
+
+	 // establish network connection
+	 //networkUtilities = new NonRealtimeNetworkingUtilities();
+	 //hostGame();
+	 //receiveData();
 }
 
 void menu::hostGame() {
@@ -107,6 +112,7 @@ void menu::hostGame() {
 }
 
 void menu::joinGame(char* ipAddress) {
+	networkUtilities->setPortNumber(8);
 	networkUtilities->openClientSocket(ipAddress);
 }
 
@@ -118,7 +124,8 @@ void menu::receiveData() {
 
 void menu::sendData() {
 
-	networkUtilities->setBuffer("Congratulations, you received some data!");
+	networkUtilities->setBuffer("HELLO");
+	printf(networkUtilities->getBuffer());
 	networkUtilities->sendData();
 }
 

@@ -67,6 +67,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\psibranch3irrlicht\source\Irrlicht\NonRealtimeNetworkingUtilities.cpp" />
     <ClCompile Include="BaseUnit.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="GameStateDTO.cpp" />
@@ -76,6 +77,7 @@
     <ClCompile Include="TurnState.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\psibranch3irrlicht\source\Irrlicht\NonRealtimeNetworkingUtilities.h" />
     <ClInclude Include="BaseUnit.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="GameStateDTO.h" />
