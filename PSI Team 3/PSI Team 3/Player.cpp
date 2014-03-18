@@ -1,11 +1,11 @@
 #include "Player.h"
+#include "irrlicht.h"
 
-
-Player::Player(void)
+Player::~Player()
 {
+	delete units;
 }
 
+void Player::initUnits() {
 
-Player::~Player(void)
-{
 }
