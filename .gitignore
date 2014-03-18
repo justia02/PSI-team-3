@@ -39,6 +39,7 @@ Thumbs.db
 *.vcxproj.user
 *.vcproj.user
 *.user
+*.sdf
 =======
 [Bb]in
 [Dd]ebug*/
