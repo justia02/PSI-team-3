@@ -74,6 +74,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mapterrain.cpp" />
     <ClCompile Include="menu.cpp" />
+    <ClCompile Include="MenuEventReceiver.cpp" />
     <ClCompile Include="TurnState.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -84,6 +85,7 @@
     <ClInclude Include="main.h" />
     <ClInclude Include="mapterrain.h" />
     <ClInclude Include="menu.h" />
+    <ClInclude Include="MenuEventReceiver.h" />
     <ClInclude Include="TurnState.h" />
   </ItemGroup>
   <ItemGroup>
