@@ -23,6 +23,7 @@ public:
 	NonRealtimeNetworkingUtilities* networkUtilities;
 
 	const wchar_t *text;
+	bool menudone;
 
 	menu(void);
 	~menu(void);
@@ -32,5 +33,6 @@ public:
 	void joinGame(char* ipAddress);
 	void receiveData();
 	void sendData();
+	void init();
 };
 
