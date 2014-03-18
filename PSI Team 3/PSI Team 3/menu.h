@@ -33,10 +33,6 @@ public:
 	~menu(void);
 
 	int run(void);
-	void hostGame();
-	void joinGame(char* ipAddress);
-	void receiveData();
-	void sendData();
 	void init();
 };
 

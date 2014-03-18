@@ -1,68 +1,10 @@
 #include "menu.h"
 #include <iostream>
+#include "MenuEventReceiver.h";
 
-
-// Declare a structure to hold some context for the event receiver so that it
-// has it available inside its OnEvent() method.
-struct SAppContext
-{
-    IrrlichtDevice *device;
-    s32             counter;
-};
-
-// Define values to identify join game and host game buttons
-enum
-{
-    GUI_ID_JOIN_GAME,
-    GUI_ID_HOST_GAME
-};
-
-
-
-//Event receiver custom class where we will later call the function for joining and creating a game
-class MyEventReceiver : public irr::IEventReceiver
-{
-public:
-    MyEventReceiver(SAppContext & context) : Context(context){ }
-
-    virtual bool OnEvent(const SEvent& event)
-    {
-        if (event.EventType == EET_GUI_EVENT)
-        {
-            s32 id = event.GUIEvent.Caller->getID();
-            IGUIEnvironment* env = Context.device->getGUIEnvironment();
-
-            switch(event.GUIEvent.EventType)
-            {
-				 
-				case EGET_BUTTON_CLICKED:
-					switch(id)
-					{
-					case GUI_ID_JOIN_GAME:
-						printf ("Join Game Button was clicked.");
-						return true;
-
-					case GUI_ID_HOST_GAME:
-						printf ("Host Game Button was clicked.");
-						// Context.device->drop();
-						return true;
-					default:
-						break;
-					}
-					break;
-
-				default:
-					break;
-            }
-        }
-
-        return false; 
-    }
-
-	private:
-    SAppContext & Context;
-};
 //class definition for menu
+using namespace irrlicht_nonrealtimenetworking;
+
 menu::menu(void)
 {
 
@@ -72,7 +14,7 @@ menu::menu(void)
 	 context.device = device;
      context.counter = 0;
 
-	 MyEventReceiver receiver(context);
+	 MenuEventReceiver receiver = MenuEventReceiver(context);
 	 //receiver.onEvent();
 
 	//here we make the device
@@ -108,30 +50,6 @@ menu::menu(void)
 	 
 }
 
-void menu::hostGame() {
-	networkUtilities->setPortNumber(8);
-	networkUtilities->openServerSocket();
-	networkUtilities->acceptClient();
-}
-
-void menu::joinGame(char* ipAddress) {
-	networkUtilities->setPortNumber(8);
-	networkUtilities->openClientSocket(ipAddress);
-}
-
-void menu::receiveData() {
-
-	networkUtilities->receiveData();
-	printf(networkUtilities->getBuffer());
-}
-
-void menu::sendData() {
-
-	networkUtilities->setBuffer("HELLO");
-	printf(networkUtilities->getBuffer());
-	networkUtilities->sendData();
-}
-
 menu::~menu(void)
 {
 }
@@ -161,15 +79,17 @@ void menu::init(void)
 	// temporary console menu to establish connection
 	
 		networkUtilities= new NonRealtimeNetworkingUtilities();
+		// portNo is our game
+		int portNo = 8;
 		int option;
 		char* ipadress = new char[1];
 
 		while (true) {
-			std::cout << "welcome! would you like to host(1) a game or join(2) a game or quit(3)?";
+			std::cout << "welcome! would you like to host(1) a game or join(2) a game or just start(3)?";
 			std::cin >> option;
 
 			if (option == 1) {
-				hostGame();
+				networkUtilities->hostGame(portNo);
 				menudone = true;
 				break;
 
@@ -177,16 +97,12 @@ void menu::init(void)
 
 				std::cout << "Please enter the IP adress of your opponent";
 				std::cin >> ipadress;
-				joinGame(ipadress);
+				networkUtilities->joinGame(ipadress, portNo);
 				menudone = true;
 				break;
 			} else if (option = 3) {
 				menudone = true;
 				break;
-				//return 1;
 			}
 		}
-		
-		//return 0;
-
 }
