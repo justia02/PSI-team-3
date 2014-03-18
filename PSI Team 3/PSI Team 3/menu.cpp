@@ -17,17 +17,10 @@ enum
     GUI_ID_HOST_GAME
 };
 
-void setSkinTransparency(s32 alpha, irr::gui::IGUISkin * skin)
-{
-    for (s32 i=0; i<irr::gui::EGDC_COUNT ; ++i)
-    {
-        video::SColor col = skin->getColor((EGUI_DEFAULT_COLOR)i);
-        col.setAlpha(alpha);
-        skin->setColor((EGUI_DEFAULT_COLOR)i, col);
-    }
-}
 
-class MyEventReceiver : public IEventReceiver
+
+//Event receiver custom class where we will later call the function for joining and creating a game
+class MyEventReceiver : public irr::IEventReceiver
 {
 public:
     MyEventReceiver(SAppContext & context) : Context(context){ }
@@ -69,11 +62,22 @@ public:
 	private:
     SAppContext & Context;
 };
-
+//class definition for menu
 menu::menu(void)
 {
-	device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(640, 480));
-	//device = createDevice( video::EDT_OPENGL, dimension2d<u32>(640, 480), 16, false, false, false, 0);
+
+	 init();
+
+	 SAppContext context;
+	 context.device = device;
+     context.counter = 0;
+
+	 MyEventReceiver receiver(context);
+	 //receiver.onEvent();
+
+	//here we make the device
+	//device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(640, 480));
+	device = createDevice( video::EDT_OPENGL, dimension2d<u32>(640, 480), 16, false, false, false, 0);
 
 	device->setWindowCaption(L"PSI TEAM 3");
 	device->setResizable(false);
@@ -85,24 +89,23 @@ menu::menu(void)
 	 //wchar_t* text2 = new wchar_t[100];
 	 //guienv->addEditBox(text2,rect<s32>(160,300, 480,325 + 32),true);
 
-     guienv->addButton(rect<s32>(160,100,480,150 + 32), 0, GUI_ID_JOIN_GAME, L"Join Game", L"Joins a game");
-	 guienv->addButton(rect<s32>(160,200,480,250 + 32), 0, GUI_ID_HOST_GAME, L"Host Game", L"Hosts a game");
+     //guienv->addButton(rect<s32>(160,100,480,150 + 32), 0, GUI_ID_JOIN_GAME, L"Join Game", L"Joins a game");
+	 //guienv->addButton(rect<s32>(160,200,480,250 + 32), 0, GUI_ID_HOST_GAME, L"Host Game", L"Hosts a game");
 
-	 text = L"add text here";
-	 guienv->addStaticText(text, rect<s32>(160,25,480,50), true);
+	 //text = L"add text here";
+	 //guienv->addStaticText(text, rect<s32>(160,25,480,50), true);
+	smgr->addCameraSceneNode(0, vector3df(0,7,-8), vector3df(0,0,0));
 
-	 SAppContext context;
-	 context.device = device;
-     context.counter = 0;
+	 mapterrain map = mapterrain(device, smgr);
 
 	 menudone = false;
 
-	 MyEventReceiver receiver(context);
+	 
 
      // And tell the device to use our custom event receiver.
      //device->setEventReceiver(&receiver);
 
-	 networkUtilities = new NonRealtimeNetworkingUtilities();
+	 
 }
 
 void menu::hostGame() {
@@ -136,15 +139,11 @@ menu::~menu(void)
 int menu::run(void)
 {
 
-	//if (menudone == false){
-		init();
-	//}
-	//else{
 		while (device->run() && driver)
 		{
 			 if (device->isWindowActive())
 			 {
-
+			;
 			//device->run();
 			driver->beginScene(true, true, SColor(0,200,200,200));
 			smgr->drawAll();
@@ -152,13 +151,7 @@ int menu::run(void)
 			driver->endScene();
 			 }
 		}
-		//device->drop();
 		
-		
-	//}
-		
-
-		// TODO launch map from here
 	return 0;
 
 }
@@ -167,6 +160,7 @@ void menu::init(void)
 {
 	// temporary console menu to establish connection
 	
+		networkUtilities= new NonRealtimeNetworkingUtilities();
 		int option;
 		char* ipadress = new char[1];
 

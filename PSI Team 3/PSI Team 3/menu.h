@@ -13,6 +13,9 @@ using namespace scene;
 using namespace video;
 using namespace io;
 using namespace gui;
+
+
+
 class menu
 {
 public:
@@ -21,6 +24,7 @@ public:
 	ISceneManager* smgr;
 	IGUIEnvironment* guienv;
 	NonRealtimeNetworkingUtilities* networkUtilities;
+
 
 	const wchar_t *text;
 	bool menudone;
