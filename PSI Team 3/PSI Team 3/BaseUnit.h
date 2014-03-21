@@ -13,6 +13,12 @@ using namespace std;
 class BaseUnit
 {
 public:
+	enum direction{
+		LEFT,
+		RIGHT,
+		BACK,
+		FORWARD
+	};
 	int maxDistance;
 	int health;
 	int damage;
@@ -34,11 +40,7 @@ public:
 	BaseUnit();
 	~BaseUnit(void);
 
-	void MoveLeft(float distance);
-	void MoveRight(float distance);
-	void MoveBack(float distance);
-	void MoveForward(float distance);
-
+	void Move(direction moveDirection, float distance);
 	void SelectUnit();
 	
 	bool createMesh();

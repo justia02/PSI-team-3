@@ -3,6 +3,7 @@
 #include "mapterrain.h"
 #include <iostream>
 #include <NonRealtimeNetworkingUtilities.h>
+#include "BaseUnit.h"
 
 using namespace irr;
 using namespace irrlicht_nonrealtimenetworking;
@@ -24,7 +25,8 @@ public:
 	ISceneManager* smgr;
 	IGUIEnvironment* guienv;
 	NonRealtimeNetworkingUtilities* networkUtilities;
-
+	BaseUnit *unit1;
+	BaseUnit *unit2;
 
 	const wchar_t *text;
 	bool menudone;

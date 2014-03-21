@@ -29,40 +29,28 @@ BaseUnit::~BaseUnit(void)
 {
 }
 
-void BaseUnit::MoveBack(float distance){
+void BaseUnit::Move(direction moveDirection, float distance){
 	if(distance > maxDistance)
 		distance = maxDistance;
-
-	position.Z -= distance;
+	switch(moveDirection){
+		case LEFT:{
+			position.X -= distance;
+			break;
+			}
+		case RIGHT:{
+			position.X += distance;
+			break;
+			}
+		case BACK:{
+			position.Z -= distance;
+			break;
+			}
+		case FORWARD:{
+			position.Z += distance;
+			break;
+			}
+		}
 	node->setPosition(position);
-	return;
-}
-
-void BaseUnit::MoveForward(float distance){
-	if(distance > maxDistance)
-		distance = maxDistance;
-
-	position.Z += distance;
-	node->setPosition(position);
-	return;
-}
-
-void BaseUnit::MoveLeft(float distance){
-	if(distance > maxDistance)
-		distance = maxDistance;
-	
-	position.X -= distance;
-	node->setPosition(position);
-	return;
-}
-
-void BaseUnit::MoveRight(float distance){
-	if(distance > maxDistance)
-		distance = maxDistance;
-	
-	position.X += distance;
-	node->setPosition(position);
-	return;
 }
 
 void BaseUnit::SelectUnit(){
@@ -106,7 +94,7 @@ bool BaseUnit::createMesh(){
 
         node->setMaterialFlag(EMF_LIGHTING, false);
         node->setMD2Animation(scene::EMAT_STAND);
-        node->setMaterialTexture( 0, driver->getTexture(bmpPath) );
+        //node->setMaterialTexture( 0, driver->getTexture(bmpPath) );
         node->setPosition(position);
         node->setScale(core::vector3df(scale,scale,scale));
     }

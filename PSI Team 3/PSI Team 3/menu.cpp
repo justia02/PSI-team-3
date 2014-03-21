@@ -1,6 +1,7 @@
 #include "menu.h"
 #include <iostream>
 #include "MenuEventReceiver.h";
+#include "BaseUnit.h"
 
 //class definition for menu
 using namespace irrlicht_nonrealtimenetworking;
@@ -40,6 +41,9 @@ menu::menu(void)
 
 	 mapterrain map = mapterrain(device, smgr);
 
+	 unit1 = new BaseUnit(vector3d<float>(0, 1, 0), device);
+	 unit2 = new BaseUnit(vector3d<float>(2, 1, 2), device);
+
 	 menudone = false;
 
 	 
@@ -59,15 +63,16 @@ int menu::run(void)
 
 		while (device->run() && driver)
 		{
-			 if (device->isWindowActive())
-			 {
-			;
+			if (device->isWindowActive())
+			{
+			
 			//device->run();
 			driver->beginScene(true, true, SColor(0,200,200,200));
 			smgr->drawAll();
 			guienv->drawAll();
 			driver->endScene();
-			 }
+			unit1->Move(BaseUnit::direction::BACK ,0.01);
+			}
 		}
 		
 	return 0;
