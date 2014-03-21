@@ -1,8 +1,8 @@
 #pragma once
-/*
+
 #include <irrlicht.h>
 #include "mapterrain.h"
-#include <NonRealtimeNetworkingUtilities.h>
+#include <non-realtime-networking/NonRealtimeNetworkingUtilities.h>
 #include "BaseUnit.h"
 //#include "GameStateDTO.h"
 
@@ -20,19 +20,19 @@ class game
 {
 private:
 	NonRealtimeNetworkingUtilities* networkUtilities;
-	//GameStateDTO* gameStateDTO;
-	void hostGame();
-	void joinGame(char* ipAddress);
+	IrrlichtDevice *device;
+	IVideoDriver* driver;
+	ISceneManager* smgr;
+	IGUIEnvironment* guienv;
+
 	BaseUnit* initializeUnits();
 	void passTurn();
 	void receiveGameState();
 	void deserialize();
 public:
 	game(void);
-	//game(IrrlichtDevice* device, ISceneManager* smgr, IGUIEnvironment* guienv);
+	game(IrrlichtDevice* device, ISceneManager* smgr, IGUIEnvironment* guienv);
 	~game(void);
 
 	
 };
-
-*/
