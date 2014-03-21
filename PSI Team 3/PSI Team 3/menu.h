@@ -2,7 +2,7 @@
 #include <irrlicht.h>
 #include "mapterrain.h"
 #include <iostream>
-#include <NonRealtimeNetworkingUtilities.h>
+#include <non-realtime-networking/NonRealtimeNetworkingUtilities.h>
 
 using namespace irr;
 using namespace irrlicht_nonrealtimenetworking;
@@ -14,8 +14,9 @@ using namespace video;
 using namespace io;
 using namespace gui;
 
-
-
+/** class for a networking menu
+*   to provide facilities to establish a connection between two users
+*/
 class menu
 {
 public:
@@ -27,9 +28,8 @@ public:
 
 
 	const wchar_t *text;
-	bool menudone;
 
-	menu(void);
+	menu(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, IGUIEnvironment* guienv, NonRealtimeNetworkingUtilities* networkUtilities);
 	~menu(void);
 
 	int run(void);
