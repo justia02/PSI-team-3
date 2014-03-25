@@ -40,7 +40,7 @@
     <IncludePath>../../../psibranch3irrlicht/source/boost_lib;.;../../../psibranch3irrlicht/source/Irrlicht;../../../psibranch3irrlicht/include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LibraryPath>../../../psibranch3irrlicht/lib/Win32-visualstudio;$(LibraryPath)</LibraryPath>
+    <LibraryPath>../../../psibranch3irrlicht/source/boost_lib/lib;../../../psibranch3irrlicht/lib/Win32-visualstudio;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -68,6 +68,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseUnit.cpp" />
+    <ClCompile Include="BaseUnitDTO.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="GameStateDTO.cpp" />
     <ClCompile Include="main.cpp" />
@@ -80,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseUnit.h" />
+    <ClInclude Include="BaseUnitDTO.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="GameStateDTO.h" />
     <ClInclude Include="main.h" />
