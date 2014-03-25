@@ -13,7 +13,7 @@ menu::menu(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, IG
 	this->guienv = guienv;
 	//this->networkUtilities = networkUtilities;
 
-	init();
+	//init();
 
 
 
@@ -25,7 +25,7 @@ menu::~menu(void)
 
 void menu::run(IrrlichtDevice* device)
 {
-
+/*
 		// setup menu
 	SAppContext context;
 	context.device = device;
@@ -39,8 +39,8 @@ void menu::run(IrrlichtDevice* device)
 	device->setEventReceiver(&receiver);
 
 	//return 0;
-
-	/*
+	*/
+	
 	// temporary console menu
 	// portNo in our game
 	int portNo = 8;
@@ -65,8 +65,8 @@ void menu::run(IrrlichtDevice* device)
 			break;
 		}
 	}
-	return 0;
-	*/
+	//return 0;
+	
 }
 
 void menu::init(void)

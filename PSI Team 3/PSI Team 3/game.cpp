@@ -22,7 +22,7 @@ game::game(void)
 	
 
 	// place camera and load map
-	//smgr->addCameraSceneNode(0, vector3df(0,7,-8), vector3df(0,0,0));
+	smgr->addCameraSceneNode(0, vector3df(0,7,-8), vector3df(0,0,0));
 	mapterrain map = mapterrain(device, smgr);
 	Player* player = new Player(device);
 	player->setPlayer1(true);
