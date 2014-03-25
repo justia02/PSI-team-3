@@ -29,10 +29,10 @@ public:
 
 	const wchar_t *text;
 
-	menu(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, IGUIEnvironment* guienv, NonRealtimeNetworkingUtilities* networkUtilities);
+	menu(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, IGUIEnvironment* guienv);
 	~menu(void);
 
-	void run(IrrlichtDevice* device);
+	void run(/*IrrlichtDevice* device*/);
 	void init();
 };
 
