@@ -1,6 +1,6 @@
 #include "game.h"
-#include "menu.h"
-#include "Player.h"
+#include "MenuEventReceiver.h";
+
 
 game::game(void)
 {
@@ -18,14 +18,14 @@ game::game(void)
 	networkUtilities = new NonRealtimeNetworkingUtilities();
 
 	// run menu
-	menu *m = new menu(device, driver, smgr, guienv, networkUtilities);
-	m->run();
+	m = new menu(device, driver, smgr, guienv, networkUtilities);
+	
 
 	// place camera and load map
-	smgr->addCameraSceneNode(0, vector3df(0,7,-8), vector3df(0,0,0));
+	//smgr->addCameraSceneNode(0, vector3df(0,7,-8), vector3df(0,0,0));
 	mapterrain map = mapterrain(device, smgr);
 
-	Player* pl = new Player(device);
+
 	//networkUtilities = new NonRealtimeNetworkingUtilities();
 	//gameStateDTO = new GameStateDTO(4);
 	//gameStateDTO->setUnits(initializeUnits());
@@ -37,24 +37,45 @@ game::game(void)
 	//make a new terrain
 	//mapterrain map = mapterrain(device, smgr);
 
-		while (device->run() && driver)
-	{
-		if (device->isWindowActive())
-		{
-			;
-			//device->run();
-			driver->beginScene(true, true, SColor(0,200,200,200));
-			smgr->drawAll();
-			guienv->drawAll();
-			driver->endScene();
-		}
-	}
+
 
 
 }
 
 game::~game(void)
 {
+}
+
+int game::run(void)
+{
+
+		//m->run(device);
+
+		// setup menu
+		SAppContext context;
+		context.device = device;
+		context.counter = 0;
+		context.networkUtilities = networkUtilities;
+
+		// setup event receiver to handle user input on menu            
+		MenuEventReceiver receiver(context);
+
+		// specify our custom event receiver in the device	
+		device->setEventReceiver(&receiver);
+
+		while (device->run() && driver)
+		if (device->isWindowActive())
+		{
+			
+			//device->run();
+			driver->beginScene(true, true, SColor(0,200,200,200));
+			smgr->drawAll();
+			guienv->drawAll();
+			driver->endScene();
+		}
+		device->drop();
+	
+	return 0;
 }
 
 
