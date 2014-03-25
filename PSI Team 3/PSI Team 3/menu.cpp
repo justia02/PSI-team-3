@@ -11,14 +11,11 @@ menu::menu(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, IG
 	this->driver = driver;
 	this->smgr = smgr;
 	this->guienv = guienv;
-	this->networkUtilities = networkUtilities;
+	//this->networkUtilities = networkUtilities;
 
 	init();
 
-	// setup menu
-	SAppContext context;
-	context.device = device;
-	context.counter = 0;
+
 
 }
 
@@ -26,9 +23,24 @@ menu::~menu(void)
 {
 }
 
-int menu::run(void)
+void menu::run(IrrlichtDevice* device)
 {
 
+		// setup menu
+	SAppContext context;
+	context.device = device;
+	context.counter = 0;
+	//context.networkUtilities = netwo
+
+	// setup event receiver to handle user input on menu            
+	MenuEventReceiver receiver(context);
+
+	// specify our custom event receiver in the device	
+	device->setEventReceiver(&receiver);
+
+	//return 0;
+
+	/*
 	// temporary console menu
 	// portNo in our game
 	int portNo = 8;
@@ -54,15 +66,14 @@ int menu::run(void)
 		}
 	}
 	return 0;
-
+	*/
 }
 
 void menu::init(void)
 {
 
-	/*
-	// setup event receiver to handle user input on menu            
-	MenuEventReceiver receiver = MenuEventReceiver(context);
+	
+
 	//receiver.onEvent();
 
 	// add gui elements
@@ -75,8 +86,8 @@ void menu::init(void)
 	text = L"add text here";
 	guienv->addStaticText(text, rect<s32>(160,25,480,50), true);
 
-	// specify our custom event receiver in the device	
-	device->setEventReceiver(&receiver);
-	*/
+
+	
+	
 
 }

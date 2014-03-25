@@ -6,7 +6,7 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
         if (event.EventType == EET_GUI_EVENT)
         {
             s32 id = event.GUIEvent.Caller->getID();
-            IGUIEnvironment* env = Context.device->getGUIEnvironment();
+            IGUIEnvironment* guienv = Context.device->getGUIEnvironment();
 
             switch(event.GUIEvent.EventType)
             {
@@ -16,10 +16,13 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 					{
 					case GUI_ID_JOIN_GAME:
 						printf ("Join Game Button was clicked.");
+						
 						return true;
 
 					case GUI_ID_HOST_GAME:
 						printf ("Host Game Button was clicked.");
+						portNo = 8;
+						Context.networkUtilities->hostGame(portNo);
 						// Context.device->drop();
 						return true;
 					default:

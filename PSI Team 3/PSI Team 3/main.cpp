@@ -15,7 +15,7 @@ int main ()
 {
 	//test
 	game g = game();
-	//g.run();
+	g.run();
 
 }
 

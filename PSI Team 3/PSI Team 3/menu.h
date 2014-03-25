@@ -32,7 +32,7 @@ public:
 	menu(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, IGUIEnvironment* guienv, NonRealtimeNetworkingUtilities* networkUtilities);
 	~menu(void);
 
-	int run(void);
+	void run(IrrlichtDevice* device);
 	void init();
 };
 
