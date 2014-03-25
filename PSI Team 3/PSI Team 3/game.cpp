@@ -25,6 +25,8 @@ game::game(void)
 	//smgr->addCameraSceneNode(0, vector3df(0,7,-8), vector3df(0,0,0));
 	mapterrain map = mapterrain(device, smgr);
 	Player* player = new Player(device);
+	player->setPlayer1(true);
+	player->initUnits();
 
 	//networkUtilities = new NonRealtimeNetworkingUtilities();
 	//gameStateDTO = new GameStateDTO(4);
