@@ -1,35 +1,48 @@
-// Authors: Sonja Kopf, Tomasz Zaremba
 /*
-#include <BaseUnit.h>
+ * Authors: Sonja Kopf, Tomasz Zaremba
+ * Data Transfer Object 
+ * to exchange the game state between two players
+ * can be serialized
+ * contains information about units (of both players)
+ * and whose turn it is
+ * --> just a container!
+ */
+#include <BaseUnitDTO.h>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
 #define FILE_NAME "serializationFile"
 
-class GameStateDTO { // Game state Data Transfer Object
+class GameStateDTO {
 
 private:
-	BaseUnit* units; // Array of units
-	bool giveUp;
-	bool player1Turn;
+	BaseUnitDTO* units; // Array of units
+	bool giveUp; // part of the victory/defeat condition
+	bool player1Turn; // true - its player1's turn, false - it's player2's turn
+
+	// serialization stuff
 	friend class boost::serialization::access;
-    template<class Archive>
+    template<class Archive>	
     void serialize(Archive & ar, const unsigned int version)
     {
         ar & units;
         ar & giveUp;
     }
+
 public:
-	GameStateDTO(int length); // Length of the units array
+	GameStateDTO(int length); // amount of units, needed to allocate memory
 	~GameStateDTO();
-	char* serialize();
-	void deserialize(char* serializationString);
-	void setUnits(BaseUnit* units) { this->units = units; }
-	BaseUnit* getUnits() { return units; }
+
+	// getters + setters
+	void setUnits(BaseUnitDTO* units) { this->units = units; }
+	BaseUnitDTO* getUnits() { return units; }
 	void setGiveUp(bool giveUp) { this->giveUp = giveUp; }
 	bool getGiveUp() { return giveUp; }
 	void setPlayer1Turn(bool player1Turn) { this->player1Turn = player1Turn; }
 	bool getPlayer1Turn() { return player1Turn; }
 
+	// serialization
+	char* serialize();
+	void deserialize(char* serializationString);
+
 };
-*/

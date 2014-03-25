@@ -1,12 +1,15 @@
-// Authors: Sonja Kopf, Tomasz Zaremba
 /*
+ * Authors: Sonja Kopf, Tomasz Zaremba
+ * implementation of GameStateDTO
+ */
+
 #include <iostream>
 #include <fstream>
 #include <GameStateDTO.h>
 
 GameStateDTO::GameStateDTO(int length) {
 
-	units = new BaseUnit[length]; // Allocating memory
+	units = new BaseUnitDTO[length]; // allocating memory
 	giveUp = false;
 	player1Turn = true;
 
@@ -67,4 +70,3 @@ char* GameStateDTO::serialize() {
 	return buffer;
 
 }
-*/
