@@ -2,7 +2,7 @@
 
 // there needs to be a player given in the constructor as parameter soo the player1 boolean can be set for the unit 
 // this way we can keep track of which unit is from which player.
-BaseUnit::BaseUnit(irr::core::vector3d<float> pos, IrrlichtDevice* dev/*, Player player*/)
+BaseUnit::BaseUnit(irr::core::vector3d<float> pos, bool player, IrrlichtDevice* dev)
 {
 	position = pos;
 	health = 100;
@@ -17,11 +17,7 @@ BaseUnit::BaseUnit(irr::core::vector3d<float> pos, IrrlichtDevice* dev/*, Player
 
     md2Path = "../media/testunit.irrmesh";
     createMesh();
-
-/*	if(player.playerNumber == 1)
-		player1 = true;
-	else
-		player1 = false'*/
+	player1 = player;
 }
 
 
