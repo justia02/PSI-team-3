@@ -1,6 +1,6 @@
 #include "game.h"
 #include "MenuEventReceiver.h";
-
+#include "Player.h"
 
 game::game(void)
 {
@@ -24,7 +24,7 @@ game::game(void)
 	// place camera and load map
 	//smgr->addCameraSceneNode(0, vector3df(0,7,-8), vector3df(0,0,0));
 	mapterrain map = mapterrain(device, smgr);
-
+	Player* player = new Player(device);
 
 	//networkUtilities = new NonRealtimeNetworkingUtilities();
 	//gameStateDTO = new GameStateDTO(4);
