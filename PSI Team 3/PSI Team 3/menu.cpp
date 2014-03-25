@@ -5,42 +5,37 @@
 //class definition for menu
 using namespace irrlicht_nonrealtimenetworking;
 
-menu::menu(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, IGUIEnvironment* guienv, NonRealtimeNetworkingUtilities* networkUtilities) 
+menu::menu(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, IGUIEnvironment* guienv) 
 {
 	this->device = device;
 	this->driver = driver;
 	this->smgr = smgr;
 	this->guienv = guienv;
-	//this->networkUtilities = networkUtilities;
 
 	//init();
-
-
-
 }
 
 menu::~menu(void)
 {
 }
 
-void menu::run(IrrlichtDevice* device)
+void menu::run(/*IrrlichtDevice* device*/)
 {
-/*
-		// setup menu
+
+	// setup menu
 	SAppContext context;
 	context.device = device;
 	context.counter = 0;
 	//context.networkUtilities = netwo
 
+	/*
 	// setup event receiver to handle user input on menu            
 	MenuEventReceiver receiver(context);
 
 	// specify our custom event receiver in the device	
 	device->setEventReceiver(&receiver);
-
-	//return 0;
 	*/
-	
+
 	// temporary console menu
 	// portNo in our game
 	int portNo = 8;
@@ -65,17 +60,10 @@ void menu::run(IrrlichtDevice* device)
 			break;
 		}
 	}
-	//return 0;
-	
 }
 
 void menu::init(void)
 {
-
-	
-
-	//receiver.onEvent();
-
 	// add gui elements
 	wchar_t* text2 = new wchar_t[100];
 	guienv->addEditBox(text2,rect<s32>(160,300, 480,325 + 32),true);
@@ -85,9 +73,4 @@ void menu::init(void)
 
 	text = L"add text here";
 	guienv->addStaticText(text, rect<s32>(160,25,480,50), true);
-
-
-	
-	
-
 }
