@@ -45,6 +45,7 @@ void menu::run(game* g) {
 		std::cin >> option;
 
 		if (option == 1) {
+			context.game_->startGame(true, "");
 //			networkUtilities->hostGame(portNo);
 			break;
 		} else if (option == 2) {
