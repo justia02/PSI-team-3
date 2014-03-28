@@ -17,30 +17,22 @@ game::game(void)
 	guienv = device->getGUIEnvironment();
 	playerCamera = new PlayerCamera(device);
 
+	// initialize networkUtilities (all networking stuff is handled in game)
 	networkUtilities = new NonRealtimeNetworkingUtilities();
 
+	// initialize players
 	localPlayer = new Player(device);
-//	localPlayer->setPlayer1(true);
-//	localPlayer->initUnits();
 	opposingPlayer = new Player(device);
 
 	// run menu
 	menu* m = new menu(device, driver, smgr, guienv);
 	m->run(this);
+
 	// place camera and load map
 	smgr->addCameraSceneNode(0, vector3df(0,8,-8), vector3df(0,0,0));
 	mapterrain map = mapterrain(device, smgr);
 
-	/*
-	 *  !! IMPORTANT !! 
-	 *  Both sides (both running games) need to keep track of BOTH players
-	 *  at the point of the constructor of the game it cannot be said whether they are player one or two
-	 *  this needs to be set when the game "starts" 
-	 *  the hosting player will always be player 1, the joining player will always be player 2
-	 *  after this has been set (after a button was clicked in the menu, i'm looking at you chris ;))
-	 *  their units can be initialized, not before!
- 	 */
-
+	// adjust camera according to players view (different for player 1 and 2)
 	if(!localPlayer->getPlayer1()){
 		vector3d<float> temp = smgr->getActiveCamera()->getPosition();
 		cout << temp.X << " " << temp.Y << " " << temp.Z;
@@ -96,7 +88,9 @@ int game::run(void)
 	
 	return 0;
 }
-
+/**
+  * starts the game from the perspective of player1/player2
+  */
 void game::startGame(bool asPlayer1, char* ipAddress) {
 
 	if (asPlayer1) {
@@ -122,6 +116,21 @@ void game::startGame(bool asPlayer1, char* ipAddress) {
 }
 
 void game::passTurn() {
+
+	// in the game state both player's units will be contained --> allocate memory for all units
+	GameStateDTO* gamestate = new GameStateDTO(localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size());
+
+	for(int i = 0; i < localPlayer->getUnits()->size(); i++) {
+		BaseUnitDTO tmp = BaseUnitDTO();
+		// hooow do i get to the unit's positions?? :-(
+		tmp.setPlayer(true);
+	}
+
+	for(int i = 0; i < opposingPlayer->getUnits()->size(); i++) {
+		BaseUnitDTO tmp = BaseUnitDTO();
+		tmp.setPlayer(false);
+	}
+
 	// read the units of each player
 	// transform then into DTOs
 	// serialize everything

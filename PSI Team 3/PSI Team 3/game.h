@@ -7,7 +7,7 @@
 
 #include "Player.h"
 #include "PlayerCamera.h"
-//#include "GameStateDTO.h"
+#include "GameStateDTO.h"
 
 using namespace irr;
 
