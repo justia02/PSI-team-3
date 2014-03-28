@@ -1,6 +1,7 @@
 #include "game.h"
-#include "MenuEventReceiver.h";
+#include "MenuEventReceiver.h"; // this include MUST NOT be in the .h file!
 #include "Player.h"
+#include "menu.h"
 
 game::game(void)
 {
@@ -19,8 +20,8 @@ game::game(void)
 	networkUtilities = new NonRealtimeNetworkingUtilities();
 
 	// run menu
-	m = new menu(device, driver, smgr, guienv);
-	m->run();
+	menu* m = new menu(device, driver, smgr, guienv);
+	m->run(this);
 	// place camera and load map
 	smgr->addCameraSceneNode(0, vector3df(0,8,-8), vector3df(0,0,0));
 	mapterrain map = mapterrain(device, smgr);
@@ -35,8 +36,8 @@ game::game(void)
 	 *  their units can be initialized, not before!
  	 */
 	localPlayer = new Player(device);
-	localPlayer->setPlayer1(true);
-	localPlayer->initUnits();
+//	localPlayer->setPlayer1(true);
+//	localPlayer->initUnits();
 	opposingPlayer = new Player(device);
 
 	if(!localPlayer->getPlayer1()){
@@ -93,6 +94,30 @@ int game::run(void)
 		device->drop();
 	
 	return 0;
+}
+
+void game::startGame(bool asPlayer1, char* ipAddress) {
+
+	if (asPlayer1) {
+		networkUtilities->hostGame(portNumber);
+
+		// hosting player is always player 1
+		localPlayer->setPlayer1(true);
+		opposingPlayer->setPlayer1(false);
+
+		localPlayer->initUnits();
+		opposingPlayer->initUnits();
+
+	} else {
+		networkUtilities->joinGame(ipAddress, portNumber); 
+
+		// joining player is always player 2
+		localPlayer->setPlayer1(false);
+		opposingPlayer->setPlayer1(true);
+
+		localPlayer->initUnits();
+		opposingPlayer->initUnits();
+	}
 }
 
 void game::passTurn() {

@@ -16,14 +16,12 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 					{
 					case GUI_ID_JOIN_GAME:
 						printf ("Join Game Button was clicked.");
-						
+						Context.game_->startGame(false, "PLEASE FILL IN THE CORRECT IP HERE");
 						return true;
 
 					case GUI_ID_HOST_GAME:
 						printf ("Host Game Button was clicked.");
-						portNo = 8;
-						Context.networkUtilities->hostGame(portNo);
-						// Context.device->drop();
+						Context.game_->startGame(true, ""); // call without ip, since we want to host 
 						return true;
 					default:
 						break;

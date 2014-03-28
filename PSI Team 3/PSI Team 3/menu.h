@@ -3,6 +3,8 @@
 #include "mapterrain.h"
 #include <iostream>
 #include <non-realtime-networking/NonRealtimeNetworkingUtilities.h>
+#include <iostream>
+#include "game.h"
 
 using namespace irr;
 using namespace irrlicht_nonrealtimenetworking;
@@ -24,15 +26,15 @@ public:
 	IVideoDriver* driver;
 	ISceneManager* smgr;
 	IGUIEnvironment* guienv;
-	NonRealtimeNetworkingUtilities* networkUtilities;
+	//NonRealtimeNetworkingUtilities* networkUtilities;
 
 
 	const wchar_t *text;
 
 	menu(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, IGUIEnvironment* guienv);
 	~menu(void);
-
-	void run(/*IrrlichtDevice* device*/);
+	/*IrrlichtDevice* device,*/
+	void run(game* g);
 	void init();
 };
 

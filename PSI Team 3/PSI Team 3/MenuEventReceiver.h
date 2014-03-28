@@ -3,6 +3,7 @@
 #include "mapterrain.h"
 #include <iostream>
 #include <non-realtime-networking/NonRealtimeNetworkingUtilities.h>
+#include "game.h"
 
 using namespace irr;
 
@@ -18,8 +19,9 @@ using namespace irrlicht_nonrealtimenetworking;
 struct SAppContext
 {
     IrrlichtDevice *device;
-    s32             counter;
+    s32 counter;
 	NonRealtimeNetworkingUtilities* networkUtilities;
+	game* game_;
 };
 
 // Define values to identify join game and host game buttons
