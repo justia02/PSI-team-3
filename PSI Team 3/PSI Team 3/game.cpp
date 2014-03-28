@@ -19,6 +19,11 @@ game::game(void)
 
 	networkUtilities = new NonRealtimeNetworkingUtilities();
 
+	localPlayer = new Player(device);
+//	localPlayer->setPlayer1(true);
+//	localPlayer->initUnits();
+	opposingPlayer = new Player(device);
+
 	// run menu
 	menu* m = new menu(device, driver, smgr, guienv);
 	m->run(this);
@@ -35,10 +40,6 @@ game::game(void)
 	 *  after this has been set (after a button was clicked in the menu, i'm looking at you chris ;))
 	 *  their units can be initialized, not before!
  	 */
-	localPlayer = new Player(device);
-//	localPlayer->setPlayer1(true);
-//	localPlayer->initUnits();
-	opposingPlayer = new Player(device);
 
 	if(!localPlayer->getPlayer1()){
 		vector3d<float> temp = smgr->getActiveCamera()->getPosition();
