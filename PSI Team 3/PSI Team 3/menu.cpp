@@ -1,6 +1,7 @@
 #include "menu.h"
 #include <iostream>
 #include "MenuEventReceiver.h"
+#include <non-realtime-networking\NonRealtimeNetworkingException.h>
 
 //class definition for menu
 using namespace irrlicht_nonrealtimenetworking;
@@ -11,7 +12,7 @@ menu::menu(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, IG
 	this->driver = driver;
 	this->smgr = smgr;
 	this->guienv = guienv;
-	this->networkUtilities = new NonRealtimeNetworkingUtilities("localhost");
+	this->networkUtilities = new NonRealtimeNetworkingUtilities("145.109.160.20");
 
 	//init();
 }
@@ -56,7 +57,17 @@ void menu::run(/*IrrlichtDevice* device*/)
 			networkUtilities->joinGame(ipAddress, portNo);
 			break;
 		} else if (option == 3) {
-			networkUtilities->establishConnection("TEST", portNo);
+			try {
+				std::cout << networkUtilities->establishConnection("TEST", portNo) << std::endl;
+				networkUtilities->receiveData();
+				std::cout << "Received: " << networkUtilities->getBuffer() << std::endl;
+			}
+			catch (NonRealtimeNetworkingException e) {
+				std::cout << "ERROR: " << e.what() << std::endl;
+			}
+			catch (std::exception e) {
+				std::cout << "ERROR: " << e.what() << std::endl;
+			}
 			break;
 		} else if (option == 4) {
 			break;
