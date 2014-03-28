@@ -12,6 +12,10 @@ using namespace std;
 
 class BaseUnit
 {
+private:
+	ILightSceneNode* selectIndication;
+	IBillboardSceneNode* indicationBoard;
+	void initUnitHighLight();
 public:
 	enum direction{
 		LEFT,
@@ -46,7 +50,7 @@ public:
 	bool createMesh();
     void setShininess(float value);
 
-
+	void highLightUnit(bool highLight);
 	// there needs to be some sort of target class to be made idk how yet
 	//void ShootTarget(target);
 };

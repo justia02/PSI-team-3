@@ -18,6 +18,8 @@ BaseUnit::BaseUnit(irr::core::vector3d<float> pos, bool player, IrrlichtDevice* 
     md2Path = "../media/testunit.irrmesh";
     createMesh();
 	player1 = player;
+
+	this->initUnitHighLight();
 }
 
 
@@ -47,13 +49,22 @@ void BaseUnit::Move(direction moveDirection, float distance){
 			}
 		}
 	node->setPosition(position);
+
+
+	cout << "the unit: " << position.X << ", " << position.Y << ", " << position.Z;
 }
 
 void BaseUnit::SelectUnit(){
+	selected = !selected;
 	if(selected)
-		selected = !selected;
+		indicationBoard->setMaterialTexture(0, device->getVideoDriver()->getTexture("../media/particle.bmp"));
 	else
-		selected = true;
+		indicationBoard->setMaterialTexture(0, device->getVideoDriver()->getTexture("../media/particlegreen.jpg"));
+
+//	if(selected)
+//		selected = !selected;
+//	else
+//		selected = true;
 
 }
 
@@ -95,4 +106,45 @@ bool BaseUnit::createMesh(){
         node->setScale(core::vector3df(scale,scale,scale));
     }
     return true;
+}
+
+void BaseUnit::highLightUnit(bool highLight)
+{
+	//selectIndication = NULL;
+	if(highLight)
+	{
+		//Move(FORWARD, 2);
+		selectIndication->setVisible(true);
+		indicationBoard->setVisible(true);
+	}
+	else
+	{
+		if(!selected)
+		{
+			selectIndication->setVisible(false);
+			indicationBoard->setVisible(false);
+		}
+	}
+}
+
+void BaseUnit::initUnitHighLight()
+{
+	vector3d<f32> newPosition = this->position + vector3d<f32>(0,0.5,0);
+	selectIndication =
+		sceneManager->addLightSceneNode(0, position,
+		video::SColorf(0.5f, 1.0f, 0.5f, 0.0f), 800.0f);
+	selectIndication->setDebugDataVisible ( scene::EDS_BBOX );
+
+	selectIndication->setVisible(false);
+
+	// attach billboard to the light
+	indicationBoard =
+		sceneManager->addBillboardSceneNode(selectIndication, core::dimension2d<f32>(1, 1));
+
+	indicationBoard->setMaterialFlag(video::EMF_LIGHTING, false);
+	indicationBoard->setMaterialFlag(video::EMF_ZWRITE_ENABLE, false);
+	indicationBoard->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);
+	indicationBoard->setMaterialTexture(0, device->getVideoDriver()->getTexture("../media/particlegreen.jpg"));
+
+	indicationBoard->setVisible(false);
 }
