@@ -14,6 +14,7 @@ game::game(void)
 	driver = device->getVideoDriver();
 	smgr = device->getSceneManager();
 	guienv = device->getGUIEnvironment();
+	playerCamera = new PlayerCamera(device);
 
 	networkUtilities = new NonRealtimeNetworkingUtilities();
 
@@ -21,7 +22,7 @@ game::game(void)
 	m = new menu(device, driver, smgr, guienv);
 	m->run();
 	// place camera and load map
-	smgr->addCameraSceneNode(0, vector3df(0,7,-8), vector3df(0,0,0));
+	smgr->addCameraSceneNode(0, vector3df(0,8,-8), vector3df(0,0,0));
 	mapterrain map = mapterrain(device, smgr);
 
 	/*
@@ -34,8 +35,17 @@ game::game(void)
 	 *  their units can be initialized, not before!
  	 */
 	localPlayer = new Player(device);
+	localPlayer->setPlayer1(true);
+	localPlayer->initUnits();
 	opposingPlayer = new Player(device);
 
+	if(!localPlayer->getPlayer1()){
+		vector3d<float> temp = smgr->getActiveCamera()->getPosition();
+		cout << temp.X << " " << temp.Y << " " << temp.Z;
+		temp.Z = !temp.Z;
+		temp.Y = 0;
+		playerCamera->setCameraPos(temp, localPlayer->getPlayer1());
+	}
 	//networkUtilities = new NonRealtimeNetworkingUtilities();
 	//gameStateDTO = new GameStateDTO(4);
 	//gameStateDTO->setUnits(initializeUnits());

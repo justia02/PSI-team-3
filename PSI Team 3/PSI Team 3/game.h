@@ -6,6 +6,7 @@
 #include "BaseUnit.h"
 #include "menu.h"
 #include "Player.h"
+#include "PlayerCamera.h"
 //#include "GameStateDTO.h"
 
 using namespace irr;
@@ -29,6 +30,7 @@ private:
 	IGUIEnvironment* guienv;
 	Player* localPlayer;
 	Player* opposingPlayer;
+	PlayerCamera* playerCamera;
 
 	// private methods
 	BaseUnit* initializeUnits();

@@ -11,9 +11,10 @@ using namespace scene;
 class PlayerCamera
 {
 public:
-	PlayerCamera(void);
+	PlayerCamera(IrrlichtDevice *dev);
 	~PlayerCamera(void);
-
-	void setCameraPos(IrrlichtDevice *device, vector3d<float> pos);
+	
+	IrrlichtDevice *device;
+	void setCameraPos(vector3d<float> pos, bool player1);
 };
 
