@@ -3,6 +3,7 @@
 #include <io.h>
 #include "mapterrain.h"
 #include "BaseUnit.h"
+#include <vector>
 
 using namespace irr;
 

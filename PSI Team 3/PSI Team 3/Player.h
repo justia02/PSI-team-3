@@ -9,12 +9,12 @@ class Player
 {
 private:
 	bool player1;
-	std::vector<BaseUnit>* units;
+	std::vector<BaseUnit*>* units;
 public:
 	Player(IrrlichtDevice* dev);
 	~Player(void);
 
-	std::vector<BaseUnit>* getUnits() { return units; }
+	std::vector<BaseUnit*>* getUnits() { return units; }
 	bool getPlayer1() { return player1; }
 	IrrlichtDevice* device;
 
