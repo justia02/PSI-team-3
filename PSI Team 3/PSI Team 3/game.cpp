@@ -120,14 +120,21 @@ void game::passTurn() {
 	// in the game state both player's units will be contained --> allocate memory for all units
 	GameStateDTO* gamestate = new GameStateDTO(localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size());
 
-	for(int i = 0; i < localPlayer->getUnits()->size(); i++) {
+	// That should work :)
+
+	for(std::vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
 		BaseUnitDTO tmp = BaseUnitDTO();
-		// hooow do i get to the unit's positions?? :-(
+		tmp.setX((*it)->position.X);
+		tmp.setY((*it)->position.Y);
+		tmp.setZ((*it)->position.Z);
 		tmp.setPlayer(true);
 	}
 
-	for(int i = 0; i < opposingPlayer->getUnits()->size(); i++) {
+	for(std::vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
 		BaseUnitDTO tmp = BaseUnitDTO();
+		tmp.setX((*it)->position.X);
+		tmp.setY((*it)->position.Y);
+		tmp.setZ((*it)->position.Z);
 		tmp.setPlayer(false);
 	}
 
