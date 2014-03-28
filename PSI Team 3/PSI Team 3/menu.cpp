@@ -1,7 +1,5 @@
 #include "menu.h"
-#include <iostream>
 #include "MenuEventReceiver.h"
-
 //class definition for menu
 using namespace irrlicht_nonrealtimenetworking;
 
@@ -11,7 +9,7 @@ menu::menu(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, IG
 	this->driver = driver;
 	this->smgr = smgr;
 	this->guienv = guienv;
-	this->networkUtilities = new NonRealtimeNetworkingUtilities("localhost");
+	//this->networkUtilities = new NonRealtimeNetworkingUtilities("localhost");
 
 	//init();
 }
@@ -20,14 +18,13 @@ menu::~menu(void)
 {
 }
 
-void menu::run(/*IrrlichtDevice* device*/)
-{
+void menu::run(game* g) {
 
 	// setup menu
 	SAppContext context;
 	context.device = device;
 	context.counter = 0;
-	//context.networkUtilities = netwo
+	context.game_ = g;
 
 	/*
 	// setup event receiver to handle user input on menu            
@@ -48,15 +45,17 @@ void menu::run(/*IrrlichtDevice* device*/)
 		std::cin >> option;
 
 		if (option == 1) {
-			networkUtilities->hostGame(portNo);
+//			networkUtilities->hostGame(portNo);
 			break;
 		} else if (option == 2) {
 			std::cout << "Please enter the IP address of your opponent" << std::endl;
 			std::cin >> ipAddress;
-			networkUtilities->joinGame(ipAddress, portNo);
+			context.game_->startGame(false, ipAddress);
+//			networkUtilities->joinGame(ipAddress, portNo);
 			break;
 		} else if (option == 3) {
-			networkUtilities->establishConnection("TEST", portNo);
+//			networkUtilities->establishConnection("TEST", portNo);
+			context.game_->startGame(true, "");
 			break;
 		} else if (option == 4) {
 			break;
