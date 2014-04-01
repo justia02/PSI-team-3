@@ -3,6 +3,7 @@
 #include <io.h>
 #include "mapterrain.h"
 #include "BaseUnit.h"
+#include "Player.h"
 #include <vector>
 
 using namespace irr;
@@ -30,7 +31,7 @@ private:
 	void moveUnit();
 
 public:
-	TempReceiver(IrrlichtDevice *device, vector<BaseUnit*>* units);
+	TempReceiver(IrrlichtDevice *device, Player *player);
 	~TempReceiver(void);
 
 	bool OnEvent(const SEvent& event);

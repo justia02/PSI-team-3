@@ -24,6 +24,8 @@ game::game(void)
 	localPlayer = new Player(device);
 	opposingPlayer = new Player(device);
 
+	device->setEventReceiver(new TempReceiver(device, localPlayer));
+
 	// run menu
 	menu* m = new menu(device, driver, smgr, guienv);
 	//m->run(this);
@@ -89,11 +91,24 @@ int game::run(void)
 	
 	return 0;
 }
+
+void game::startGame() {
+
+	networkUtilities->initializeWS("127.0.0.1");
+	networkUtilities->setGameName("PSI Team 3");
+	networkUtilities->registerOnTheServer();
+	if ((networkUtilities->getSessionId() % 2) == 0)
+		startGame(true);
+	else
+		startGame(false, networkUtilities->getOpponentsIpAddress().c_str());
+
+}
 /**
   * starts the game from the perspective of player1/player2
   */
-void game::startGame(bool asPlayer1, char* ipAddress) {
-	
+
+void game::startGame(bool asPlayer1, const char* ipAddress) {
+
 
 	if (asPlayer1) {
 		networkUtilities->hostGame(portNumber);
@@ -106,7 +121,7 @@ void game::startGame(bool asPlayer1, char* ipAddress) {
 		opposingPlayer->initUnits();
 
 	} else {
-		networkUtilities->joinGame(ipAddress, portNumber); 
+		networkUtilities->joinGame(std::string(ipAddress), portNumber); 
 
 		// joining player is always player 2
 		localPlayer->setPlayer1(false);
@@ -121,37 +136,58 @@ void game::passTurn() {
 
 	// in the game state both player's units will be contained --> allocate memory for all units
 	GameStateDTO* gamestate = new GameStateDTO(localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size());
+	BaseUnitDTO* units = new BaseUnitDTO[localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size()];
+	int i = 0;
 
-	// That should work :)
-
+	// read units of this player
 	for(std::vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
+		// create a DTO for each of them
 		BaseUnitDTO tmp = BaseUnitDTO();
 		tmp.setX((*it)->position.X);
 		tmp.setY((*it)->position.Y);
 		tmp.setZ((*it)->position.Z);
 		tmp.setPlayer(true);
+
+		// put unitDTOs in list that is given to gamestateDTO
+		units[i] = tmp;
+		i++;
 	}
 
+	// read units of opponent
 	for(std::vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
+		// create a DTO for each of them
 		BaseUnitDTO tmp = BaseUnitDTO();
 		tmp.setX((*it)->position.X);
 		tmp.setY((*it)->position.Y);
 		tmp.setZ((*it)->position.Z);
 		tmp.setPlayer(false);
+
+		// put unitDTOs in list that is given to gamestateDTO
+		units[i] = tmp;
+		i++;
 	}
 
-	// read the units of each player
-	// transform then into DTOs
-	// serialize everything
+	// put units in the game state DTO
+	gamestate->setUnits(units);
+
+	// serialize the gamestateDTO (unitDTOs should be serialized along with them...)
+	char* buffer = gamestate->serialize();
+
 	// send it it to opposing player
+	networkUtilities->setBuffer(buffer);
+	networkUtilities->sendData();
 }
 
 void game::receiveGameState() {
 	// receive data from opposing player
+	networkUtilities->receiveData();
+	// deserialize data
+	deserialize();
 }
 
 void game::deserialize() {
 	// deserialized data to DTOs (units and gamestate)
+
 }
 
 void game::updateGameState(){
