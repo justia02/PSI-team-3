@@ -19,7 +19,7 @@ GameStateDTO::~GameStateDTO() {
 	delete units;
 }
 
-void GameStateDTO::deserialize(char* serializationString) {
+void GameStateDTO::deserialize(std::string serializationString) {
 
 	std::ofstream ofs(FILE_NAME);
 	ofs << serializationString;
@@ -36,7 +36,7 @@ void GameStateDTO::deserialize(char* serializationString) {
 
 }
 
-char* GameStateDTO::serialize() {
+char* GameStateDTO::serializeGameState() {
 
 	// create and open a character archive for serialized vector instance
     std::ofstream ofs(FILE_NAME);

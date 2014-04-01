@@ -33,6 +33,7 @@ private:
 	ISceneManager* smgr;
 	IGUIEnvironment* guienv;
 	PlayerCamera* playerCamera;
+	GameStateDTO* gameState;
 
 	// private methods
 	BaseUnit* initializeUnits();
