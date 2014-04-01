@@ -11,7 +11,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
-#define FILE_NAME "serializationFile"
+#define FILE_NAME "serializationFileGameState"
 
 class GameStateDTO {
 
@@ -30,6 +30,10 @@ private:
     }
 
 public:
+	GameStateDTO() { 
+		giveUp = false;
+		player1Turn = true;
+	};
 	GameStateDTO(int length); // amount of units, needed to allocate memory
 	~GameStateDTO();
 
@@ -42,7 +46,7 @@ public:
 	bool getPlayer1Turn() { return player1Turn; }
 
 	// serialization
-	char* serialize();
-	void deserialize(char* serializationString);
+	char* serializeGameState();
+	void deserialize(std::string serializationString);
 
 };

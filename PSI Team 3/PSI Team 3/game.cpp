@@ -20,6 +20,9 @@ game::game(void)
 	// initialize networkUtilities (all networking stuff is handled in game)
 	networkUtilities = new NonRealtimeNetworkingUtilities();
 
+	// initialize gameStateDTO
+	gameState = new GameStateDTO();
+
 	// initialize players
 	localPlayer = new Player(device);
 	opposingPlayer = new Player(device);
@@ -29,6 +32,10 @@ game::game(void)
 	// run menu
 	menu* m = new menu(device, driver, smgr, guienv);
 	m->run(this);
+
+	// TEST --> should only serialize game state to file
+	passTurn();
+
 
 	// place camera and load map
 	smgr->addCameraSceneNode(0, vector3df(0,8,-8), vector3df(0,0,0));
@@ -93,7 +100,7 @@ int game::run(void)
 
 void game::startGame() {
 
-	networkUtilities->initializeWS("127.0.0.1");
+	networkUtilities->initializeWS("145.109.197.6");
 	networkUtilities->setGameName("PSI Team 3");
 	networkUtilities->registerOnTheServer();
 	if ((networkUtilities->getSessionId() % 2) == 0)
@@ -102,7 +109,7 @@ void game::startGame() {
 		startGame(false, networkUtilities->getOpponentsIpAddress().c_str());
 
 }
-/**
+/**	
   * starts the game from the perspective of player1/player2
   */
 void game::startGame(bool asPlayer1, const char* ipAddress) {
@@ -132,7 +139,7 @@ void game::startGame(bool asPlayer1, const char* ipAddress) {
 void game::passTurn() {
 
 	// in the game state both player's units will be contained --> allocate memory for all units
-	GameStateDTO* gamestate = new GameStateDTO(localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size());
+	gameState = new GameStateDTO(localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size());
 	BaseUnitDTO* units = new BaseUnitDTO[localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size()];
 	int i = 0;
 
@@ -140,10 +147,24 @@ void game::passTurn() {
 	for(std::vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
 		// create a DTO for each of them
 		BaseUnitDTO tmp = BaseUnitDTO();
+		tmp.setId((*it)->id);
 		tmp.setX((*it)->position.X);
 		tmp.setY((*it)->position.Y);
 		tmp.setZ((*it)->position.Z);
 		tmp.setPlayer(true);
+
+		// output properties of unit
+		std::cout<<"UNITS OF LOCAL PLAYER";
+		std::cout<<tmp.getId();
+		std::cout<<"\n";
+		std::cout<<tmp.getPlayer();
+		std::cout<<"\n";
+		std::cout<<tmp.getX();
+		std::cout<<"\n";
+		std::cout<<tmp.getY();
+		std::cout<<"\n";
+		std::cout<<tmp.getZ();
+		std::cout<<"\n";
 
 		// put unitDTOs in list that is given to gamestateDTO
 		units[i] = tmp;
@@ -154,10 +175,24 @@ void game::passTurn() {
 	for(std::vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
 		// create a DTO for each of them
 		BaseUnitDTO tmp = BaseUnitDTO();
+		tmp.setId((*it)->id);
 		tmp.setX((*it)->position.X);
 		tmp.setY((*it)->position.Y);
 		tmp.setZ((*it)->position.Z);
 		tmp.setPlayer(false);
+
+		// output properties of unit
+		std::cout<<"UNITS OF OPPOSING PLAYER";
+		std::cout<<tmp.getId();
+		std::cout<<"\n";
+		std::cout<<tmp.getPlayer();
+		std::cout<<"\n";
+		std::cout<<tmp.getX();
+		std::cout<<"\n";
+		std::cout<<tmp.getY();
+		std::cout<<"\n";
+		std::cout<<tmp.getZ();
+		std::cout<<"\n";
 
 		// put unitDTOs in list that is given to gamestateDTO
 		units[i] = tmp;
@@ -165,30 +200,36 @@ void game::passTurn() {
 	}
 
 	// put units in the game state DTO
-	gamestate->setUnits(units);
+	gameState->setUnits(units);
 
 	// serialize the gamestateDTO (unitDTOs should be serialized along with them...)
-	char* buffer = gamestate->serialize();
-
+	char* buffer = gameState->serializeGameState();
+	std::cout<<buffer;
 	// send it it to opposing player
-	networkUtilities->setBuffer(buffer);
-	networkUtilities->sendData();
+	// networkUtilities->setBuffer(buffer);
+	// networkUtilities->sendData();
 }
 
 void game::receiveGameState() {
 	// receive data from opposing player
 	networkUtilities->receiveData();
 	// deserialize data
-	deserialize();
 }
 
 void game::deserialize() {
 	// deserialized data to DTOs (units and gamestate)
-
+	std::string buffer = networkUtilities->getBuffer();
+	gameState->deserialize(buffer);
 }
 
 void game::updateGameState(){
-	// update gamestate by updating all attributes in both players 
+	// create a GameStateDTO object and fill in data we received by deserializing it
+	gameState = new GameStateDTO();
+	deserialize();
+
+	// update gamestate by updating all attributes in both players
+
+
 	// and updating which player is active
 	// visually update what had happened (render again?)
 }
