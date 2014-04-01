@@ -38,11 +38,29 @@ enum
 class MenuEventReceiver : public irr::IEventReceiver
 {
 	public:
-
+		// members for the menu
 		const wchar_t *text;
 
-		MenuEventReceiver(SAppContext & context) : Context(context){ };
+		MenuEventReceiver(SAppContext & context) : Context(context)
+		{
+			unitList = context.game_->localPlayer->getUnits();
+			smgr = context.device->getSceneManager();
+
+			camera = smgr->getActiveCamera();
+		};
 		bool OnEvent(const SEvent& event);
 	    SAppContext & Context;
 		int portNo;
+		// members for the unit controll
+	private:
+		void MouseOverUnit();
+		void setDirection(irr::EKEY_CODE keyCode);
+
+		BaseUnit::direction moveDirection;
+		bool isUnitSelected;
+		bool isHoveringUnit;
+		BaseUnit *selectedUnit;
+		vector<BaseUnit*>* unitList;
+		ICameraSceneNode* camera;
+		ISceneManager* smgr;
 };
