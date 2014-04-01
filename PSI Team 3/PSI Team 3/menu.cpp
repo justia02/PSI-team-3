@@ -45,18 +45,30 @@ void menu::run(game* g) {
 		std::cin >> option;
 
 		if (option == 1) {
-			context.game_->startGame(true, "");
-//			networkUtilities->hostGame(portNo);
+			try {
+				context.game_->startGame(true);
+			}
+			catch(NonRealtimeNetworkingException e) {
+				std::cout << "NonRealtimeNetworkingException: " << e.what() << std::endl;
+			}
 			break;
 		} else if (option == 2) {
 			std::cout << "Please enter the IP address of your opponent" << std::endl;
 			std::cin >> ipAddress;
-			context.game_->startGame(false, ipAddress);
-//			networkUtilities->joinGame(ipAddress, portNo);
+			try {
+				context.game_->startGame(false, ipAddress);
+			}
+			catch(NonRealtimeNetworkingException e) {
+				std::cout << "NonRealtimeNetworkingException: " << e.what() << std::endl;
+			}
 			break;
 		} else if (option == 3) {
-//			networkUtilities->establishConnection("TEST", portNo);
-//			context.game_->startGame(true, "");
+			try {
+				context.game_->startGame();
+			}
+			catch(NonRealtimeNetworkingException e) {
+				std::cout << "NonRealtimeNetworkingException: " << e.what() << std::endl;
+			}
 			break;
 		} else if (option == 4) {
 			context.game_->localPlayer->setPlayer1(true);

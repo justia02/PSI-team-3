@@ -24,6 +24,8 @@ game::game(void)
 	localPlayer = new Player(device);
 	opposingPlayer = new Player(device);
 
+	device->setEventReceiver(new TempReceiver(device, localPlayer));
+
 	// run menu
 	menu* m = new menu(device, driver, smgr, guienv);
 	m->run(this);
@@ -88,10 +90,22 @@ int game::run(void)
 	
 	return 0;
 }
+
+void game::startGame() {
+
+	networkUtilities->initializeWS("127.0.0.1");
+	networkUtilities->setGameName("PSI Team 3");
+	networkUtilities->registerOnTheServer();
+	if ((networkUtilities->getSessionId() % 2) == 0)
+		startGame(true);
+	else
+		startGame(false, networkUtilities->getOpponentsIpAddress().c_str());
+
+}
 /**
   * starts the game from the perspective of player1/player2
   */
-void game::startGame(bool asPlayer1, char* ipAddress) {
+void game::startGame(bool asPlayer1, const char* ipAddress) {
 
 	if (asPlayer1) {
 		networkUtilities->hostGame(portNumber);
@@ -104,7 +118,7 @@ void game::startGame(bool asPlayer1, char* ipAddress) {
 		opposingPlayer->initUnits();
 
 	} else {
-		networkUtilities->joinGame(ipAddress, portNumber); 
+		networkUtilities->joinGame(std::string(ipAddress), portNumber); 
 
 		// joining player is always player 2
 		localPlayer->setPlayer1(false);
