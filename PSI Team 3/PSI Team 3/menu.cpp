@@ -55,8 +55,7 @@ void menu::run(game* g) {
 //			networkUtilities->joinGame(ipAddress, portNo);
 			break;
 		} else if (option == 3) {
-//			networkUtilities->establishConnection("TEST", portNo);
-//			context.game_->startGame(true, "");
+			context.game_->startGame();
 			break;
 		} else if (option == 4) {
 			context.game_->localPlayer->setPlayer1(true);
