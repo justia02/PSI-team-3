@@ -23,6 +23,9 @@ public:
 		BACK,
 		FORWARD
 	};
+
+	int id;
+
 	int maxDistance;
 	int health;
 	int damage;

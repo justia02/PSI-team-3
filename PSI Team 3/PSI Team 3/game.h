@@ -31,8 +31,6 @@ private:
 	IVideoDriver* driver;
 	ISceneManager* smgr;
 	IGUIEnvironment* guienv;
-	Player* localPlayer;
-	Player* opposingPlayer;
 	PlayerCamera* playerCamera;
 
 	// private methods
@@ -51,4 +49,8 @@ public:
 	// public methods
 	int run(void);
 	void startGame(bool asPlayer1, char* ipAddress); 
+
+	// players
+	Player* localPlayer;
+	Player* opposingPlayer;
 };

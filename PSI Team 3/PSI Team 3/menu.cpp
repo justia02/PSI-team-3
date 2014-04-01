@@ -56,9 +56,14 @@ void menu::run(game* g) {
 			break;
 		} else if (option == 3) {
 //			networkUtilities->establishConnection("TEST", portNo);
-			context.game_->startGame(true, "");
+//			context.game_->startGame(true, "");
 			break;
 		} else if (option == 4) {
+			context.game_->localPlayer->setPlayer1(true);
+			context.game_->opposingPlayer->setPlayer1(false);
+			context.game_->localPlayer->initUnits();
+			context.game_->opposingPlayer->initUnits();
+
 			break;
 		}
 	}

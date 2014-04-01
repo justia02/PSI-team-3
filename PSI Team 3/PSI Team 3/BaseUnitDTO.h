@@ -11,6 +11,8 @@ class BaseUnitDTO
 
 private:
 	// relevant attributes for data transfer
+	int id;
+
 	float x;
 	float y;
 	float z;
@@ -37,11 +39,13 @@ public:
 		this->player1 = player1;
 	};
 	
+	int getId() {return this->id; };
 	float getX() { return this->x; };
 	float getY() { return this->y; };
 	float getZ() { return this->z; };
 	bool  getPlayer() { return this->player1; };
 
+	void setId(int id) {this->id = id; };
 	void setX(float x) { this->x = x; };
 	void setY(float y) {this->y = y; };
 	void setZ(float z) {this->z = z;};
