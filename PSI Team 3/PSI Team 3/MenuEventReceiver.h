@@ -28,13 +28,19 @@ struct SAppContext
 enum
 {
     GUI_ID_JOIN_GAME,
-    GUI_ID_HOST_GAME
+    GUI_ID_HOST_GAME,
+	GUI_ID_JOIN_GAME_DONE,
+	GUI_ID_JOIN_WSDL,
+	GUI_ID_START_GAME
 };
 
 
 class MenuEventReceiver : public irr::IEventReceiver
 {
 	public:
+
+		const wchar_t *text;
+
 		MenuEventReceiver(SAppContext & context) : Context(context){ };
 		bool OnEvent(const SEvent& event);
 	    SAppContext & Context;

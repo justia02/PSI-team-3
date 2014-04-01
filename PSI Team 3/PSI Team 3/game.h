@@ -49,6 +49,7 @@ public:
 	// public methods
 	int run(void);
 	void startGame(bool asPlayer1, char* ipAddress); 
+	void game::init_map(IrrlichtDevice *device_map);
 
 	// players
 	Player* localPlayer;
