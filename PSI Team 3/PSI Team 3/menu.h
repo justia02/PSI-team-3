@@ -3,6 +3,7 @@
 #include "mapterrain.h"
 #include <iostream>
 #include <non-realtime-networking/NonRealtimeNetworkingUtilities.h>
+#include <non-realtime-networking/NonRealtimeNetworkingException.h>
 #include <iostream>
 #include "game.h"
 

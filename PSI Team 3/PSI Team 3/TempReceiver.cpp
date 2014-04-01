@@ -1,9 +1,9 @@
 #include "TempReceiver.h"
 
-TempReceiver::TempReceiver(IrrlichtDevice *device, vector<BaseUnit*>* units)
+TempReceiver::TempReceiver(IrrlichtDevice *device, Player *player)
 {
 	this->device = device;
-	this->unitList = units;
+	this->unitList = player->getUnits();
 	this->smgr = device->getSceneManager();
 	this->camera = smgr->getActiveCamera();
 	this->collManager = smgr->getSceneCollisionManager();
