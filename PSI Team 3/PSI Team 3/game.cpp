@@ -24,6 +24,8 @@ game::game(void)
 	localPlayer = new Player(device);
 	opposingPlayer = new Player(device);
 
+	device->setEventReceiver(new TempReceiver(device, localPlayer));
+
 	// run menu
 	menu* m = new menu(device, driver, smgr, guienv);
 	m->run(this);
