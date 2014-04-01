@@ -33,7 +33,7 @@ game::game(void)
 	menu* m = new menu(device, driver, smgr, guienv);
 	m->run(this);
 
-	// TEST --> should only serialize game state to file
+	// TEST --> should only serialize game state to file (seralizationFileGameState)
 	passTurn();
 
 
@@ -144,6 +144,8 @@ void game::passTurn() {
 	int i = 0;
 
 	// read units of this player
+	std::cout<<"UNITS OF LOCAL PLAYER";
+	std::cout<<"\n";
 	for(std::vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
 		// create a DTO for each of them
 		BaseUnitDTO tmp = BaseUnitDTO();
@@ -154,7 +156,7 @@ void game::passTurn() {
 		tmp.setPlayer(true);
 
 		// output properties of unit
-		std::cout<<"UNITS OF LOCAL PLAYER";
+
 		std::cout<<tmp.getId();
 		std::cout<<"\n";
 		std::cout<<tmp.getPlayer();
@@ -165,13 +167,15 @@ void game::passTurn() {
 		std::cout<<"\n";
 		std::cout<<tmp.getZ();
 		std::cout<<"\n";
-
+		std::cout<<"\n";
 		// put unitDTOs in list that is given to gamestateDTO
 		units[i] = tmp;
 		i++;
 	}
 
 	// read units of opponent
+	std::cout<<"UNITS OF OPPOSING PLAYER";
+	std::cout<<"\n";
 	for(std::vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
 		// create a DTO for each of them
 		BaseUnitDTO tmp = BaseUnitDTO();
@@ -182,7 +186,6 @@ void game::passTurn() {
 		tmp.setPlayer(false);
 
 		// output properties of unit
-		std::cout<<"UNITS OF OPPOSING PLAYER";
 		std::cout<<tmp.getId();
 		std::cout<<"\n";
 		std::cout<<tmp.getPlayer();
@@ -193,7 +196,7 @@ void game::passTurn() {
 		std::cout<<"\n";
 		std::cout<<tmp.getZ();
 		std::cout<<"\n";
-
+		std::cout<<"\n";
 		// put unitDTOs in list that is given to gamestateDTO
 		units[i] = tmp;
 		i++;

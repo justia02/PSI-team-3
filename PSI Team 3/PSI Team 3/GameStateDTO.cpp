@@ -8,7 +8,7 @@
 #include <GameStateDTO.h>
 
 GameStateDTO::GameStateDTO(int length) {
-
+	unitLength = length;
 	units = new BaseUnitDTO[length]; // allocating memory
 	giveUp = false;
 	player1Turn = true;
