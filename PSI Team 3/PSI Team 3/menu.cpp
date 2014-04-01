@@ -63,7 +63,6 @@ void menu::run(game* g) {
 			context.game_->opposingPlayer->setPlayer1(false);
 			context.game_->localPlayer->initUnits();
 			context.game_->opposingPlayer->initUnits();
-
 			break;
 		}
 	}

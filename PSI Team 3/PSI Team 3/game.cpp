@@ -119,37 +119,58 @@ void game::passTurn() {
 
 	// in the game state both player's units will be contained --> allocate memory for all units
 	GameStateDTO* gamestate = new GameStateDTO(localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size());
+	BaseUnitDTO* units = new BaseUnitDTO[localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size()];
+	int i = 0;
 
-	// That should work :)
-
+	// read units of this player
 	for(std::vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
+		// create a DTO for each of them
 		BaseUnitDTO tmp = BaseUnitDTO();
 		tmp.setX((*it)->position.X);
 		tmp.setY((*it)->position.Y);
 		tmp.setZ((*it)->position.Z);
 		tmp.setPlayer(true);
+
+		// put unitDTOs in list that is given to gamestateDTO
+		units[i] = tmp;
+		i++;
 	}
 
+	// read units of opponent
 	for(std::vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
+		// create a DTO for each of them
 		BaseUnitDTO tmp = BaseUnitDTO();
 		tmp.setX((*it)->position.X);
 		tmp.setY((*it)->position.Y);
 		tmp.setZ((*it)->position.Z);
 		tmp.setPlayer(false);
+
+		// put unitDTOs in list that is given to gamestateDTO
+		units[i] = tmp;
+		i++;
 	}
 
-	// read the units of each player
-	// transform then into DTOs
-	// serialize everything
+	// put units in the game state DTO
+	gamestate->setUnits(units);
+
+	// serialize the gamestateDTO (unitDTOs should be serialized along with them...)
+	char* buffer = gamestate->serialize();
+
 	// send it it to opposing player
+	networkUtilities->setBuffer(buffer);
+	networkUtilities->sendData();
 }
 
 void game::receiveGameState() {
 	// receive data from opposing player
+	networkUtilities->receiveData();
+	// deserialize data
+	deserialize();
 }
 
 void game::deserialize() {
 	// deserialized data to DTOs (units and gamestate)
+
 }
 
 void game::updateGameState(){

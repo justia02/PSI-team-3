@@ -64,7 +64,6 @@ char* GameStateDTO::serialize() {
 
 	// get file data
 	pbuf->sgetn(buffer, size);
-	// std::cout << "Buffer to be send: " << buffer << std::endl;
 	ifs.close();
 
 	return buffer;
