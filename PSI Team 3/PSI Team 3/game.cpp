@@ -31,15 +31,15 @@ game::game(void)
 
 	// run menu
 	menu* m = new menu(device, driver, smgr, guienv);
-	m->run(this);
+	//m->run(this);
 
 	// TEST --> should only serialize game state to file (seralizationFileGameState)
 	passTurn();
 
 
 	// place camera and load map
-	smgr->addCameraSceneNode(0, vector3df(0,8,-8), vector3df(0,0,0));
-	mapterrain map = mapterrain(device, smgr);
+	//smgr->addCameraSceneNode(0, vector3df(0,8,-8), vector3df(0,0,0));
+	//mapterrain map = mapterrain(device, smgr);
 
 	// adjust camera according to players view (different for player 1 and 2)
 	if(!localPlayer->getPlayer1()){
@@ -54,7 +54,7 @@ game::game(void)
 	//gameStateDTO->setUnits(initializeUnits());
 
 	//camera 
-	//smgr->addCameraSceneNode(0, vector3df(0,7,-8), vector3df(0,0,0));
+	smgr->addCameraSceneNode(0, vector3df(0,7,-8), vector3df(0,0,0));
 
 	//make a new terrain
 	//mapterrain map = mapterrain(device, smgr);
@@ -74,14 +74,15 @@ int game::run(void)
 		context.device = device;
 		context.counter = 0;
 		context.networkUtilities = networkUtilities;
+		context.game_ = this;
 
-		/*
+		
 		// setup event receiver to handle user input on menu            
 		MenuEventReceiver receiver(context);
 
 		// specify our custom event receiver in the device	
 		device->setEventReceiver(&receiver);
-		*/
+		
 
 		while (device->run() && driver)
 		if (device->isWindowActive())
@@ -112,7 +113,9 @@ void game::startGame() {
 /**	
   * starts the game from the perspective of player1/player2
   */
+
 void game::startGame(bool asPlayer1, const char* ipAddress) {
+
 
 	if (asPlayer1) {
 		networkUtilities->hostGame(portNumber);
@@ -235,6 +238,12 @@ void game::updateGameState(){
 
 	// and updating which player is active
 	// visually update what had happened (render again?)
+}
+
+void game::init_map(IrrlichtDevice *device_map)
+{
+	//make a new terrain
+	mapterrain map = mapterrain(device_map, smgr);
 }
 
 

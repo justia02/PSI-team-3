@@ -50,8 +50,11 @@ public:
 
 	// public methods
 	int run(void);
+ 
+	void game::init_map(IrrlichtDevice *device_map);
 	void startGame(bool asPlayer1, const char* ipAddress = NULL); 
 	void startGame();
+
 
 	// players
 	Player* localPlayer;
