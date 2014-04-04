@@ -34,8 +34,8 @@ game::game(void)
 	//m->run(this);
 
 	// TEST --> should only serialize game state to file (seralizationFileGameState)
-	passTurn();
 
+	// passTurn();
 
 	// place camera and load map
 	//smgr->addCameraSceneNode(0, vector3df(0,8,-8), vector3df(0,0,0));
@@ -58,6 +58,7 @@ game::game(void)
 
 	//make a new terrain
 	//mapterrain map = mapterrain(device, smgr);
+
 }
 
 game::~game(void)
@@ -145,8 +146,8 @@ void game::passTurn() {
 	int i = 0;
 
 	// read units of this player
-	std::cout<<"UNITS OF LOCAL PLAYER";
-	std::cout<<"\n";
+	std::cout<<"UNITS OF LOCAL PLAYER" << std::endl;
+
 	for(std::vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
 		// create a DTO for each of them
 		BaseUnitDTO tmp = BaseUnitDTO();
@@ -158,17 +159,11 @@ void game::passTurn() {
 
 		// output properties of unit
 
-		std::cout<<tmp.getId();
-		std::cout<<"\n";
-		std::cout<<tmp.getPlayer();
-		std::cout<<"\n";
-		std::cout<<tmp.getX();
-		std::cout<<"\n";
-		std::cout<<tmp.getY();
-		std::cout<<"\n";
-		std::cout<<tmp.getZ();
-		std::cout<<"\n";
-		std::cout<<"\n";
+		std::cout << "Unit ID: " << tmp.getId() << std::endl;
+		std::cout << "Unit player: " << tmp.getPlayer() << std::endl;
+		std::cout << "X: " << tmp.getX() << std::endl;
+		std::cout << "Y: " << tmp.getY() << std::endl;
+		std::cout << "Z: " << tmp.getZ() << std::endl << std::endl;
 		// put unitDTOs in list that is given to gamestateDTO
 		units[i] = tmp;
 		i++;
@@ -187,17 +182,11 @@ void game::passTurn() {
 		tmp.setPlayer(false);
 
 		// output properties of unit
-		std::cout<<tmp.getId();
-		std::cout<<"\n";
-		std::cout<<tmp.getPlayer();
-		std::cout<<"\n";
-		std::cout<<tmp.getX();
-		std::cout<<"\n";
-		std::cout<<tmp.getY();
-		std::cout<<"\n";
-		std::cout<<tmp.getZ();
-		std::cout<<"\n";
-		std::cout<<"\n";
+		std::cout << "Unit ID: " << tmp.getId() << std::endl;
+		std::cout << "Unit player: " << tmp.getPlayer() << std::endl;
+		std::cout << "X: " << tmp.getX() << std::endl;
+		std::cout << "Y: " << tmp.getY() << std::endl;
+		std::cout << "Z: " << tmp.getZ() << std::endl << std::endl;
 		// put unitDTOs in list that is given to gamestateDTO
 		units[i] = tmp;
 		i++;
@@ -208,9 +197,22 @@ void game::passTurn() {
 
 	// serialize the gamestateDTO (unitDTOs should be serialized along with them...)
 	char* buffer = gameState->serializeGameState();
-	std::cout<<buffer;
+	// std::cout<<buffer;
 	// send it it to opposing player
-	// networkUtilities->setBuffer(buffer);
+	networkUtilities->setBuffer(buffer);
+	deserialize();
+
+	std::cout << "Check deserialization of units:" << std::endl << std::endl;
+	for (int i=0; i<5; i++) { // 5 is hard-coded!
+		BaseUnitDTO tmp = gameState->getUnits()[i];
+		// output properties of unit
+		std::cout << "Unit ID: " << tmp.getId() << std::endl;
+		std::cout << "Unit player: " << tmp.getPlayer() << std::endl;
+		std::cout << "X: " << tmp.getX() << std::endl;
+		std::cout << "Y: " << tmp.getY() << std::endl;
+		std::cout << "Z: " << tmp.getZ() << std::endl << std::endl;
+	}
+
 	// networkUtilities->sendData();
 }
 
@@ -222,8 +224,7 @@ void game::receiveGameState() {
 
 void game::deserialize() {
 	// deserialized data to DTOs (units and gamestate)
-	std::string buffer = networkUtilities->getBuffer();
-	gameState->deserialize(buffer);
+	gameState->deserialize(networkUtilities->getBuffer());
 }
 
 void game::updateGameState(){

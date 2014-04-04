@@ -84,6 +84,8 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 					Context.game_->opposingPlayer->setPlayer1(false);
 					Context.game_->localPlayer->initUnits();
 					Context.game_->opposingPlayer->initUnits();
+					// For now, to test serialization and deserialization of units
+					Context.game_->passTurn();
 					return true;
 
 				default:
