@@ -25,3 +25,7 @@ void Player::initUnits() {
 		}
 	}
 }
+
+void Player::setDevice(IrrlichtDevice* dev){
+	device = dev;
+}

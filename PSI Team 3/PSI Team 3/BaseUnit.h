@@ -15,7 +15,7 @@ class BaseUnit
 private:
 	ILightSceneNode* selectIndication;
 	IBillboardSceneNode* indicationBoard;
-	void initUnitHighLight();
+	//void initUnitHighLight();
 public:
 	enum direction{
 		LEFT,
@@ -33,8 +33,10 @@ public:
 	
 	//model variables
     ISceneManager* sceneManager;
-    irr::io::path md2Path;
-    irr::io::path bmpPath;
+    irr::io::path meshPath;
+    irr::io::path texturePath;
+    irr::io::path texturePathHighlight;
+    irr::io::path texturePathSelected;
     IrrlichtDevice* device;
     IAnimatedMeshSceneNode* node;
     IVideoDriver* driver;

@@ -14,12 +14,21 @@ BaseUnit::BaseUnit(irr::core::vector3d<float> pos, bool player, IrrlichtDevice* 
     device = dev;
     sceneManager = device->getSceneManager();
     driver = device->getVideoDriver();
-
-    md2Path = "../media/testunit.irrmesh";
-    createMesh();
 	player1 = player;
 
-	this->initUnitHighLight();
+    meshPath = "../media/testunit.irrmesh";
+	if(player1){
+		texturePath = "../media/Unit_P1.jpg";
+		texturePathHighlight = "../media/Unit_P1_Highlight.jpg";
+		texturePathSelected = "../media/Unit_P1_Selected.jpg";
+	}else{
+		texturePath = "../media/Unit_P2.jpg";
+		texturePathHighlight = "../media/Unit_P2_Highlight.jpg";
+		texturePathSelected = "../media/Unit_P2_Selected.jpg";
+	}
+	createMesh();
+
+	//this->initUnitHighLight();
 }
 
 
@@ -56,11 +65,14 @@ void BaseUnit::Move(direction moveDirection, float distance){
 
 void BaseUnit::SelectUnit(){
 	selected = !selected;
-	if(selected)
-		indicationBoard->setMaterialTexture(0, device->getVideoDriver()->getTexture("../media/particle.bmp"));
-	else
-		indicationBoard->setMaterialTexture(0, device->getVideoDriver()->getTexture("../media/particlegreen.jpg"));
-
+	if(selected && player1)
+		node->setMaterialTexture(0, driver->getTexture(texturePathSelected));
+	else if(selected && !player1)
+		node->setMaterialTexture(0, driver->getTexture(texturePathSelected));
+	else if(!selected && player1)
+		node->setMaterialTexture(0, driver->getTexture(texturePath));
+	else if(!selected && !player1)
+		node->setMaterialTexture(0, driver->getTexture(texturePath));
 //	if(selected)
 //		selected = !selected;
 //	else
@@ -87,7 +99,7 @@ bool BaseUnit::createMesh(){
         cout << "The driver is not set in MeshViewer->createMesh";
         return false;
     }
-    IAnimatedMesh* mesh = sceneManager->getMesh(md2Path);
+    IAnimatedMesh* mesh = sceneManager->getMesh(meshPath);
     
     if (!mesh){
         cout << "The mesh could not be created in MashViewer->createMesh";
@@ -101,7 +113,7 @@ bool BaseUnit::createMesh(){
 
         node->setMaterialFlag(EMF_LIGHTING, false);
         node->setMD2Animation(scene::EMAT_STAND);
-        //node->setMaterialTexture( 0, driver->getTexture(bmpPath) );
+        node->setMaterialTexture( 0, driver->getTexture(texturePath) );
         node->setPosition(position);
         node->setScale(core::vector3df(scale,scale,scale));
     }
@@ -114,37 +126,49 @@ void BaseUnit::highLightUnit(bool highLight)
 	if(highLight)
 	{
 		//Move(FORWARD, 2);
-		selectIndication->setVisible(true);
-		indicationBoard->setVisible(true);
+		if(player1)
+			node->setMaterialTexture(0, driver->getTexture(texturePathHighlight));
+		else
+			node->setMaterialTexture(0, driver->getTexture(texturePathHighlight));
+		//selectIndication->setVisible(true);
+		//indicationBoard->setVisible(true);
 	}
 	else
 	{
+		if(selected && player1)
+			node->setMaterialTexture(0, driver->getTexture(texturePathSelected));
+		else if(selected && !player1)
+			node->setMaterialTexture(0, driver->getTexture(texturePathSelected));
+		else if(!selected && player1)
+			node->setMaterialTexture(0, driver->getTexture(texturePath));
+		else if(!selected && !player1)
+			node->setMaterialTexture(0, driver->getTexture(texturePath));
 		if(!selected)
 		{
-			selectIndication->setVisible(false);
-			indicationBoard->setVisible(false);
+			//selectIndication->setVisible(false);
+			//indicationBoard->setVisible(false);
 		}
 	}
 }
 
-void BaseUnit::initUnitHighLight()
-{
-	vector3d<f32> newPosition = this->position + vector3d<f32>(0,0.5,0);
-	selectIndication =
-		sceneManager->addLightSceneNode(0, position,
-		video::SColorf(0.5f, 1.0f, 0.5f, 0.0f), 800.0f);
-	selectIndication->setDebugDataVisible ( scene::EDS_BBOX );
-
-	selectIndication->setVisible(false);
-
-	// attach billboard to the light
-	indicationBoard =
-		sceneManager->addBillboardSceneNode(selectIndication, core::dimension2d<f32>(1, 1));
-
-	indicationBoard->setMaterialFlag(video::EMF_LIGHTING, false);
-	indicationBoard->setMaterialFlag(video::EMF_ZWRITE_ENABLE, false);
-	indicationBoard->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);
-	indicationBoard->setMaterialTexture(0, device->getVideoDriver()->getTexture("../media/particlegreen.jpg"));
-
-	indicationBoard->setVisible(false);
-}
+//void BaseUnit::initUnitHighLight()
+//{
+//	vector3d<f32> newPosition = this->position + vector3d<f32>(0,0.5,0);
+//	selectIndication =
+//		sceneManager->addLightSceneNode(0, position,
+//		video::SColorf(0.5f, 1.0f, 0.5f, 0.0f), 800.0f);
+//	selectIndication->setDebugDataVisible ( scene::EDS_BBOX );
+//
+//	selectIndication->setVisible(false);
+//
+//	// attach billboard to the light
+//	indicationBoard =
+//		sceneManager->addBillboardSceneNode(selectIndication, core::dimension2d<f32>(1, 1));
+//
+//	indicationBoard->setMaterialFlag(video::EMF_LIGHTING, false);
+//	indicationBoard->setMaterialFlag(video::EMF_ZWRITE_ENABLE, false);
+//	indicationBoard->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);
+//	indicationBoard->setMaterialTexture(0, device->getVideoDriver()->getTexture("../media/particlegreen.jpg"));
+//
+//	indicationBoard->setVisible(false);
+//}
