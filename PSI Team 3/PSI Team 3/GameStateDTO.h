@@ -11,11 +11,13 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
-#define FILE_NAME "serializationFile"
+#define FILE_NAME "serializationFileGameState"
 
 class GameStateDTO {
 
 private:
+
+	int unitLength;
 	BaseUnitDTO* units; // Array of units
 	bool giveUp; // part of the victory/defeat condition
 	bool player1Turn; // true - its player1's turn, false - it's player2's turn
@@ -25,11 +27,17 @@ private:
     template<class Archive>	
     void serialize(Archive & ar, const unsigned int version)
     {
-        ar & units;
+        for(int i = 0; i < unitLength; i++) {
+			ar & units[i];
+		}
         ar & giveUp;
     }
 
 public:
+	GameStateDTO() { 
+		giveUp = false;
+		player1Turn = true;
+	};
 	GameStateDTO(int length); // amount of units, needed to allocate memory
 	~GameStateDTO();
 
@@ -42,7 +50,7 @@ public:
 	bool getPlayer1Turn() { return player1Turn; }
 
 	// serialization
-	char* serialize();
-	void deserialize(char* serializationString);
+	char* serializeGameState();
+	void deserialize(std::string serializationString);
 
 };

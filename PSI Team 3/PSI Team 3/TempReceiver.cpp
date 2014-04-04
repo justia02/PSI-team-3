@@ -26,8 +26,8 @@ bool TempReceiver::OnEvent(const SEvent& event)
 			if(this->isHoveringUnit)
 			{
 
-				moveUnit();
-				
+				//moveUnit();
+				selectedUnit->SelectUnit();
 				//this->selectUnit(this->selectedUnit);
 				
 				//if(this->selectedUnit != NULL)
@@ -78,14 +78,13 @@ void TempReceiver::MouseOverUnit()
 	{
 		// deselect the unit
 		(*it)->highLightUnit(false);
-		(*it)->selected = false;
+		//(*it)->selected = false;
 		if((*it)->position == selectedPosition)
 		{
 			this->isHoveringUnit = true;
 			//(*it)->SelectUnit();
 			(*it)->highLightUnit(true);
 			selectedUnit = (BaseUnit*)(*it);
-
 			return;
 			//it->Move(BaseUnit::FORWARD, 3);
 			//cout << "We have a seleced unit!";
