@@ -3,8 +3,10 @@
 #include "mapterrain.h"
 #include <iostream>
 #include <non-realtime-networking/NonRealtimeNetworkingUtilities.h>
+#include <non-realtime-networking/NonRealtimeNetworkingException.h>
 #include <iostream>
 #include "game.h"
+#include "MenuEventReceiver.h"
 
 using namespace irr;
 using namespace irrlicht_nonrealtimenetworking;
@@ -28,8 +30,8 @@ public:
 	IGUIEnvironment* guienv;
 	//NonRealtimeNetworkingUtilities* networkUtilities;
 
-
-	const wchar_t *text;
+	void init_console(SAppContext context);
+	//const wchar_t *text;
 
 	menu(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, IGUIEnvironment* guienv);
 	~menu(void);

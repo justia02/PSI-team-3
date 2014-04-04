@@ -2,8 +2,9 @@
 
 // there needs to be a player given in the constructor as parameter soo the player1 boolean can be set for the unit 
 // this way we can keep track of which unit is from which player.
-BaseUnit::BaseUnit(irr::core::vector3d<float> pos, bool player, IrrlichtDevice* dev)
+BaseUnit::BaseUnit(irr::core::vector3d<float> pos, bool player, IrrlichtDevice* dev, int id)
 {
+	this->id = id;
 	position = pos;
 	health = 100;
 	damage = 25;

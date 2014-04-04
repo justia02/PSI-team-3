@@ -16,13 +16,16 @@ Player::~Player()
 void Player::initUnits() {
 	ifstream infile("../assets/positions.txt");
 	float x, y, z, pl;
+	int id = 0;
+
 	while(infile >> x >> y >> z >> pl){
 		if(pl == 1 && player1){
-			units->push_back(new BaseUnit(vector3d<float>(x, y, z), player1, device));
+			units->push_back(new BaseUnit(vector3d<float>(x, y, z), player1, device, id));
 		}
 		else if(pl == 2 && !player1){
-			units->push_back(new BaseUnit(vector3d<float>(x, y, z), player1, device));
+			units->push_back(new BaseUnit(vector3d<float>(x, y, z), player1, device, id));
 		}
+		id++;
 	}
 }
 

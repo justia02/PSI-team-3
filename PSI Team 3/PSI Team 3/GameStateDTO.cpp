@@ -8,7 +8,7 @@
 #include <GameStateDTO.h>
 
 GameStateDTO::GameStateDTO(int length) {
-
+	unitLength = length;
 	units = new BaseUnitDTO[length]; // allocating memory
 	giveUp = false;
 	player1Turn = true;
@@ -19,7 +19,7 @@ GameStateDTO::~GameStateDTO() {
 	delete units;
 }
 
-void GameStateDTO::deserialize(char* serializationString) {
+void GameStateDTO::deserialize(std::string serializationString) {
 
 	std::ofstream ofs(FILE_NAME);
 	ofs << serializationString;
@@ -36,7 +36,7 @@ void GameStateDTO::deserialize(char* serializationString) {
 
 }
 
-char* GameStateDTO::serialize() {
+char* GameStateDTO::serializeGameState() {
 
 	// create and open a character archive for serialized vector instance
     std::ofstream ofs(FILE_NAME);
@@ -64,7 +64,6 @@ char* GameStateDTO::serialize() {
 
 	// get file data
 	pbuf->sgetn(buffer, size);
-	// std::cout << "Buffer to be send: " << buffer << std::endl;
 	ifs.close();
 
 	return buffer;

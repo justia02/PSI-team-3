@@ -28,15 +28,39 @@ struct SAppContext
 enum
 {
     GUI_ID_JOIN_GAME,
-    GUI_ID_HOST_GAME
+    GUI_ID_HOST_GAME,
+	GUI_ID_JOIN_GAME_DONE,
+	GUI_ID_JOIN_WSDL,
+	GUI_ID_START_GAME
 };
 
 
 class MenuEventReceiver : public irr::IEventReceiver
 {
 	public:
-		MenuEventReceiver(SAppContext & context) : Context(context){ };
+		// members for the menu
+		const wchar_t *text;
+
+		MenuEventReceiver(SAppContext & context) : Context(context)
+		{
+			unitList = context.game_->localPlayer->getUnits();
+			smgr = context.device->getSceneManager();
+
+			camera = smgr->getActiveCamera();
+		};
 		bool OnEvent(const SEvent& event);
 	    SAppContext & Context;
 		int portNo;
+		// members for the unit controll
+	private:
+		void MouseOverUnit();
+		void setDirection(irr::EKEY_CODE keyCode);
+
+		BaseUnit::direction moveDirection;
+		bool isUnitSelected;
+		bool isHoveringUnit;
+		BaseUnit *selectedUnit;
+		vector<BaseUnit*>* unitList;
+		ICameraSceneNode* camera;
+		ISceneManager* smgr;
 };

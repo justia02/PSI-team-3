@@ -33,6 +33,7 @@ private:
 	ISceneManager* smgr;
 	IGUIEnvironment* guienv;
 	PlayerCamera* playerCamera;
+	GameStateDTO* gameState;
 
 	// private methods
 	BaseUnit* initializeUnits();
@@ -49,7 +50,11 @@ public:
 
 	// public methods
 	int run(void);
-	void startGame(bool asPlayer1, char* ipAddress); 
+ 
+	void game::init_map(IrrlichtDevice *device_map);
+	void startGame(bool asPlayer1, const char* ipAddress = NULL); 
+	void startGame();
+
 
 	// players
 	Player* localPlayer;
