@@ -49,7 +49,7 @@ public:
 
 	// public methods
 	int run(void);
-	void startGame(bool asPlayer1, const char* ipAddress = NULL); 
+	void startGame(bool asPlayer1, char* ipAddress = NULL); 
 	void startGame();
 
 	// players
