@@ -38,29 +38,8 @@ game::game(void)
 
 	// passTurn();
 
-	// place camera and load map
-	//smgr->addCameraSceneNode(0, vector3df(0,8,-8), vector3df(0,0,0));
-	//mapterrain map = mapterrain(device, smgr);
-	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
-	// adjust camera according to players view (different for player 1 and 2)
-	if(!localPlayer->getPlayer1()){
-		vector3d<float> temp = smgr->getActiveCamera()->getPosition();
-		cout << temp.X << " " << temp.Y << " " << temp.Z;
-		temp.Z = !temp.Z;
-		temp.Y = 0;
-		playerCamera->setCameraPos(temp, localPlayer->getPlayer1());
-	}
-
 	// init_map(device);
 
-	try {
-		if (!localPlayer->getPlayer1())
-			updateGameState();
-	}
-	// We should have a nice error box!
-	catch(NonRealtimeNetworkingException e) {
-		std::cout << "Error: " << e.what() << std::endl;
-	}
 	//networkUtilities = new NonRealtimeNetworkingUtilities();
 	//gameStateDTO = new GameStateDTO(4);
 	//gameStateDTO->setUnits(initializeUnits());
@@ -92,6 +71,7 @@ int game::run(void)
 		// setup event receiver to handle user input on menu            
 		MenuEventReceiver receiver(context);
 		receiver.setIsUnitSelected(false);
+		receiver.menuDone = false;
 
 		// specify our custom event receiver in the device	
 		device->setEventReceiver(&receiver);
@@ -128,6 +108,8 @@ void game::startGame() {
   */
 void game::startGame(bool asPlayer1, char* ipAddress) {
 
+	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
+
 	if (asPlayer1) {
 		networkUtilities->hostGame(portNumber);
 
@@ -147,7 +129,23 @@ void game::startGame(bool asPlayer1, char* ipAddress) {
 
 		localPlayer->initUnits();
 		opposingPlayer->initUnits();
+
+		vector3d<float> temp = smgr->getActiveCamera()->getPosition();
+		cout << temp.X << " " << temp.Y << " " << temp.Z;
+		temp.Z = !temp.Z;
+		temp.Y = 0;
+		playerCamera->setCameraPos(temp, localPlayer->getPlayer1());
+
+		try {
+			updateGameState();
+		}
+		// We should have a nice error box!
+		catch(NonRealtimeNetworkingException e) {
+			std::cout << "Error: " << e.what() << std::endl;
+		}
+
 	}
+
 }
 
 void game::passTurn() {

@@ -55,4 +55,5 @@ public:
 	// players
 	Player* localPlayer;
 	Player* opposingPlayer;
+
 };

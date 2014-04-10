@@ -40,7 +40,7 @@ class MenuEventReceiver : public irr::IEventReceiver
 {
 	public:
 		IGUIEditBox *box;
-
+		bool menuDone;
 		wchar_t *text;
 		char *ch;
 		std::string s;
@@ -61,6 +61,7 @@ class MenuEventReceiver : public irr::IEventReceiver
 		int portNo;
 		// members for the unit controll
 	private:
+		
 		void MouseOverUnit();
 		void setDirection(irr::EKEY_CODE keyCode);
 
