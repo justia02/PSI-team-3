@@ -61,7 +61,7 @@ void BaseUnit::Move(direction moveDirection, float distance){
 	node->setPosition(position);
 
 
-	cout << "the unit: " << position.X << ", " << position.Y << ", " << position.Z;
+	cout << "the unit: " << "ID: " << id << "Position: " << position.X << ", " << position.Y << ", " << position.Z;
 }
 
 void BaseUnit::SelectUnit(){
