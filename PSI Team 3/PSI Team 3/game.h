@@ -37,7 +37,7 @@ private:
 
 	// private methods
 	BaseUnit* initializeUnits();
-	void passTurn();
+
 	void receiveGameState();
 	void deserialize();
 	void updateGameState();
@@ -53,6 +53,7 @@ public:
 	void startGame(bool asPlayer1, char* ipAddress = NULL); 
 	void game::init_map(IrrlichtDevice *device_map);
 	void startGame();
+	void passTurn();
 
 	// players
 	Player* localPlayer;
