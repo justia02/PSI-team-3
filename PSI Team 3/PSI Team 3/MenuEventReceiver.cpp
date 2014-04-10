@@ -1,8 +1,83 @@
 #include "MenuEventReceiver.h"
+#include <assert.h>
 
 //Event receiver custom class where we will later call the function for joining and creating a game
 bool MenuEventReceiver::OnEvent(const SEvent& event)
 {
+
+	// logic for the menu
+    if (event.EventType == EET_GUI_EVENT)
+    {
+        s32 id = event.GUIEvent.Caller->getID();
+        IGUIEnvironment* guienv = Context.device->getGUIEnvironment();
+
+        switch(event.GUIEvent.EventType)
+        { 
+
+				case EGET_BUTTON_CLICKED:
+					switch(id)
+					{
+					case GUI_ID_JOIN_GAME:
+						printf ("Join Game Button was clicked.");
+						guienv->clear();
+						text = L"Enter ip here";
+						
+						box = guienv->addEditBox(text, rect<s32>(160,25,480,50), true);
+						//guienv->addStaticText();
+						guienv->addButton(rect<s32>(160,200,480,250 + 32), 0, GUI_ID_JOIN_GAME_DONE, L"connect", L"connect to a game");
+						return true;
+
+					case GUI_ID_JOIN_GAME_DONE:
+						const wchar_t* t;
+						t = box->getText();
+						size_t   i;
+						ch = (char *)malloc(30);
+						wcstombs_s(&i, ch, (size_t)30, t, (size_t)30 );
+
+						printf(ch);
+						guienv->clear();
+						Context.game_->startGame(false, ch);
+						Context.game_->init_map(Context.device);
+						return true;
+
+					case GUI_ID_HOST_GAME:
+						printf ("Host Game Button was clicked.");
+						guienv->clear();
+						Context.game_->startGame(true, ""); // call without ip, since we want to host 
+						Context.game_->init_map(Context.device);
+						return true;
+
+
+					case GUI_ID_JOIN_WSDL:
+						guienv->clear();	
+						Context.game_->init_map(Context.device);
+						Context.game_->startGame();
+						menuDone = true;
+						return true;
+
+					case GUI_ID_START_GAME:
+						guienv->clear();
+
+						Context.game_->init_map(Context.device);
+						Context.game_->localPlayer->setPlayer1(true);
+						Context.game_->opposingPlayer->setPlayer1(false);
+						Context.game_->localPlayer->initUnits();
+						Context.game_->opposingPlayer->initUnits();
+						return true;
+
+					default:
+						break;
+					}
+					break;
+
+				default:
+					break;
+				}
+    }
+
+	if (!menuDone)
+		return false;
+
 	// if there is a key input and there is a unit selected
 	if(event.EventType == EET_KEY_INPUT_EVENT && this->isUnitSelected)
 	{
@@ -47,71 +122,14 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 		}
 	}
 
-	// logic for the menu
-    if (event.EventType == EET_GUI_EVENT)
-    {
-        s32 id = event.GUIEvent.Caller->getID();
-        IGUIEnvironment* guienv = Context.device->getGUIEnvironment();
-
-        switch(event.GUIEvent.EventType)
-        {
-				 
-			case EGET_BUTTON_CLICKED:
-				switch(id)
-				{
-				case GUI_ID_JOIN_GAME:
-					printf ("Join Game Button was clicked.");
-					guienv->clear();
-					text = new wchar_t[100];
-					guienv->addEditBox(text, rect<s32>(160,25,480,50), true);
-					//guienv->addStaticText();
-					//guienv->addButton();
-					return true;
-
-				case GUI_ID_JOIN_GAME_DONE:
-					guienv->clear();
-					//char ch;
-					//WideCharToMultiByte(CP_ACP, text, 
-					Context.game_->startGame(false, "PLEASE FILL IN THE CORRECT IP HERE");
-					return true;
-
-				case GUI_ID_HOST_GAME:
-					printf ("Host Game Button was clicked.");
-					guienv->clear();
-					Context.game_->startGame(true, ""); // call without ip, since we want to host 
-					return true;
-
-
-				case GUI_ID_JOIN_WSDL:
-
-					return true;
-
-				case GUI_ID_START_GAME:
-					guienv->clear();
-					Context.game_->init_map(Context.device);
-					Context.game_->localPlayer->setPlayer1(true);
-					Context.game_->opposingPlayer->setPlayer1(false);
-					Context.game_->localPlayer->initUnits();
-					Context.game_->opposingPlayer->initUnits();
-					
-					return true;
-
-				default:
-					break;
-				}
-				break;
-
-			default:
-				break;
-        }
-    }
-
     return false;
 }
 
 // if the player moves its mouse check if its over a frendly unit he can select
 void MenuEventReceiver::MouseOverUnit()
 {
+	if (!menuDone)
+		return;
 	position2d<irr::s32> cursorPos;
 	vector3df selectedPosition;
 	line3d<f32> line;

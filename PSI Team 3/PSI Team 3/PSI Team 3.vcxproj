@@ -71,28 +71,25 @@
     <ClCompile Include="BaseUnitDTO.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="GameStateDTO.cpp" />
+    <ClCompile Include="IllegalStateException.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mapterrain.cpp" />
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="MenuEventReceiver.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerCamera.cpp" />
-    <ClCompile Include="TempReceiver.cpp" />
-    <ClCompile Include="TurnState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseUnit.h" />
     <ClInclude Include="BaseUnitDTO.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="GameStateDTO.h" />
-    <ClInclude Include="main.h" />
+    <ClInclude Include="IllegalStateException.h" />
     <ClInclude Include="mapterrain.h" />
     <ClInclude Include="menu.h" />
     <ClInclude Include="MenuEventReceiver.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerCamera.h" />
-    <ClInclude Include="TempReceiver.h" />
-    <ClInclude Include="TurnState.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\psibranch3irrlicht\source\Irrlicht\Irrlicht10.0.vcxproj">
