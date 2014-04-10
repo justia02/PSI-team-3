@@ -11,6 +11,7 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 		// move the unit
 		this->selectedUnit->Move(moveDirection, 2);
 		// deselect the unit
+		this->selectedUnit->SelectUnit();
 		this->selectedUnit = NULL;
 		this->isUnitSelected = false;
 	}
@@ -28,7 +29,7 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 
 				this->isUnitSelected = true;
 				this->selectedUnit->SelectUnit();
-				cout << "Select the direction you want to move (w,s,a,d)";
+				cout << "Select the direction you want to move (w,s,a,d)"<< endl;
 			}
             break;
 		case EMIE_MOUSE_MOVED:
@@ -124,7 +125,7 @@ void MenuEventReceiver::MouseOverUnit()
 	{
 		// deselect the unit
 		(*it)->highLightUnit(false);
-		(*it)->selected = false;
+		//(*it)->selected = false;
 		// if the positions of the node and the unit are the same
 		// set this unit as the selected unit and highlight it
 		if((*it)->position == selectedPosition)

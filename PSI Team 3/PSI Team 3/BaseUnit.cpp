@@ -8,7 +8,7 @@ BaseUnit::BaseUnit(irr::core::vector3d<float> pos, bool player, IrrlichtDevice* 
 	position = pos;
 	health = 100;
 	damage = 25;
-	maxDistance = 2;
+	maxDistance = 1;
 
 	selected = false;
 
@@ -66,13 +66,9 @@ void BaseUnit::Move(direction moveDirection, float distance){
 
 void BaseUnit::SelectUnit(){
 	selected = !selected;
-	if(selected && player1)
+	if(selected)
 		node->setMaterialTexture(0, driver->getTexture(texturePathSelected));
-	else if(selected && !player1)
-		node->setMaterialTexture(0, driver->getTexture(texturePathSelected));
-	else if(!selected && player1)
-		node->setMaterialTexture(0, driver->getTexture(texturePath));
-	else if(!selected && !player1)
+	else if(!selected)
 		node->setMaterialTexture(0, driver->getTexture(texturePath));
 //	if(selected)
 //		selected = !selected;
@@ -110,14 +106,17 @@ bool BaseUnit::createMesh(){
     
     if (node)
     {
-        float scale = 0.25;
-
+        float scale = 0.5;
+		vector3d<float> temp = vector3d<float>((1-scale)/2, 0 , (1-scale)/2);
+		position += temp;
         node->setMaterialFlag(EMF_LIGHTING, false);
         node->setMD2Animation(scene::EMAT_STAND);
         node->setMaterialTexture( 0, driver->getTexture(texturePath) );
         node->setPosition(position);
         node->setScale(core::vector3df(scale,scale,scale));
     }
+	irr::core::vector3df extent = node->getTransformedBoundingBox().getExtent();
+	std::cout << "unit mesh bounding box X: " << extent.X << " Y: " << extent.Y << " Z: " << extent.Z << endl;
     return true;
 }
 
@@ -136,16 +135,11 @@ void BaseUnit::highLightUnit(bool highLight)
 	}
 	else
 	{
-		if(selected && player1)
+		if(selected)
 			node->setMaterialTexture(0, driver->getTexture(texturePathSelected));
-		else if(selected && !player1)
-			node->setMaterialTexture(0, driver->getTexture(texturePathSelected));
-		else if(!selected && player1)
-			node->setMaterialTexture(0, driver->getTexture(texturePath));
-		else if(!selected && !player1)
-			node->setMaterialTexture(0, driver->getTexture(texturePath));
-		if(!selected)
+		else if(!selected)
 		{
+			node->setMaterialTexture(0, driver->getTexture(texturePath));
 			//selectIndication->setVisible(false);
 			//indicationBoard->setVisible(false);
 		}
