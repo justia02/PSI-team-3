@@ -54,7 +54,8 @@ game::game(void)
 	init_map(device);
 
 	try {
-		updateGameState();
+		if (!localPlayer->getPlayer1())
+			updateGameState();
 	}
 	// We should have a nice error box!
 	catch(NonRealtimeNetworkingException e) {
@@ -118,7 +119,7 @@ void game::startGame() {
 	if ((networkUtilities->getSessionId() % 2) == 1)
 		startGame(true);
 	else
-		startGame(false, "145.109.213.70");
+		startGame(false, networkUtilities->getOpponentsIpAddress());
 
 }
 /**	
