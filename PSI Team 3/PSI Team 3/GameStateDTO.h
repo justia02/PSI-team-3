@@ -17,7 +17,6 @@ class GameStateDTO {
 
 private:
 
-	int unitLength;
 	BaseUnitDTO* units; // Array of units
 	bool giveUp; // part of the victory/defeat condition
 	bool player1Turn; // true - its player1's turn, false - it's player2's turn
@@ -52,5 +51,6 @@ public:
 	// serialization
 	char* serializeGameState();
 	void deserialize(std::string serializationString);
+	int unitLength;
 
 };

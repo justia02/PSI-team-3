@@ -22,7 +22,7 @@ game::game(void)
 	networkUtilities = new NonRealtimeNetworkingUtilities();
 
 	// initialize gameStateDTO
-	gameState = new GameStateDTO();
+	gameState = new GameStateDTO(5);
 
 	// initialize players
 	localPlayer = new Player(device);
@@ -32,7 +32,7 @@ game::game(void)
 
 	// run menu
 	menu* m = new menu(device, driver, smgr, guienv);
-	//m->run(this);
+	m->run(this);
 
 	// TEST --> should only serialize game state to file (seralizationFileGameState)
 
@@ -41,7 +41,7 @@ game::game(void)
 	// place camera and load map
 	//smgr->addCameraSceneNode(0, vector3df(0,8,-8), vector3df(0,0,0));
 	//mapterrain map = mapterrain(device, smgr);
-
+	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
 	// adjust camera according to players view (different for player 1 and 2)
 	if(!localPlayer->getPlayer1()){
 		vector3d<float> temp = smgr->getActiveCamera()->getPosition();
@@ -50,12 +50,21 @@ game::game(void)
 		temp.Y = 0;
 		playerCamera->setCameraPos(temp, localPlayer->getPlayer1());
 	}
+
+	init_map(device);
+
+	try {
+		updateGameState();
+	}
+	// We should have a nice error box!
+	catch(NonRealtimeNetworkingException e) {
+		std::cout << "Error: " << e.what() << std::endl;
+	}
 	//networkUtilities = new NonRealtimeNetworkingUtilities();
 	//gameStateDTO = new GameStateDTO(4);
 	//gameStateDTO->setUnits(initializeUnits());
 
 	//camera 
-	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
 
 	//make a new terrain
 	//mapterrain map = mapterrain(device, smgr);
@@ -103,13 +112,13 @@ int game::run(void)
 
 void game::startGame() {
 
-	networkUtilities->initializeWS("145.109.197.6");
+	networkUtilities->initializeWS("145.109.165.229");
 	networkUtilities->setGameName("PSI Team 3");
 	networkUtilities->registerOnTheServer();
 	if ((networkUtilities->getSessionId() % 2) == 1)
 		startGame(true);
 	else
-		startGame(false, networkUtilities->getOpponentsIpAddress());
+		startGame(false, "145.109.213.70");
 
 }
 /**	
@@ -200,23 +209,28 @@ void game::passTurn() {
 	char* buffer = gameState->serializeGameState();
 	// std::cout<<buffer;
 	// send it it to opposing player
-	networkUtilities->setBuffer(buffer);
-	networkUtilities->sendData();
+	try {
+		networkUtilities->setBuffer(buffer);
+		networkUtilities->sendData();
 
-	updateGameState();
+		updateGameState();
+	}
+	catch(NonRealtimeNetworkingException e) {
+		std::cout << "Error: " << e.what() << std::endl;
+	}
+
 }
 
 void game::updateGameState(){
 	// create a GameStateDTO object and fill in data we received by deserializing it
 	networkUtilities->receiveData();
-
-	gameState = new GameStateDTO();
+	std::cout << "Buffer: " << networkUtilities->getBuffer() << std::endl;
+	// gameState = new GameStateDTO();
 	gameState->deserialize(networkUtilities->getBuffer());
 
 	bool unitUpdated;
-
 	// update gamestate by updating all attributes in both players
-	for (int i=0; sizeof(gameState->getUnits())/ sizeof(gameState->getUnits()[0]) ; i++) { // calc length of array
+	for (int i=0; i < gameState->unitLength; i++) { // calc length of array
 		BaseUnitDTO tmp = gameState->getUnits()[i];
 		unitUpdated = false;
 
@@ -260,14 +274,14 @@ void game::updateGameState(){
 		if (! unitUpdated) 
 			throw new IllegalStateException("Unit is not assigned to a player.");
 
-		/*
+		
 		// output properties of unit
 		std::cout << "Unit ID: " << tmp.getId() << std::endl;
 		std::cout << "Unit player: " << tmp.getPlayer() << std::endl;
 		std::cout << "X: " << tmp.getX() << std::endl;
 		std::cout << "Y: " << tmp.getY() << std::endl;
 		std::cout << "Z: " << tmp.getZ() << std::endl << std::endl;
-		*/
+		
 	}
 
 	// update which player is active (just invert)
