@@ -3,6 +3,7 @@
 #include "mapterrain.h"
 #include <iostream>
 #include <non-realtime-networking/NonRealtimeNetworkingUtilities.h>
+//#include <non-realtime-networking/NonRealtimeNetworkingexception.h>
 #include "game.h"
 
 using namespace irr;
@@ -39,7 +40,11 @@ class MenuEventReceiver : public irr::IEventReceiver
 {
 	public:
 
-		const wchar_t *text;
+		IGUIEditBox *box;
+
+		wchar_t *text;
+		char *ch;
+		std::string s;
 
 		MenuEventReceiver(SAppContext & context) : Context(context){ };
 		bool OnEvent(const SEvent& event);
