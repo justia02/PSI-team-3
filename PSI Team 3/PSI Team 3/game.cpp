@@ -32,7 +32,7 @@ game::game(void)
 
 	// run menu
 	menu* m = new menu(device, driver, smgr, guienv);
-	m->run(this);
+	// m->run(this);
 
 	// TEST --> should only serialize game state to file (seralizationFileGameState)
 
@@ -51,7 +51,7 @@ game::game(void)
 		playerCamera->setCameraPos(temp, localPlayer->getPlayer1());
 	}
 
-	init_map(device);
+	// init_map(device);
 
 	try {
 		if (!localPlayer->getPlayer1())
@@ -65,7 +65,7 @@ game::game(void)
 	//gameStateDTO = new GameStateDTO(4);
 	//gameStateDTO->setUnits(initializeUnits());
 
-	//camera 
+	//camera
 
 	//make a new terrain
 	//mapterrain map = mapterrain(device, smgr);
@@ -91,6 +91,7 @@ int game::run(void)
 		
 		// setup event receiver to handle user input on menu            
 		MenuEventReceiver receiver(context);
+		receiver.setIsUnitSelected(false);
 
 		// specify our custom event receiver in the device	
 		device->setEventReceiver(&receiver);

@@ -49,6 +49,9 @@ class MenuEventReceiver : public irr::IEventReceiver
 			camera = smgr->getActiveCamera();
 		};
 		bool OnEvent(const SEvent& event);
+		void setIsUnitSelected(bool value) {
+			isUnitSelected = value;
+		};
 	    SAppContext & Context;
 		int portNo;
 		// members for the unit controll

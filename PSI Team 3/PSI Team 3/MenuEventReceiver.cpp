@@ -88,7 +88,7 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 
 				case GUI_ID_START_GAME:
 					guienv->clear();
-					Context.game_->init_map(Context.device);
+					// Context.game_->init_map(Context.device);
 					Context.game_->localPlayer->setPlayer1(true);
 					Context.game_->opposingPlayer->setPlayer1(false);
 					Context.game_->localPlayer->initUnits();

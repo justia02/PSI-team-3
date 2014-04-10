@@ -2,6 +2,9 @@
 
 // there needs to be a player given in the constructor as parameter soo the player1 boolean can be set for the unit 
 // this way we can keep track of which unit is from which player.
+
+#define HALF_SIZE 4
+
 BaseUnit::BaseUnit(irr::core::vector3d<float> pos, bool player, IrrlichtDevice* dev, int id)
 {
 	this->id = id;
@@ -42,19 +45,23 @@ void BaseUnit::Move(direction moveDirection, float distance){
 		distance = maxDistance;
 	switch(moveDirection){
 		case LEFT:{
-			position.X -= distance;
+			if (!(position.X < (-HALF_SIZE + 0.3)))
+				position.X -= distance;
 			break;
 			}
 		case RIGHT:{
-			position.X += distance;
+			if (!(position.X > (HALF_SIZE - 0.3)))
+				position.X += distance;
 			break;
 			}
 		case BACK:{
-			position.Z -= distance;
+			if (!(position.Z < (-HALF_SIZE + 0.3)))
+				position.Z -= distance;
 			break;
 			}
 		case FORWARD:{
-			position.Z += distance;
+			if (!(position.Z > (HALF_SIZE - 0.3)))
+				position.Z += distance;
 			break;
 			}
 		}

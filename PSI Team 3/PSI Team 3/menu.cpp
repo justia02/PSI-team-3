@@ -11,7 +11,7 @@ menu::menu(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, IG
 	this->guienv = guienv;
 	//this->networkUtilities = new NonRealtimeNetworkingUtilities("localhost");
 
-	// init();
+	init();
 }
 
 menu::~menu(void)
