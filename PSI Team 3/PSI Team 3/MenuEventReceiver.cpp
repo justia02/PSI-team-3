@@ -16,6 +16,14 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 		this->isUnitSelected = false;
 	}
 
+	if(event.EventType == EET_KEY_INPUT_EVENT)
+	{
+		if(event.KeyInput.Key == irr::KEY_KEY_P)
+		{
+			Context.game_->passTurn();
+		}
+
+	}
 	// Remember the mouse state
     if (event.EventType == EET_MOUSE_INPUT_EVENT)
     {
@@ -85,8 +93,7 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 					Context.game_->opposingPlayer->setPlayer1(false);
 					Context.game_->localPlayer->initUnits();
 					Context.game_->opposingPlayer->initUnits();
-					// For now, to test serialization and deserialization of units
-					Context.game_->passTurn();
+					
 					return true;
 
 				default:

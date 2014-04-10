@@ -8,7 +8,6 @@
 #include "Player.h"
 #include "PlayerCamera.h"
 #include "GameStateDTO.h"
-#include "TempReceiver.h"
 
 using namespace irr;
 
@@ -38,8 +37,6 @@ private:
 	// private methods
 	BaseUnit* initializeUnits();
 
-	void receiveGameState();
-	void deserialize();
 	void updateGameState();
 
 public:
