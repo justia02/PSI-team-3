@@ -8,7 +8,7 @@
 #include <GameStateDTO.h>
 
 GameStateDTO::GameStateDTO(int length) {
-
+	unitLength = length;
 	units = new BaseUnitDTO[length]; // allocating memory
 	giveUp = false;
 	player1Turn = true;
@@ -21,13 +21,13 @@ GameStateDTO::~GameStateDTO() {
 
 void GameStateDTO::deserialize(std::string serializationString) {
 
-	std::ofstream ofs(FILE_NAME);
+	std::ofstream ofs("LOL");
 	ofs << serializationString;
 	ofs.close();
 
 	{
         // create and open an archive for input
-        std::ifstream ifs(FILE_NAME);
+        std::ifstream ifs("LOL");
         boost::archive::text_iarchive ia(ifs);
         // read class state from archive
         ia >> *this;

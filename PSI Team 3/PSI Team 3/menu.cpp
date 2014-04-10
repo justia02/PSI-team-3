@@ -26,7 +26,7 @@ void menu::run(game* g) {
 	context.counter = 0;
 	context.game_ = g;
 
-	//init_console(context);
+	init_console(context);
 	
 	// setup event receiver to handle user input on menu            
 	//MenuEventReceiver receiver(context);

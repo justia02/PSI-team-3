@@ -2,6 +2,7 @@
 #include "MenuEventReceiver.h"; // this include MUST NOT be in the .h file!
 #include "Player.h"
 #include "menu.h"
+#include "IllegalStateException.h"
 
 game::game(void)
 {
@@ -21,26 +22,26 @@ game::game(void)
 	networkUtilities = new NonRealtimeNetworkingUtilities();
 
 	// initialize gameStateDTO
-	gameState = new GameStateDTO();
+	gameState = new GameStateDTO(5);
 
 	// initialize players
 	localPlayer = new Player(device);
 	opposingPlayer = new Player(device);
 
-	device->setEventReceiver(new TempReceiver(device, localPlayer));
+	//device->setEventReceiver(new TempReceiver(device, localPlayer));
 
 	// run menu
 	menu* m = new menu(device, driver, smgr, guienv);
-	//m->run(this);
+	// m->run(this);
 
-	// TEST --> should only serialize game state to file
-	passTurn();
+	// TEST --> should only serialize game state to file (seralizationFileGameState)
 
+	// passTurn();
 
 	// place camera and load map
 	//smgr->addCameraSceneNode(0, vector3df(0,8,-8), vector3df(0,0,0));
 	//mapterrain map = mapterrain(device, smgr);
-
+	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
 	// adjust camera according to players view (different for player 1 and 2)
 	if(!localPlayer->getPlayer1()){
 		vector3d<float> temp = smgr->getActiveCamera()->getPosition();
@@ -49,15 +50,26 @@ game::game(void)
 		temp.Y = 0;
 		playerCamera->setCameraPos(temp, localPlayer->getPlayer1());
 	}
+
+	// init_map(device);
+
+	try {
+		if (!localPlayer->getPlayer1())
+			updateGameState();
+	}
+	// We should have a nice error box!
+	catch(NonRealtimeNetworkingException e) {
+		std::cout << "Error: " << e.what() << std::endl;
+	}
 	//networkUtilities = new NonRealtimeNetworkingUtilities();
 	//gameStateDTO = new GameStateDTO(4);
 	//gameStateDTO->setUnits(initializeUnits());
 
-	//camera 
-	smgr->addCameraSceneNode(0, vector3df(0,7,-8), vector3df(0,0,0));
+	//camera
 
 	//make a new terrain
 	//mapterrain map = mapterrain(device, smgr);
+
 }
 
 game::~game(void)
@@ -79,6 +91,7 @@ int game::run(void)
 		
 		// setup event receiver to handle user input on menu            
 		MenuEventReceiver receiver(context);
+		receiver.setIsUnitSelected(false);
 
 		// specify our custom event receiver in the device	
 		device->setEventReceiver(&receiver);
@@ -101,21 +114,19 @@ int game::run(void)
 
 void game::startGame() {
 
-	networkUtilities->initializeWS("145.109.197.6");
+	networkUtilities->initializeWS("145.109.165.229");
 	networkUtilities->setGameName("PSI Team 3");
 	networkUtilities->registerOnTheServer();
-	if ((networkUtilities->getSessionId() % 2) == 0)
+	if ((networkUtilities->getSessionId() % 2) == 1)
 		startGame(true);
 	else
-		startGame(false, networkUtilities->getOpponentsIpAddress().c_str());
+		startGame(false, networkUtilities->getOpponentsIpAddress());
 
 }
 /**	
   * starts the game from the perspective of player1/player2
   */
-
-void game::startGame(bool asPlayer1, const char* ipAddress) {
-
+void game::startGame(bool asPlayer1, char* ipAddress) {
 
 	if (asPlayer1) {
 		networkUtilities->hostGame(portNumber);
@@ -128,7 +139,7 @@ void game::startGame(bool asPlayer1, const char* ipAddress) {
 		opposingPlayer->initUnits();
 
 	} else {
-		networkUtilities->joinGame(std::string(ipAddress), portNumber); 
+		networkUtilities->joinGame(ipAddress, portNumber); 
 
 		// joining player is always player 2
 		localPlayer->setPlayer1(false);
@@ -147,6 +158,8 @@ void game::passTurn() {
 	int i = 0;
 
 	// read units of this player
+	std::cout<<"UNITS OF LOCAL PLAYER" << std::endl;
+
 	for(std::vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
 		// create a DTO for each of them
 		BaseUnitDTO tmp = BaseUnitDTO();
@@ -157,24 +170,20 @@ void game::passTurn() {
 		tmp.setPlayer(true);
 
 		// output properties of unit
-		std::cout<<"UNITS OF LOCAL PLAYER";
-		std::cout<<tmp.getId();
-		std::cout<<"\n";
-		std::cout<<tmp.getPlayer();
-		std::cout<<"\n";
-		std::cout<<tmp.getX();
-		std::cout<<"\n";
-		std::cout<<tmp.getY();
-		std::cout<<"\n";
-		std::cout<<tmp.getZ();
-		std::cout<<"\n";
 
+		std::cout << "Unit ID: " << tmp.getId() << std::endl;
+		std::cout << "Unit player: " << tmp.getPlayer() << std::endl;
+		std::cout << "X: " << tmp.getX() << std::endl;
+		std::cout << "Y: " << tmp.getY() << std::endl;
+		std::cout << "Z: " << tmp.getZ() << std::endl << std::endl;
 		// put unitDTOs in list that is given to gamestateDTO
 		units[i] = tmp;
 		i++;
 	}
 
 	// read units of opponent
+	std::cout<<"UNITS OF OPPOSING PLAYER";
+	std::cout<<"\n";
 	for(std::vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
 		// create a DTO for each of them
 		BaseUnitDTO tmp = BaseUnitDTO();
@@ -185,18 +194,11 @@ void game::passTurn() {
 		tmp.setPlayer(false);
 
 		// output properties of unit
-		std::cout<<"UNITS OF OPPOSING PLAYER";
-		std::cout<<tmp.getId();
-		std::cout<<"\n";
-		std::cout<<tmp.getPlayer();
-		std::cout<<"\n";
-		std::cout<<tmp.getX();
-		std::cout<<"\n";
-		std::cout<<tmp.getY();
-		std::cout<<"\n";
-		std::cout<<tmp.getZ();
-		std::cout<<"\n";
-
+		std::cout << "Unit ID: " << tmp.getId() << std::endl;
+		std::cout << "Unit player: " << tmp.getPlayer() << std::endl;
+		std::cout << "X: " << tmp.getX() << std::endl;
+		std::cout << "Y: " << tmp.getY() << std::endl;
+		std::cout << "Z: " << tmp.getZ() << std::endl << std::endl;
 		// put unitDTOs in list that is given to gamestateDTO
 		units[i] = tmp;
 		i++;
@@ -207,34 +209,85 @@ void game::passTurn() {
 
 	// serialize the gamestateDTO (unitDTOs should be serialized along with them...)
 	char* buffer = gameState->serializeGameState();
-	std::cout<<buffer;
+	// std::cout<<buffer;
 	// send it it to opposing player
-	// networkUtilities->setBuffer(buffer);
-	// networkUtilities->sendData();
-}
+	try {
+		networkUtilities->setBuffer(buffer);
+		networkUtilities->sendData();
 
-void game::receiveGameState() {
-	// receive data from opposing player
-	networkUtilities->receiveData();
-	// deserialize data
-}
+		updateGameState();
+	}
+	catch(NonRealtimeNetworkingException e) {
+		std::cout << "Error: " << e.what() << std::endl;
+	}
 
-void game::deserialize() {
-	// deserialized data to DTOs (units and gamestate)
-	std::string buffer = networkUtilities->getBuffer();
-	gameState->deserialize(buffer);
 }
 
 void game::updateGameState(){
 	// create a GameStateDTO object and fill in data we received by deserializing it
-	gameState = new GameStateDTO();
-	deserialize();
+	networkUtilities->receiveData();
+	std::cout << "Buffer: " << networkUtilities->getBuffer() << std::endl;
+	// gameState = new GameStateDTO();
+	gameState->deserialize(networkUtilities->getBuffer());
 
+	bool unitUpdated;
 	// update gamestate by updating all attributes in both players
+	for (int i=0; i < gameState->unitLength; i++) { // calc length of array
+		BaseUnitDTO tmp = gameState->getUnits()[i];
+		unitUpdated = false;
 
+		// find referring unit
+		for(std::vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
+			if (unitUpdated) break;
+			if (tmp.getId() == (*it)->id) {
+				if((*it)->player1 != localPlayer->getPlayer1())
+					throw new IllegalStateException("Unit is not assigned correctly!");
 
-	// and updating which player is active
-	// visually update what had happened (render again?)
+				// update position attributes of unit
+				(*it)->position.X = tmp.getX();
+				(*it)->position.Y = tmp.getY();
+				(*it)->position.Z = tmp.getZ();
+
+				// later on -> update other attributes of the unit
+
+				unitUpdated = true;
+			}
+		}
+
+		// find referring unit
+		for(std::vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
+			if (unitUpdated) break;
+			if (tmp.getId() == (*it)->id) {
+				if((*it)->player1 != opposingPlayer->getPlayer1())
+					throw new IllegalStateException("Unit does is not assigned correctly!");
+
+				// update position attributes of unit
+				(*it)->position.X = tmp.getX();
+				(*it)->position.Y = tmp.getY();
+				(*it)->position.Z = tmp.getZ();
+
+				// updates the unit's position visually on the map (hopefully)
+				(*it)->node->setPosition((*it)->position);
+
+				unitUpdated = true;
+			}
+		}
+
+		if (! unitUpdated) 
+			throw new IllegalStateException("Unit is not assigned to a player.");
+
+		
+		// output properties of unit
+		std::cout << "Unit ID: " << tmp.getId() << std::endl;
+		std::cout << "Unit player: " << tmp.getPlayer() << std::endl;
+		std::cout << "X: " << tmp.getX() << std::endl;
+		std::cout << "Y: " << tmp.getY() << std::endl;
+		std::cout << "Z: " << tmp.getZ() << std::endl << std::endl;
+		
+	}
+
+	// update which player is active (just invert)
+	gameState->setPlayer1Turn(!gameState->getPlayer1Turn());
 }
 
 void game::init_map(IrrlichtDevice *device_map)

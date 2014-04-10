@@ -21,6 +21,7 @@ public:
 	// void setUnits(std::vector<BaseUnit>* units) { this->units = units; }
 	void initUnits();
 	void setPlayer1(bool player1) { this->player1 = player1; }
+	void setDevice(IrrlichtDevice* dev);
 };
 
 #endif

@@ -8,7 +8,6 @@
 #include "Player.h"
 #include "PlayerCamera.h"
 #include "GameStateDTO.h"
-#include "TempReceiver.h"
 
 using namespace irr;
 
@@ -37,9 +36,7 @@ private:
 
 	// private methods
 	BaseUnit* initializeUnits();
-	void passTurn();
-	void receiveGameState();
-	void deserialize();
+
 	void updateGameState();
 
 public:
@@ -50,11 +47,10 @@ public:
 
 	// public methods
 	int run(void);
- 
+	void startGame(bool asPlayer1, char* ipAddress = NULL); 
 	void game::init_map(IrrlichtDevice *device_map);
-	void startGame(bool asPlayer1, const char* ipAddress = NULL); 
 	void startGame();
-
+	void passTurn();
 
 	// players
 	Player* localPlayer;
