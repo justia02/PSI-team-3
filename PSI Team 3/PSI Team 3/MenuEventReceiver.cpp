@@ -118,7 +118,7 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 				default:
 					break;
 				}
-				break;
+
 
 
     }
