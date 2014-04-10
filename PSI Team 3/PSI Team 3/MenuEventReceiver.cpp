@@ -38,15 +38,16 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 						guienv->clear();
 						Context.game_->startGame(false, ch);
 						Context.game_->init_map(Context.device);
+						menuDone = true;
 						return true;
 
 					case GUI_ID_HOST_GAME:
 						printf ("Host Game Button was clicked.");
 						guienv->clear();
-						Context.game_->startGame(true, ""); // call without ip, since we want to host 
 						Context.game_->init_map(Context.device);
+						Context.game_->startGame(true, ""); // call without ip, since we want to host 
+						menuDone = true;
 						return true;
-
 
 					case GUI_ID_JOIN_WSDL:
 						guienv->clear();	
@@ -63,6 +64,7 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 						Context.game_->opposingPlayer->setPlayer1(false);
 						Context.game_->localPlayer->initUnits();
 						Context.game_->opposingPlayer->initUnits();
+						menuDone = true;
 						return true;
 
 					default:

@@ -33,6 +33,7 @@ game::game(void)
 	// run menu
 	menu* m = new menu(device, driver, smgr, guienv);
 	// m->run(this);
+		smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
 
 	// TEST --> should only serialize game state to file (seralizationFileGameState)
 
@@ -108,8 +109,6 @@ void game::startGame() {
   */
 void game::startGame(bool asPlayer1, char* ipAddress) {
 
-	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
-
 	if (asPlayer1) {
 		networkUtilities->hostGame(portNumber);
 
@@ -119,6 +118,7 @@ void game::startGame(bool asPlayer1, char* ipAddress) {
 
 		localPlayer->initUnits();
 		opposingPlayer->initUnits();
+		// passTurn();
 
 	} else {
 		networkUtilities->joinGame(ipAddress, portNumber); 
