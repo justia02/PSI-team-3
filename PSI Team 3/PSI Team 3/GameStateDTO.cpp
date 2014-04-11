@@ -39,7 +39,7 @@ void GameStateDTO::deserialize(std::string serializationString) {
 char* GameStateDTO::serializeGameState() {
 
 	// create and open a character archive for serialized vector instance
-    std::ofstream ofs(FILE_NAME);
+    std::ofstream ofs(GAME_STATE_FILE_NAME);
 
 	// save data to archive
     {
@@ -51,7 +51,7 @@ char* GameStateDTO::serializeGameState() {
 		ofs.close();
     }
 
-	std::ifstream ifs(FILE_NAME);
+	std::ifstream ifs(GAME_STATE_FILE_NAME);
 
 	std::filebuf* pbuf = ifs.rdbuf();
 

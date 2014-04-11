@@ -6,7 +6,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
-#define FILE_NAME "serializationFileBaseUnit"
+#define BASE_UNIT_FILE_NAME "serializationFileBaseUnit"
 
 class BaseUnitDTO
 {
