@@ -3,7 +3,7 @@
 #include <fstream>
 
 char* BaseUnitDTO::serialize() {
-	std::ofstream ofs(FILE_NAME);
+	std::ofstream ofs(BASE_UNIT_FILE_NAME);
 	// save data to archive
     {
         boost::archive::text_oarchive oa(ofs);
@@ -14,7 +14,7 @@ char* BaseUnitDTO::serialize() {
 		ofs.close();
     }
 
-	std::ifstream ifs(FILE_NAME);
+	std::ifstream ifs(BASE_UNIT_FILE_NAME);
 
 	std::filebuf* pbuf = ifs.rdbuf();
 
@@ -33,13 +33,13 @@ char* BaseUnitDTO::serialize() {
 }
 
 void BaseUnitDTO::deserialize(std::string serializationString) {
-	std::ofstream ofs(FILE_NAME);
+	std::ofstream ofs(BASE_UNIT_FILE_NAME);
 	ofs << serializationString;
 	ofs.close();
 
 	{
         // create and open an archive for input
-        std::ifstream ifs(FILE_NAME);
+        std::ifstream ifs(BASE_UNIT_FILE_NAME);
         boost::archive::text_iarchive ia(ifs);
         // read class state from archive
         ia >> *this;

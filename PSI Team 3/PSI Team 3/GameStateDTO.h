@@ -11,7 +11,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
-#define FILE_NAME "serializationFileGameState"
+#define GAME_STATE_FILE_NAME "serializationFileGameState"
 
 class GameStateDTO {
 

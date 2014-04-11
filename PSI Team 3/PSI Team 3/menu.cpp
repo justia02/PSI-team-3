@@ -1,6 +1,8 @@
 #include "menu.h"
 
-//class definition for menu
+/**
+  * Implementation of menu
+  */
 using namespace irrlicht_nonrealtimenetworking;
 
 menu::menu(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, IGUIEnvironment* guienv) 
@@ -9,8 +11,8 @@ menu::menu(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, IG
 	this->driver = driver;
 	this->smgr = smgr;
 	this->guienv = guienv;
-	//this->networkUtilities = new NonRealtimeNetworkingUtilities("localhost");
 
+	// initalizes graphical menu
 	init();
 }
 
@@ -20,45 +22,36 @@ menu::~menu(void)
 
 void menu::run(game* g) {
 
-	// setup menu
+	// setup context
 	SAppContext context;
 	context.device = device;
 	context.counter = 0;
 	context.game_ = g;
 
+	// runs the console menu
 	init_console(context);
-	
-	// setup event receiver to handle user input on menu            
-	//MenuEventReceiver receiver(context);
-
-	// specify our custom event receiver in the device	
-	//device->setEventReceiver(&receiver);
-	
-
-
-
-
 }
 
+/**
+ * inializes the graphical menu
+ */
 void menu::init(void)
 {
+	// TODO: add text?!
+	guienv->addStaticText(L"Welcome! Please select an option.",
+        rect<s32>(235,50,360,50+10), true);
 	// add gui elements
-	//wchar_t* text2 = new wchar_t[100];
-	//guienv->addEditBox(text2,rect<s32>(160,300, 480,325 + 32),true);
-
-	guienv->addButton(rect<s32>(160,100,480,150 + 32), 0, GUI_ID_JOIN_GAME, L"Join Game", L"Joins a game");
-	guienv->addButton(rect<s32>(160,200,480,250 + 32), 0, GUI_ID_HOST_GAME, L"Host Game", L"Hosts a game");
-	guienv->addButton(rect<s32>(160,300,480,350 + 32), 0, GUI_ID_JOIN_WSDL, L"Join Server", L"Joins the server that will assign players");
-	guienv->addButton(rect<s32>(160,400,480,450 + 32), 0, GUI_ID_START_GAME, L"Start Game", L"Start game without network for test");
-
-	//text = L"add text here";
-	//guienv->addStaticText(text, rect<s32>(160,25,480,50), true);
+	guienv->addButton(rect<s32>(240,100,350,150 + 10), 0, GUI_ID_JOIN_GAME, L"Join Game", L"Joins a game");
+	guienv->addButton(rect<s32>(240,200,350,250 + 10), 0, GUI_ID_HOST_GAME, L"Host Game", L"Hosts a game");
+	guienv->addButton(rect<s32>(240,300,350,350 + 10), 0, GUI_ID_JOIN_WSDL, L"Quick Match", L"Starts a quick match, opponent will be automatically assigned.");
+	guienv->addButton(rect<s32>(240,400,350,450 + 10), 0, GUI_ID_START_GAME, L"Start Game", L"Start game without network for test");
 }
 
+/**
+ * initializes an alternative console menu, mainly for testing purpose
+ */
 void menu::init_console(SAppContext context)
 {
-		// temporary console menu
-		// portNo in our game
 		int portNo = 6;
 		int option;
 		char* ipAddress = new char[15];

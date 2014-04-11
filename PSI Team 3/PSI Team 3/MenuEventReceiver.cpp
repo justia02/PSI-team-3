@@ -1,11 +1,14 @@
 #include "MenuEventReceiver.h"
 #include <assert.h>
 
-//Event receiver custom class where we will later call the function for joining and creating a game
+/**
+ * implementation of event receiver class
+ * it is a event receiver that is valid all over the game, not only in the menu
+*/
 bool MenuEventReceiver::OnEvent(const SEvent& event)
 {
 
-	// logic for the menu
+	// Menu
     if (event.EventType == EET_GUI_EVENT)
     {
         s32 id = event.GUIEvent.Caller->getID();
@@ -18,13 +21,12 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 					switch(id)
 					{
 					case GUI_ID_JOIN_GAME:
-						printf ("Join Game Button was clicked.");
 						guienv->clear();
+						// display interface to enter ip address
 						text = L"Enter ip here";
 						
-						box = guienv->addEditBox(text, rect<s32>(160,25,480,50), true);
-						//guienv->addStaticText();
-						guienv->addButton(rect<s32>(160,200,480,250 + 32), 0, GUI_ID_JOIN_GAME_DONE, L"connect", L"connect to a game");
+						box = guienv->addEditBox(text, rect<s32>(240,25,350,50), true);
+						guienv->addButton(rect<s32>(240,100,350,150 + 10), 0, GUI_ID_JOIN_GAME_DONE, L"connect", L"connect to a game");
 						return true;
 
 					case GUI_ID_JOIN_GAME_DONE:
@@ -42,7 +44,6 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 						return true;
 
 					case GUI_ID_HOST_GAME:
-						printf ("Host Game Button was clicked.");
 						guienv->clear();
 						Context.game_->init_map(Context.device);
 						Context.game_->startGame(true, ""); // call without ip, since we want to host 
@@ -58,7 +59,6 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 
 					case GUI_ID_START_GAME:
 						guienv->clear();
-
 						Context.game_->init_map(Context.device);
 						Context.game_->localPlayer->setPlayer1(true);
 						Context.game_->opposingPlayer->setPlayer1(false);
@@ -77,6 +77,8 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 				}
     }
 
+	// from here on all logic is about the game, not the menu
+	// this will only be checked if the menu is done.
 	if (!menuDone)
 		return false;
 
@@ -85,8 +87,17 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 	{
 		// set the direction from the keycode
 		setDirection(event.KeyInput.Key);
-		// move the unit
-		this->selectedUnit->Move(moveDirection, 2);
+
+		// Create a list of all units if such doesn't exist yet
+		//if (allUnits == NULL || allUnits->size() == 0) {
+			allUnits = new std::vector<BaseUnit*>();
+			allUnits->insert(allUnits->end(), unitList->begin(), unitList->end());
+			allUnits->insert(allUnits->end(), Context.game_->opposingPlayer->getUnits()->begin(), Context.game_->opposingPlayer->getUnits()->end());
+		//}
+
+		// move
+		this->selectedUnit->Move(moveDirection, 1, allUnits, Context.game_->localPlayer->getPlayer1());
+
 		// deselect the unit
 		this->selectedUnit->SelectUnit();
 		this->selectedUnit = NULL;
@@ -127,9 +138,12 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
     return false;
 }
 
-// if the player moves its mouse check if its over a frendly unit he can select
+/**
+ * highlight friendly units on mouse over
+ */
 void MenuEventReceiver::MouseOverUnit()
 {
+	// this code is only relevant if the menu is already done
 	if (!menuDone)
 		return;
 	position2d<irr::s32> cursorPos;
@@ -154,7 +168,6 @@ void MenuEventReceiver::MouseOverUnit()
 	{
 		// deselect the unit
 		(*it)->highLightUnit(false);
-		//(*it)->selected = false;
 		// if the positions of the node and the unit are the same
 		// set this unit as the selected unit and highlight it
 		if((*it)->position == selectedPosition)
@@ -169,7 +182,9 @@ void MenuEventReceiver::MouseOverUnit()
 	this->isHoveringUnit = false;
 }
 
-// sets the direction the unit should move in from the keycode
+/**
+ * move unit 
+ */
 void MenuEventReceiver::setDirection(EKEY_CODE keyCode)
 {
 	// if there is no unit selected just return

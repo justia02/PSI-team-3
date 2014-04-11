@@ -1,5 +1,5 @@
 #include "game.h"
-#include "MenuEventReceiver.h"; // this include MUST NOT be in the .h file!
+#include "MenuEventReceiver.h" // this include MUST NOT be in the .h file!
 #include "Player.h"
 #include "menu.h"
 #include "IllegalStateException.h"

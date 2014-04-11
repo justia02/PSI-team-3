@@ -45,12 +45,11 @@ class MenuEventReceiver : public irr::IEventReceiver
 		char *ch;
 		std::string s;
 
-
 		MenuEventReceiver(SAppContext & context) : Context(context)
 		{
+			menuDone = false;
 			unitList = context.game_->localPlayer->getUnits();
 			smgr = context.device->getSceneManager();
-
 			camera = smgr->getActiveCamera();
 		};
 		bool OnEvent(const SEvent& event);
@@ -70,6 +69,7 @@ class MenuEventReceiver : public irr::IEventReceiver
 		bool isHoveringUnit;
 		BaseUnit *selectedUnit;
 		vector<BaseUnit*>* unitList;
+		vector<BaseUnit*>* allUnits;
 		ICameraSceneNode* camera;
 		ISceneManager* smgr;
 };
