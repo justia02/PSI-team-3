@@ -209,6 +209,7 @@ void game::passTurn() {
 	char* buffer = gameState->serializeGameState();
 	// std::cout<<buffer;
 	// send it it to opposing player
+	
 	try {
 		networkUtilities->setBuffer(buffer);
 		networkUtilities->sendData();
@@ -217,6 +218,8 @@ void game::passTurn() {
 	}
 	catch(NonRealtimeNetworkingException e) {
 		std::cout << "Error: " << e.what() << std::endl;
+		
+		device->getGUIEnvironment()->addMessageBox(L"Oops an Error", L"Something went wrong, probably connection lost", true, EMBF_OK);
 	}
 
 }
