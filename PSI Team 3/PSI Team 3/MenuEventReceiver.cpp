@@ -1,11 +1,14 @@
 #include "MenuEventReceiver.h"
 #include <assert.h>
 
-//Event receiver custom class where we will later call the function for joining and creating a game
+/**
+ * implementation of event receiver class
+ * it is a event receiver that is valid all over the game, not only in the menu
+*/
 bool MenuEventReceiver::OnEvent(const SEvent& event)
 {
 
-	// logic for the menu
+	// Menu
     if (event.EventType == EET_GUI_EVENT)
     {
         s32 id = event.GUIEvent.Caller->getID();
@@ -18,13 +21,12 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 					switch(id)
 					{
 					case GUI_ID_JOIN_GAME:
-						printf ("Join Game Button was clicked.");
 						guienv->clear();
+						// display interface to enter ip address
 						text = L"Enter ip here";
 						
-						box = guienv->addEditBox(text, rect<s32>(160,25,480,50), true);
-						//guienv->addStaticText();
-						guienv->addButton(rect<s32>(160,200,480,250 + 32), 0, GUI_ID_JOIN_GAME_DONE, L"connect", L"connect to a game");
+						box = guienv->addEditBox(text, rect<s32>(240,25,350,50), true);
+						guienv->addButton(rect<s32>(240,100,350,150 + 10), 0, GUI_ID_JOIN_GAME_DONE, L"connect", L"connect to a game");
 						return true;
 
 					case GUI_ID_JOIN_GAME_DONE:
@@ -42,7 +44,6 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 						return true;
 
 					case GUI_ID_HOST_GAME:
-						printf ("Host Game Button was clicked.");
 						guienv->clear();
 						Context.game_->init_map(Context.device);
 						Context.game_->startGame(true, ""); // call without ip, since we want to host 
@@ -77,6 +78,8 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 				}
     }
 
+	// from here on all logic is about the game, not the menu
+	// this will only be checked if the menu is done.
 	if (!menuDone)
 		return false;
 
