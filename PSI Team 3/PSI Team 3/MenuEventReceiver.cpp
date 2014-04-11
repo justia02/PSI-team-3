@@ -58,7 +58,6 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 
 					case GUI_ID_START_GAME:
 						guienv->clear();
-
 						Context.game_->init_map(Context.device);
 						Context.game_->localPlayer->setPlayer1(true);
 						Context.game_->opposingPlayer->setPlayer1(false);
@@ -85,8 +84,17 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 	{
 		// set the direction from the keycode
 		setDirection(event.KeyInput.Key);
-		// move the unit
-		this->selectedUnit->Move(moveDirection, 2);
+
+		// Create a list of all units if such doesn't exist yet
+		//if (allUnits == NULL || allUnits->size() == 0) {
+			allUnits = new std::vector<BaseUnit*>();
+			allUnits->insert(allUnits->end(), unitList->begin(), unitList->end());
+			allUnits->insert(allUnits->end(), Context.game_->opposingPlayer->getUnits()->begin(), Context.game_->opposingPlayer->getUnits()->end());
+		//}
+
+		// move
+		this->selectedUnit->Move(moveDirection, 1, allUnits, Context.game_->localPlayer->getPlayer1());
+
 		// deselect the unit
 		this->selectedUnit->SelectUnit();
 		this->selectedUnit = NULL;
