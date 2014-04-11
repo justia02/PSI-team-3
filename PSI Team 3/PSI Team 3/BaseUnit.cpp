@@ -40,35 +40,106 @@ BaseUnit::~BaseUnit(void)
 {
 }
 
-void BaseUnit::Move(direction moveDirection, float distance){
+BaseUnit::direction BaseUnit::revertMoveDirection(direction moveDirection) {
+
+	if (moveDirection == LEFT)
+		moveDirection = RIGHT;
+	else if (moveDirection == RIGHT)
+		moveDirection = LEFT;
+	else if (moveDirection == BACK)
+		moveDirection = FORWARD;
+	else if (moveDirection == FORWARD)
+		moveDirection = BACK;
+
+	return moveDirection;
+
+}
+
+bool BaseUnit::canMove(direction moveDirection, float distance, std::vector<BaseUnit*>* units) {
+
+	// Check whether selected unit can move in a given direction or not	
+	switch(moveDirection) {
+		case LEFT: {
+			// Check if that would not violate board boundaries
+			if (position.X < (-HALF_SIZE + distance))
+				return false;
+			// Check if another unit isn't already there
+			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it)
+				if (irr::core::vector3d<float>(position.X - distance, position.Y, position.Z) == (*it)->position)
+					return false;
+			break;
+		}
+		case RIGHT: {
+			// Check if that would not violate board boundaries
+			if (position.X > (HALF_SIZE - distance))
+				return false;
+			// Check if another unit isn't already there
+			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it)
+				if (irr::core::vector3d<float>(position.X + distance, position.Y, position.Z) == (*it)->position)
+					return false;
+			break;
+		}
+		case BACK: {
+			// Check if that would not violate board boundaries
+			if (position.Z < (-HALF_SIZE + distance))
+				return false;
+			// Check if another unit isn't already there
+			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it)
+				if (irr::core::vector3d<float>(position.X, position.Y, position.Z - distance) == (*it)->position)
+					return false;
+			break;
+		}
+		case FORWARD: {
+			// Check if that would not violate board boundaries
+			if (position.Z > (HALF_SIZE - distance))
+				return false;
+			// Check if another unit isn't already there
+			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it)
+				if (irr::core::vector3d<float>(position.X, position.Y, position.Z + distance) == (*it)->position)
+					return false;
+			break;
+		}
+
+	}
+
+	return true;
+
+}
+
+void BaseUnit::Move(direction moveDirection, float distance, std::vector<BaseUnit*>* units, bool player1) {
+
 	if(distance > maxDistance)
 		distance = maxDistance;
-	switch(moveDirection){
-		case LEFT:{
-			if (!(position.X < (-HALF_SIZE + 0.3)))
+	
+	// Revert move direction if we're player2
+	if (player1 == false)
+		moveDirection = revertMoveDirection(moveDirection);
+
+	if (canMove(moveDirection, distance, units)) {
+		switch(moveDirection){
+			case LEFT:{
 				position.X -= distance;
-			break;
-			}
-		case RIGHT:{
-			if (!(position.X > (HALF_SIZE - 0.3)))
+				break;
+				}
+			case RIGHT:{
 				position.X += distance;
-			break;
-			}
-		case BACK:{
-			if (!(position.Z < (-HALF_SIZE + 0.3)))
+				break;
+				}
+			case BACK:{
 				position.Z -= distance;
-			break;
-			}
-		case FORWARD:{
-			if (!(position.Z > (HALF_SIZE - 0.3)))
+				break;
+				}
+			case FORWARD:{
 				position.Z += distance;
-			break;
-			}
+				break;
+				}
 		}
+	}
+
 	node->setPosition(position);
 
-
 	cout << "the unit: " << "ID: " << id << "Position: " << position.X << ", " << position.Y << ", " << position.Z;
+
 }
 
 void BaseUnit::SelectUnit(){

@@ -3,6 +3,7 @@
 #include <irrlicht.h>
 #include <iostream>
 #include <string>
+#include <vector>
 
 using namespace irr;
 using namespace core;
@@ -12,10 +13,7 @@ using namespace std;
 
 class BaseUnit
 {
-private:
-	ILightSceneNode* selectIndication;
-	IBillboardSceneNode* indicationBoard;
-	//void initUnitHighLight();
+
 public:
 	enum direction{
 		LEFT,
@@ -49,7 +47,7 @@ public:
 	BaseUnit();
 	~BaseUnit(void);
 
-	void Move(direction moveDirection, float distance);
+	void Move(direction moveDirection, float distance, std::vector<BaseUnit*>* units, bool player1);
 	void SelectUnit();
 	
 	bool createMesh();
@@ -58,5 +56,12 @@ public:
 	void highLightUnit(bool highLight);
 	// there needs to be some sort of target class to be made idk how yet
 	//void ShootTarget(target);
+
+private:
+	ILightSceneNode* selectIndication;
+	IBillboardSceneNode* indicationBoard;
+	bool canMove(direction moveDirection, float distance, std::vector<BaseUnit*>* units);
+	direction revertMoveDirection(direction moveDirection);
+
 };
 
