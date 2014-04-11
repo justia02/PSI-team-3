@@ -138,9 +138,12 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
     return false;
 }
 
-// if the player moves its mouse check if its over a frendly unit he can select
+/**
+ * highlight friendly units on mouse over
+ */
 void MenuEventReceiver::MouseOverUnit()
 {
+	// this code is only relevant if the menu is already done
 	if (!menuDone)
 		return;
 	position2d<irr::s32> cursorPos;
@@ -165,7 +168,6 @@ void MenuEventReceiver::MouseOverUnit()
 	{
 		// deselect the unit
 		(*it)->highLightUnit(false);
-		//(*it)->selected = false;
 		// if the positions of the node and the unit are the same
 		// set this unit as the selected unit and highlight it
 		if((*it)->position == selectedPosition)
@@ -180,7 +182,9 @@ void MenuEventReceiver::MouseOverUnit()
 	this->isHoveringUnit = false;
 }
 
-// sets the direction the unit should move in from the keycode
+/**
+ * move unit 
+ */
 void MenuEventReceiver::setDirection(EKEY_CODE keyCode)
 {
 	// if there is no unit selected just return
