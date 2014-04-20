@@ -7,6 +7,7 @@
 game::game(void)
 {
 	//create the device
+	
 	device = createDevice( video::EDT_OPENGL, dimension2d<u32>(640, 480), 16, false, false, false, 0);
 
 	device->setWindowCaption(L"PSI TEAM 3");
@@ -71,6 +72,7 @@ int game::run(void)
 		
 		// setup event receiver to handle user input on menu            
 		MenuEventReceiver receiver(context);
+		receiver.init(guienv, 640, 480);
 		receiver.setIsUnitSelected(false);
 		receiver.menuDone = false;
 

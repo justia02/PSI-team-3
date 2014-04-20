@@ -1,5 +1,6 @@
 #pragma once
 #include <irrlicht.h>
+#include <menuReceiver.h>
 #include "mapterrain.h"
 #include <iostream>
 #include <non-realtime-networking/NonRealtimeNetworkingUtilities.h>
@@ -25,18 +26,8 @@ struct SAppContext
 	game* game_;
 };
 
-// Define values to identify join game and host game buttons
-enum
-{
-    GUI_ID_JOIN_GAME,
-    GUI_ID_HOST_GAME,
-	GUI_ID_JOIN_GAME_DONE,
-	GUI_ID_JOIN_WSDL,
-	GUI_ID_START_GAME
-};
 
-
-class MenuEventReceiver : public irr::IEventReceiver
+class MenuEventReceiver : public irr::menuReceiver
 {
 	public:
 		IGUIEditBox *box;
@@ -53,10 +44,19 @@ class MenuEventReceiver : public irr::IEventReceiver
 			camera = smgr->getActiveCamera();
 		};
 		bool OnEvent(const SEvent& event);
+
 		void setIsUnitSelected(bool value) {
 			isUnitSelected = value;
 		};
 	    SAppContext & Context;
+
+		//implementation of the functions from the engine.
+		void JOIN_GAME();
+		void HOST_GAME();
+		void JOIN_GAME_SECOND();
+		void JOIN_WSDL();
+		void START_GAME();
+
 		int portNo;
 		// members for the unit controll
 	private:

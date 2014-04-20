@@ -2,80 +2,13 @@
 #include <assert.h>
 
 /**
- * implementation of event receiver class
+ * implementation of event receiver class in the engine
  * it is a event receiver that is valid all over the game, not only in the menu
 */
 bool MenuEventReceiver::OnEvent(const SEvent& event)
 {
-
-	// Menu
-    if (event.EventType == EET_GUI_EVENT)
-    {
-        s32 id = event.GUIEvent.Caller->getID();
-        IGUIEnvironment* guienv = Context.device->getGUIEnvironment();
-
-        switch(event.GUIEvent.EventType)
-        { 
-
-				case EGET_BUTTON_CLICKED:
-					switch(id)
-					{
-					case GUI_ID_JOIN_GAME:
-						guienv->clear();
-						// display interface to enter ip address
-						text = L"Enter ip here";
-						
-						box = guienv->addEditBox(text, rect<s32>(240,25,350,50), true);
-						guienv->addButton(rect<s32>(240,100,350,150 + 10), 0, GUI_ID_JOIN_GAME_DONE, L"connect", L"connect to a game");
-						return true;
-
-					case GUI_ID_JOIN_GAME_DONE:
-						const wchar_t* t;
-						t = box->getText();
-						size_t   i;
-						ch = (char *)malloc(30);
-						wcstombs_s(&i, ch, (size_t)30, t, (size_t)30 );
-
-						printf(ch);
-						guienv->clear();
-						Context.game_->startGame(false, ch);
-						Context.game_->init_map(Context.device);
-						menuDone = true;
-						return true;
-
-					case GUI_ID_HOST_GAME:
-						guienv->clear();
-						Context.game_->init_map(Context.device);
-						Context.game_->startGame(true, ""); // call without ip, since we want to host 
-						menuDone = true;
-						return true;
-
-					case GUI_ID_JOIN_WSDL:
-						guienv->clear();	
-						Context.game_->init_map(Context.device);
-						Context.game_->startGame();
-						menuDone = true;
-						return true;
-
-					case GUI_ID_START_GAME:
-						guienv->clear();
-						Context.game_->init_map(Context.device);
-						Context.game_->localPlayer->setPlayer1(true);
-						Context.game_->opposingPlayer->setPlayer1(false);
-						Context.game_->localPlayer->initUnits();
-						Context.game_->opposingPlayer->initUnits();
-						menuDone = true;
-						return true;
-
-					default:
-						break;
-					}
-					break;
-
-				default:
-					break;
-				}
-    }
+	//this is a call to the function in the base class where the program will check which button you press.
+	menuSwitchCases(event, Context.device->getGUIEnvironment());
 
 	// from here on all logic is about the game, not the menu
 	// this will only be checked if the menu is done.
@@ -136,6 +69,58 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 	}
 
     return false;
+}
+
+/**
+ * implementation of the 5 empty function in the menuReceiver in the engine
+ */
+void MenuEventReceiver::JOIN_GAME()
+{
+	// display interface to enter ip address
+	text = L"Enter ip here";
+	IGUIEnvironment* guienv = Context.device->getGUIEnvironment();					
+    box = guienv->addEditBox(text, rect<s32>(240,25,350,50), true);
+	guienv->addButton(rect<s32>(240,100,350,150 + 10), 0, GUI_ID_JOIN_GAME_SECOND, L"connect", L"connect to a game");
+}
+
+void MenuEventReceiver::HOST_GAME()
+{
+	Context.game_->init_map(Context.device);
+	Context.game_->startGame(true, ""); // call without ip, since we want to host 
+	menuDone = true;
+}
+
+void MenuEventReceiver::JOIN_GAME_SECOND()
+{
+	const wchar_t* t;
+	t = box->getText();
+	size_t   i;
+	ch = (char *)malloc(30);
+	wcstombs_s(&i, ch, (size_t)30, t, (size_t)30 );
+
+	IGUIEnvironment* guienv = Context.device->getGUIEnvironment();
+	guienv->clear();
+
+	Context.game_->startGame(false, ch);
+	Context.game_->init_map(Context.device);
+	menuDone = true;
+}
+
+void MenuEventReceiver::JOIN_WSDL()
+{
+	Context.game_->init_map(Context.device);
+	Context.game_->startGame();
+	menuDone = true;
+}
+
+void MenuEventReceiver::START_GAME()
+{
+	Context.game_->init_map(Context.device);
+	Context.game_->localPlayer->setPlayer1(true);
+	Context.game_->opposingPlayer->setPlayer1(false);
+	Context.game_->localPlayer->initUnits();
+	Context.game_->opposingPlayer->initUnits();
+	menuDone = true;
 }
 
 /**
