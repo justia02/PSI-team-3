@@ -35,22 +35,6 @@ game::game(void)
 	menu* m = new menu(device, driver, smgr, guienv);
 	// m->run(this);
 		smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
-
-	// TEST --> should only serialize game state to file (seralizationFileGameState)
-
-	// passTurn();
-
-	// init_map(device);
-
-	//networkUtilities = new NonRealtimeNetworkingUtilities();
-	//gameStateDTO = new GameStateDTO(4);
-	//gameStateDTO->setUnits(initializeUnits());
-
-	//camera
-
-	//make a new terrain
-	//mapterrain map = mapterrain(device, smgr);
-
 }
 
 game::~game(void)
@@ -212,6 +196,11 @@ void game::passTurn() {
 	// serialize the gamestateDTO (unitDTOs should be serialized along with them...)
 	char* buffer = gameState->serializeGameState();
 	
+	if (gameState->victory) {
+		std::cout << "YOU WIN: " << gameState->victory << std::endl;
+		device->getGUIEnvironment()->addMessageBox(L"YOU WIN!", L"Congratulations, you win the game!", true, EMBF_OK);	
+	}
+
 	try {
 		networkUtilities->setBuffer(buffer);
 		networkUtilities->sendData();
@@ -224,10 +213,6 @@ void game::passTurn() {
 		device->getGUIEnvironment()->addMessageBox(L"Oops an Error", L"Something went wrong, probably connection lost", true, EMBF_OK);
 	}
 
-	if (gameState->victory) {
-		device->getGUIEnvironment()->addMessageBox(L"YOU WIN!", L"Congratulations, you win the game!", true, EMBF_OK);	
-	}
-
 }
 
 void game::updateGameState(){
@@ -237,6 +222,7 @@ void game::updateGameState(){
 	// gameState = new GameStateDTO();
 	gameState->deserialize(networkUtilities->getBuffer());
 	if (gameState->victory) {
+		std::cout << "YOU LOSE: " << gameState->victory << std::endl;	
 		device->getGUIEnvironment()->addMessageBox(L"YOU LOSE!", L"Your opponent won the game. You lose.", true, EMBF_OK);
 		return;
 	}
@@ -340,6 +326,7 @@ bool game::checkVictory() {
 	return victory;
 }
 
+/*
 bool game::checkDefeat() {
 	// check defeat conditions (invert victory conditions) -- at the beginning of a turn
 	bool defeat = true;
@@ -372,5 +359,6 @@ bool game::checkDefeat() {
 
 	return defeat;
 }
+*/
 
 

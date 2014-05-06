@@ -222,10 +222,6 @@ void BaseUnit::SelectUnit(){
 		node->setMaterialTexture(0, driver->getTexture(texturePathSelected));
 	else if(!selected)
 		node->setMaterialTexture(0, driver->getTexture(texturePath));
-//	if(selected)
-//		selected = !selected;
-//	else
-//		selected = true;
 
 }
 
