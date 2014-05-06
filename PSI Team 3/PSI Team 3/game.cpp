@@ -299,4 +299,30 @@ void game::init_map(IrrlichtDevice *device_map)
 	mapterrain map = mapterrain(device_map, smgr);
 }
 
+bool game::checkVictory() {
+	// check victory conditions
+	bool victory = true;
+
+	// #1 all units of opponent are dead
+	for(vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
+		// if there is at least one of the opposing units is still alive, this condition isn't met
+		if ((*it)->getHealth() > 0) {
+			victory = false;
+		}
+	}
+
+	// #2 base was captured --> opposing unit is on base for at least 2 turns
+	for(vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
+		for (vector<irr::core::vector3d<float>>::iterator it = opposingPlayer->basePositions->begin(); it != opposingPlayer->basePositions->end(); it++) {
+		
+		}
+	}
+
+	return victory;
+}
+
+bool game::checkDefeat() {
+	return false;
+}
+
 
