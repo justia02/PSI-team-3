@@ -322,7 +322,7 @@ bool game::checkVictory() {
 	// #2 opponent's base was captured --> local unit is on opponent's base for at least 2 turns
 	bool isOnBase = false;
 	for(vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
-		for (int i = 0; i < Player.BASE_SIZE; i++) {
+		for (int i = 0; i < 2; i++) {
 			if (opposingPlayer->basePositions[i] == (*it)->position) {
 				isOnBase = true;
 				(*it)->onBaseCounter++;
@@ -355,7 +355,7 @@ bool game::checkDefeat() {
 	// #2 my base was captured --> opposing unit is on my base for at least 2 turns
 	bool isOnBase = false;
 	for(vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
-		for (int i = 0; i < Player.BASE_SIZE; i++) {
+		for (int i = 0; i < 2; i++) {
 			if (localPlayer->basePositions[i] == (*it)->position) {
 				isOnBase = true;
 				(*it)->onBaseCounter++;
