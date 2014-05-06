@@ -150,66 +150,67 @@ void game::startGame(bool asPlayer1, char* ipAddress) {
 }
 
 void game::passTurn() {
-
 	// in the game state both player's units will be contained --> allocate memory for all units
 	gameState = new GameStateDTO(localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size());
-	BaseUnitDTO* units = new BaseUnitDTO[localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size()];
-	int i = 0;
+	gameState->victory = checkVictory();
 
-	// read units of this player
-	std::cout<<"UNITS OF LOCAL PLAYER" << std::endl;
+	if (!gameState->victory) {
+		BaseUnitDTO* units = new BaseUnitDTO[localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size()];
+		int i = 0;
 
-	for(std::vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
-		// create a DTO for each of them
-		BaseUnitDTO tmp = BaseUnitDTO();
-		tmp.setId((*it)->id);
-		tmp.setX((*it)->position.X);
-		tmp.setY((*it)->position.Y);
-		tmp.setZ((*it)->position.Z);
-		tmp.setPlayer(true);
+		// read units of this player
+		std::cout<<"UNITS OF LOCAL PLAYER" << std::endl;
 
-		// output properties of unit
+		for(std::vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
+			// create a DTO for each of them
+			BaseUnitDTO tmp = BaseUnitDTO();
+			tmp.setId((*it)->id);
+			tmp.setX((*it)->position.X);
+			tmp.setY((*it)->position.Y);
+			tmp.setZ((*it)->position.Z);
+			tmp.setPlayer(true);
 
-		std::cout << "Unit ID: " << tmp.getId() << std::endl;
-		std::cout << "Unit player: " << tmp.getPlayer() << std::endl;
-		std::cout << "X: " << tmp.getX() << std::endl;
-		std::cout << "Y: " << tmp.getY() << std::endl;
-		std::cout << "Z: " << tmp.getZ() << std::endl << std::endl;
-		// put unitDTOs in list that is given to gamestateDTO
-		units[i] = tmp;
-		i++;
+			// output properties of unit
+
+			std::cout << "Unit ID: " << tmp.getId() << std::endl;
+			std::cout << "Unit player: " << tmp.getPlayer() << std::endl;
+			std::cout << "X: " << tmp.getX() << std::endl;
+			std::cout << "Y: " << tmp.getY() << std::endl;
+			std::cout << "Z: " << tmp.getZ() << std::endl << std::endl;
+			// put unitDTOs in list that is given to gamestateDTO
+			units[i] = tmp;
+			i++;
+		}
+
+		// read units of opponent
+		std::cout<<"UNITS OF OPPOSING PLAYER";
+		std::cout<<"\n";
+		for(std::vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
+			// create a DTO for each of them
+			BaseUnitDTO tmp = BaseUnitDTO();
+			tmp.setId((*it)->id);
+			tmp.setX((*it)->position.X);
+			tmp.setY((*it)->position.Y);
+			tmp.setZ((*it)->position.Z);
+			tmp.setPlayer(false);
+
+			// output properties of unit
+			std::cout << "Unit ID: " << tmp.getId() << std::endl;
+			std::cout << "Unit player: " << tmp.getPlayer() << std::endl;
+			std::cout << "X: " << tmp.getX() << std::endl;
+			std::cout << "Y: " << tmp.getY() << std::endl;
+			std::cout << "Z: " << tmp.getZ() << std::endl << std::endl;
+			// put unitDTOs in list that is given to gamestateDTO
+			units[i] = tmp;
+			i++;
+		}
+
+		// put units in the game state DTO
+		gameState->setUnits(units);
+
 	}
-
-	// read units of opponent
-	std::cout<<"UNITS OF OPPOSING PLAYER";
-	std::cout<<"\n";
-	for(std::vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
-		// create a DTO for each of them
-		BaseUnitDTO tmp = BaseUnitDTO();
-		tmp.setId((*it)->id);
-		tmp.setX((*it)->position.X);
-		tmp.setY((*it)->position.Y);
-		tmp.setZ((*it)->position.Z);
-		tmp.setPlayer(false);
-
-		// output properties of unit
-		std::cout << "Unit ID: " << tmp.getId() << std::endl;
-		std::cout << "Unit player: " << tmp.getPlayer() << std::endl;
-		std::cout << "X: " << tmp.getX() << std::endl;
-		std::cout << "Y: " << tmp.getY() << std::endl;
-		std::cout << "Z: " << tmp.getZ() << std::endl << std::endl;
-		// put unitDTOs in list that is given to gamestateDTO
-		units[i] = tmp;
-		i++;
-	}
-
-	// put units in the game state DTO
-	gameState->setUnits(units);
-
 	// serialize the gamestateDTO (unitDTOs should be serialized along with them...)
 	char* buffer = gameState->serializeGameState();
-	// std::cout<<buffer;
-	// send it it to opposing player
 	
 	try {
 		networkUtilities->setBuffer(buffer);
@@ -223,6 +224,10 @@ void game::passTurn() {
 		device->getGUIEnvironment()->addMessageBox(L"Oops an Error", L"Something went wrong, probably connection lost", true, EMBF_OK);
 	}
 
+	if (gameState->victory) {
+		device->getGUIEnvironment()->addMessageBox(L"YOU WIN!", L"Congratulations, you win the game!", true, EMBF_OK);	
+	}
+
 }
 
 void game::updateGameState(){
@@ -231,6 +236,10 @@ void game::updateGameState(){
 	std::cout << "Buffer: " << networkUtilities->getBuffer() << std::endl;
 	// gameState = new GameStateDTO();
 	gameState->deserialize(networkUtilities->getBuffer());
+	if (gameState->victory) {
+		device->getGUIEnvironment()->addMessageBox(L"YOU LOSE!", L"Your opponent won the game. You lose.", true, EMBF_OK);
+		return;
+	}
 
 	bool unitUpdated;
 	// update gamestate by updating all attributes in both players
@@ -261,7 +270,7 @@ void game::updateGameState(){
 			if (unitUpdated) break;
 			if (tmp.getId() == (*it)->id) {
 				if((*it)->player1 != opposingPlayer->getPlayer1())
-					throw new IllegalStateException("Unit does is not assigned correctly!");
+					throw new IllegalStateException("Unit is not assigned correctly!");
 
 				// update position attributes of unit
 				(*it)->position.X = tmp.getX();
@@ -299,7 +308,7 @@ void game::init_map(IrrlichtDevice *device_map)
 }
 
 bool game::checkVictory() {
-	// check victory conditions
+	// check victory conditions -- at the end of a turn
 	bool victory = true;
 
 	// #1 all units of opponent are dead
@@ -332,7 +341,7 @@ bool game::checkVictory() {
 }
 
 bool game::checkDefeat() {
-	// check defeat conditions (invert victory conditions)
+	// check defeat conditions (invert victory conditions) -- at the beginning of a turn
 	bool defeat = true;
 
 	// #1 all my units are dead

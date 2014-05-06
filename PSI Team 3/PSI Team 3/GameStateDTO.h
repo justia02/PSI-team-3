@@ -20,7 +20,6 @@ private:
 	BaseUnitDTO* units; // Array of units
 	bool giveUp; // part of the victory/defeat condition
 	bool player1Turn; // true - its player1's turn, false - it's player2's turn
-
 	// serialization stuff
 	friend class boost::serialization::access;
     template<class Archive>	
@@ -53,4 +52,5 @@ public:
 	void deserialize(std::string serializationString);
 	int unitLength;
 
+	bool victory;
 };
