@@ -121,7 +121,6 @@ void game::startGame(bool asPlayer1, char* ipAddress) {
 		localPlayer->initUnits();
 		opposingPlayer->initUnits();
 		// passTurn();
-
 	} else {
 		networkUtilities->joinGame(ipAddress, portNumber); 
 
@@ -297,6 +296,72 @@ void game::init_map(IrrlichtDevice *device_map)
 {
 	//make a new terrain
 	mapterrain map = mapterrain(device_map, smgr);
+}
+
+bool game::checkVictory() {
+	// check victory conditions
+	bool victory = true;
+
+	// #1 all units of opponent are dead
+	for(vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
+		// if there is at least one of the opposing units is still alive, this condition isn't met
+		if ((*it)->getHealth() > 0) {
+			victory = false;
+		}
+	}
+
+	// #2 opponent's base was captured --> local unit is on opponent's base for at least 2 turns
+	bool isOnBase = false;
+	for(vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
+		for (int i = 0; i < Player.BASE_SIZE; i++) {
+			if (opposingPlayer->basePositions[i] == (*it)->position) {
+				isOnBase = true;
+				(*it)->onBaseCounter++;
+				if ((*it)->onBaseCounter > 1) {
+					victory = true;
+				}
+			}
+		}
+		// reset the counter if unit is not on a base field
+		if (!isOnBase) {
+			(*it)->onBaseCounter = 0;
+		}
+	}
+
+	return victory;
+}
+
+bool game::checkDefeat() {
+	// check defeat conditions (invert victory conditions)
+	bool defeat = true;
+
+	// #1 all my units are dead
+	for(vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
+		// if there is at least one of my units is still alive, this condition isn't met
+		if ((*it)->getHealth() > 0) {
+			defeat = false;
+		}
+	}
+
+	// #2 my base was captured --> opposing unit is on my base for at least 2 turns
+	bool isOnBase = false;
+	for(vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
+		for (int i = 0; i < Player.BASE_SIZE; i++) {
+			if (localPlayer->basePositions[i] == (*it)->position) {
+				isOnBase = true;
+				(*it)->onBaseCounter++;
+				if ((*it)->onBaseCounter > 1) {
+					defeat = true;
+				}
+			}
+		}
+		// reset the counter if unit is not on a base field
+		if (!isOnBase) {
+			(*it)->onBaseCounter = 0;
+		}
+	}
+
+	return defeat;
 }
 
 

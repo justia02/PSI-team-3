@@ -44,6 +44,8 @@ public:
 	bool selected;
 	bool player1;
 
+	int onBaseCounter;
+
 	BaseUnit(vector3d<float> position, bool player, IrrlichtDevice* dev, int id);
 	BaseUnit();
 	~BaseUnit(void);

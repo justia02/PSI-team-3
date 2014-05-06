@@ -51,6 +51,8 @@ public:
 	void game::init_map(IrrlichtDevice *device_map);
 	void startGame();
 	void passTurn();
+	bool checkVictory(); 
+	bool checkDefeat();
 
 	// players
 	Player* localPlayer;
