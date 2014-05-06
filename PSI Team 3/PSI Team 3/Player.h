@@ -25,6 +25,7 @@ public:
 	void initUnits();
 	void setPlayer1(bool player1) { this->player1 = player1; }
 	void setDevice(IrrlichtDevice* dev);
+	const int BASE_SIZE = 2;
 };
 
 #endif

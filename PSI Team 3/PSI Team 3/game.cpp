@@ -310,10 +310,21 @@ bool game::checkVictory() {
 		}
 	}
 
-	// #2 base was captured --> opposing unit is on base for at least 2 turns
-	for(vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
-		for (vector<irr::core::vector3d<float>>::iterator it = opposingPlayer->basePositions->begin(); it != opposingPlayer->basePositions->end(); it++) {
-		
+	// #2 opponent's base was captured --> local unit is on opponent's base for at least 2 turns
+	bool isOnBase = false;
+	for(vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
+		for (int i = 0; i < Player.BASE_SIZE; i++) {
+			if (opposingPlayer->basePositions[i] == (*it)->position) {
+				isOnBase = true;
+				(*it)->onBaseCounter++;
+				if ((*it)->onBaseCounter > 1) {
+					victory = true;
+				}
+			}
+		}
+		// reset the counter if unit is not on a base field
+		if (!isOnBase) {
+			(*it)->onBaseCounter = 0;
 		}
 	}
 
@@ -321,7 +332,36 @@ bool game::checkVictory() {
 }
 
 bool game::checkDefeat() {
-	return false;
+	// check defeat conditions (invert victory conditions)
+	bool defeat = true;
+
+	// #1 all my units are dead
+	for(vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
+		// if there is at least one of my units is still alive, this condition isn't met
+		if ((*it)->getHealth() > 0) {
+			defeat = false;
+		}
+	}
+
+	// #2 my base was captured --> opposing unit is on my base for at least 2 turns
+	bool isOnBase = false;
+	for(vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
+		for (int i = 0; i < Player.BASE_SIZE; i++) {
+			if (localPlayer->basePositions[i] == (*it)->position) {
+				isOnBase = true;
+				(*it)->onBaseCounter++;
+				if ((*it)->onBaseCounter > 1) {
+					defeat = true;
+				}
+			}
+		}
+		// reset the counter if unit is not on a base field
+		if (!isOnBase) {
+			(*it)->onBaseCounter = 0;
+		}
+	}
+
+	return defeat;
 }
 
 
