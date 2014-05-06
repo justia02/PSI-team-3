@@ -121,7 +121,6 @@ void game::startGame(bool asPlayer1, char* ipAddress) {
 		localPlayer->initUnits();
 		opposingPlayer->initUnits();
 		// passTurn();
-
 	} else {
 		networkUtilities->joinGame(ipAddress, portNumber); 
 
