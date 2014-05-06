@@ -10,9 +10,13 @@ class Player
 private:
 	bool player1;
 	std::vector<BaseUnit*>* units;
+	
+
 public:
 	Player(IrrlichtDevice* dev);
 	~Player(void);
+
+	irr::core::vector3d<float> basePosition;
 
 	std::vector<BaseUnit*>* getUnits() { return units; }
 	bool getPlayer1() { return player1; }
