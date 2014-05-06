@@ -57,6 +57,15 @@ public:
 	// there needs to be some sort of target class to be made idk how yet
 	//void ShootTarget(target);
 
+	void shoot(std::vector<BaseUnit*>* units);
+	void setHealth(int health) {
+		this->health = health;
+	};
+	int getHealth() {
+		return health;
+	};
+	void remove();
+
 private:
 	ILightSceneNode* selectIndication;
 	IBillboardSceneNode* indicationBoard;
