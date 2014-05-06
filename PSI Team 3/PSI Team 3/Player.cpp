@@ -6,7 +6,7 @@ using namespace std;
 Player::Player(IrrlichtDevice* dev){
 	device = dev;
 	units = new std::vector<BaseUnit*>;
-	basePositions = new irr::core::vector3d<float>[BASE_SIZE];
+	basePositions = new irr::core::vector3d<float>[2];
 }
 
 Player::~Player()
