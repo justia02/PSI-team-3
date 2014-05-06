@@ -15,8 +15,7 @@ private:
 public:
 	Player(IrrlichtDevice* dev);
 	~Player(void);
-
-	irr::core::vector3d<float> basePosition;
+	irr::core::vector3d<float>* basePositions;
 
 	std::vector<BaseUnit*>* getUnits() { return units; }
 	bool getPlayer1() { return player1; }
