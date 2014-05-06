@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <string>
 
 using namespace irr;
 using namespace core;
@@ -38,7 +39,7 @@ public:
     IrrlichtDevice* device;
     IAnimatedMeshSceneNode* node;
     IVideoDriver* driver;
-
+	scene::IBillboardTextSceneNode* healthBar;
 
 	bool selected;
 	bool player1;

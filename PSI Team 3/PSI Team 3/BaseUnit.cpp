@@ -30,6 +30,7 @@ BaseUnit::BaseUnit(irr::core::vector3d<float> pos, bool player, IrrlichtDevice* 
 		texturePathHighlight = "../media/Unit_P2_Highlight.jpg";
 		texturePathSelected = "../media/Unit_P2_Selected.jpg";
 	}
+
 	createMesh();
 
 	//this->initUnitHighLight();
@@ -136,10 +137,21 @@ void BaseUnit::shoot(std::vector<BaseUnit*>* units) {
 	for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it) {
 
 		if ((*it)->position.X == position.X && (*it)->position.Z == minZ) {
-			// Attack!
+			// Attack! :D
+			// Update health
 			(*it)->setHealth((*it)->getHealth() - damage);
-			if (dist <= 1) // Counter attack
+			// Update health bar
+			std::string myHealthText = std::string(std::to_string(static_cast<long long>((*it)->getHealth())) + "%");
+			(*it)->healthBar->setText(std::wstring(myHealthText.begin(), myHealthText.end()).c_str());
+			(*it)->healthBar->setColor(irr::video::SColor(0, 0, 0, 0));
+			if (dist <= 1) { // Counter attack
+				// Update health
 				setHealth(getHealth() - (damage/2));
+				// Update health bar
+				std::string healthText = std::string(std::to_string(static_cast<long long>(getHealth())) + "%");
+				healthBar->setText(std::wstring(healthText.begin(), healthText.end()).c_str());
+				healthBar->setColor(irr::video::SColor(0, 0, 0, 0));
+			}
 			std::cout << "My HP after attack: " << health << std::endl;
 			std::cout << "Opponent's unit HP after attack: " << (*it)->getHealth() << std::endl;
 
@@ -242,7 +254,8 @@ bool BaseUnit::createMesh(){
         cout << "The mesh could not be created in MashViewer->createMesh";
         return false;
     }
-    node = sceneManager->addAnimatedMeshSceneNode( mesh );
+
+    node = sceneManager->addAnimatedMeshSceneNode(mesh);
     
     if (node)
     {
@@ -254,7 +267,11 @@ bool BaseUnit::createMesh(){
         node->setMaterialTexture( 0, driver->getTexture(texturePath) );
         node->setPosition(position);
         node->setScale(core::vector3df(scale,scale,scale));
+		// Add health bar
+		healthBar = sceneManager->addBillboardTextSceneNode(device->getGUIEnvironment()->getBuiltInFont(), L"100%", node, core::dimension2d<f32>(0.6f, 0.6f), core::vector3df(0.5f, 2.5f, 0));
+		healthBar->setColor(irr::video::SColor(0, 0, 0, 0));
     }
+
 	irr::core::vector3df extent = node->getTransformedBoundingBox().getExtent();
 	std::cout << "unit mesh bounding box X: " << extent.X << " Y: " << extent.Y << " Z: " << extent.Z << endl;
     return true;
