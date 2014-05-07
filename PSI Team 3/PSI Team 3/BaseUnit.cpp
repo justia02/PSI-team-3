@@ -11,7 +11,8 @@ BaseUnit::BaseUnit(irr::core::vector3d<float> pos, bool player, IrrlichtDevice* 
 	position = pos;
 	health = 100;
 	damage = 25;
-	maxDistance = 1;
+	maxDistance = 2;
+	shootingRange = 2;
 
 	selected = false;
 
@@ -36,23 +37,31 @@ BaseUnit::BaseUnit(irr::core::vector3d<float> pos, bool player, IrrlichtDevice* 
 	//this->initUnitHighLight();
 }
 
+void BaseUnit::updateHealthBar() {
+
+	std::string healthText = std::string(std::to_string(static_cast<long long>(getHealth())) + "%");
+	healthBar->setText(std::wstring(healthText.begin(), healthText.end()).c_str());
+	healthBar->setColor(irr::video::SColor(0, 0, 0, 0));
+
+}
+
 
 BaseUnit::~BaseUnit(void)
 {
 }
 
-BaseUnit::direction BaseUnit::revertMoveDirection(direction moveDirection) {
+BaseUnit::direction BaseUnit::revertDirection(direction direction) {
 
-	if (moveDirection == LEFT)
-		moveDirection = RIGHT;
-	else if (moveDirection == RIGHT)
-		moveDirection = LEFT;
-	else if (moveDirection == BACK)
-		moveDirection = FORWARD;
-	else if (moveDirection == FORWARD)
-		moveDirection = BACK;
+	if (direction == LEFT)
+		direction = RIGHT;
+	else if (direction == RIGHT)
+		direction = LEFT;
+	else if (direction == BACK)
+		direction = FORWARD;
+	else if (direction == FORWARD)
+		direction = BACK;
 
-	return moveDirection;
+	return direction;
 
 }
 
@@ -107,7 +116,29 @@ bool BaseUnit::canMove(direction moveDirection, float distance, std::vector<Base
 
 }
 
-void BaseUnit::shoot(std::vector<BaseUnit*>* units) {
+void BaseUnit::shoot(direction shootDirection, std::vector<BaseUnit*>* units) {
+
+	if (player1 == false)
+		shootDirection = revertDirection(shootDirection);
+
+	switch(shootDirection){
+			case LEFT:{
+				
+				break;
+				}
+			case RIGHT:{
+				
+				break;
+				}
+			case BACK:{
+				
+				break;
+				}
+			case FORWARD:{
+				
+				break;
+				}
+		}
 
 	float minZ = 10; // veeery biiiig at the beginning
 	float dist;
@@ -141,16 +172,12 @@ void BaseUnit::shoot(std::vector<BaseUnit*>* units) {
 			// Update health
 			(*it)->setHealth((*it)->getHealth() - damage);
 			// Update health bar
-			std::string myHealthText = std::string(std::to_string(static_cast<long long>((*it)->getHealth())) + "%");
-			(*it)->healthBar->setText(std::wstring(myHealthText.begin(), myHealthText.end()).c_str());
-			(*it)->healthBar->setColor(irr::video::SColor(0, 0, 0, 0));
+			(*it)->updateHealthBar();
 			if (dist <= 1) { // Counter attack
 				// Update health
 				setHealth(getHealth() - (damage/2));
 				// Update health bar
-				std::string healthText = std::string(std::to_string(static_cast<long long>(getHealth())) + "%");
-				healthBar->setText(std::wstring(healthText.begin(), healthText.end()).c_str());
-				healthBar->setColor(irr::video::SColor(0, 0, 0, 0));
+				updateHealthBar();
 			}
 			std::cout << "My HP after attack: " << health << std::endl;
 			std::cout << "Opponent's unit HP after attack: " << (*it)->getHealth() << std::endl;
@@ -187,7 +214,7 @@ void BaseUnit::Move(direction moveDirection, float distance, std::vector<BaseUni
 	
 	// Revert move direction if we're player2
 	if (player1 == false)
-		moveDirection = revertMoveDirection(moveDirection);
+		moveDirection = revertDirection(moveDirection);
 
 	if (canMove(moveDirection, distance, units)) {
 		switch(moveDirection){

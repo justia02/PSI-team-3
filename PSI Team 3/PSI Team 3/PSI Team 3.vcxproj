@@ -89,9 +89,11 @@
     <ClInclude Include="mapterrain.h" />
     <ClInclude Include="menu.h" />
     <ClInclude Include="MenuEventReceiver.h" />
+    <ClInclude Include="Mover.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerCamera.h" />
     <ClInclude Include="Serializable.h" />
+    <ClInclude Include="Shooter.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\psibranch3irrlicht\source\Irrlicht\Irrlicht10.0.vcxproj">
