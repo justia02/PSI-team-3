@@ -136,68 +136,67 @@ void game::startGame(bool asPlayer1, char* ipAddress) {
 void game::passTurn() {
 	// in the game state both player's units will be contained --> allocate memory for all units
 	gameState = new GameStateDTO(localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size());
-	gameState->victory = checkVictory();
+	gameState->setVictory(checkVictory());
 
-	if (!gameState->victory) {
-		BaseUnitDTO* units = new BaseUnitDTO[localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size()];
-		int i = 0;
+	BaseUnitDTO* units = new BaseUnitDTO[localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size()];
+	int i = 0;
 
-		// read units of this player
-		std::cout<<"UNITS OF LOCAL PLAYER" << std::endl;
+	// read units of this player
+	std::cout<<"UNITS OF LOCAL PLAYER" << std::endl;
 
-		for(std::vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
-			// create a DTO for each of them
-			BaseUnitDTO tmp = BaseUnitDTO();
-			tmp.setId((*it)->id);
-			tmp.setX((*it)->position.X);
-			tmp.setY((*it)->position.Y);
-			tmp.setZ((*it)->position.Z);
-			tmp.setPlayer(true);
+	for(std::vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
+		// create a DTO for each of them
+		BaseUnitDTO tmp = BaseUnitDTO();
+		tmp.setId((*it)->id);
+		tmp.setX((*it)->position.X);
+		tmp.setY((*it)->position.Y);
+		tmp.setZ((*it)->position.Z);
+		tmp.setPlayer(true);
+		tmp.setHealth((*it)->health);
 
-			// output properties of unit
+		// output properties of unit
 
-			std::cout << "Unit ID: " << tmp.getId() << std::endl;
-			std::cout << "Unit player: " << tmp.getPlayer() << std::endl;
-			std::cout << "X: " << tmp.getX() << std::endl;
-			std::cout << "Y: " << tmp.getY() << std::endl;
-			std::cout << "Z: " << tmp.getZ() << std::endl << std::endl;
-			// put unitDTOs in list that is given to gamestateDTO
-			units[i] = tmp;
-			i++;
-		}
-
-		// read units of opponent
-		std::cout<<"UNITS OF OPPOSING PLAYER";
-		std::cout<<"\n";
-		for(std::vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
-			// create a DTO for each of them
-			BaseUnitDTO tmp = BaseUnitDTO();
-			tmp.setId((*it)->id);
-			tmp.setX((*it)->position.X);
-			tmp.setY((*it)->position.Y);
-			tmp.setZ((*it)->position.Z);
-			tmp.setPlayer(false);
-
-			// output properties of unit
-			std::cout << "Unit ID: " << tmp.getId() << std::endl;
-			std::cout << "Unit player: " << tmp.getPlayer() << std::endl;
-			std::cout << "X: " << tmp.getX() << std::endl;
-			std::cout << "Y: " << tmp.getY() << std::endl;
-			std::cout << "Z: " << tmp.getZ() << std::endl << std::endl;
-			// put unitDTOs in list that is given to gamestateDTO
-			units[i] = tmp;
-			i++;
-		}
-
-		// put units in the game state DTO
-		gameState->setUnits(units);
-
+		std::cout << "Unit ID: " << tmp.getId() << std::endl;
+		std::cout << "Unit player: " << tmp.getPlayer() << std::endl;
+		std::cout << "X: " << tmp.getX() << std::endl;
+		std::cout << "Y: " << tmp.getY() << std::endl;
+		std::cout << "Z: " << tmp.getZ() << std::endl << std::endl;
+		// put unitDTOs in list that is given to gamestateDTO
+		units[i] = tmp;
+		i++;
 	}
+
+	// read units of opponent
+	std::cout<<"UNITS OF OPPOSING PLAYER";
+	std::cout<<"\n";
+	for(std::vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
+		// create a DTO for each of them
+		BaseUnitDTO tmp = BaseUnitDTO();
+		tmp.setId((*it)->id);
+		tmp.setX((*it)->position.X);
+		tmp.setY((*it)->position.Y);
+		tmp.setZ((*it)->position.Z);
+		tmp.setPlayer(false);
+		tmp.setHealth((*it)->health);
+
+		// output properties of unit
+		std::cout << "Unit ID: " << tmp.getId() << std::endl;
+		std::cout << "Unit player: " << tmp.getPlayer() << std::endl;
+		std::cout << "X: " << tmp.getX() << std::endl;
+		std::cout << "Y: " << tmp.getY() << std::endl;
+		std::cout << "Z: " << tmp.getZ() << std::endl << std::endl;
+		// put unitDTOs in list that is given to gamestateDTO
+		units[i] = tmp;
+		i++;
+	}
+
+	// put units in the game state DTO
+	gameState->setUnits(units);
 	// serialize the gamestateDTO (unitDTOs should be serialized along with them...)
 	char* buffer = gameState->serializeGameState();
 	
-	if (gameState->victory) {
-		std::cout << "YOU WIN: " << gameState->victory << std::endl;
+	if (gameState->getVictory()) {
+		std::cout << "YOU WIN: " << gameState->getVictory() << std::endl;
 		device->getGUIEnvironment()->addMessageBox(L"YOU WIN!", L"Congratulations, you win the game!", true, EMBF_OK);	
 	}
 
@@ -209,7 +208,6 @@ void game::passTurn() {
 	}
 	catch(NonRealtimeNetworkingException e) {
 		std::cout << "Error: " << e.what() << std::endl;
-		
 		device->getGUIEnvironment()->addMessageBox(L"Oops an Error", L"Something went wrong, probably connection lost", true, EMBF_OK);
 	}
 
@@ -221,11 +219,6 @@ void game::updateGameState(){
 	std::cout << "Buffer: " << networkUtilities->getBuffer() << std::endl;
 	// gameState = new GameStateDTO();
 	gameState->deserialize(networkUtilities->getBuffer());
-	if (gameState->victory) {
-		std::cout << "YOU LOSE: " << gameState->victory << std::endl;	
-		device->getGUIEnvironment()->addMessageBox(L"YOU LOSE!", L"Your opponent won the game. You lose.", true, EMBF_OK);
-		return;
-	}
 
 	bool unitUpdated;
 	// update gamestate by updating all attributes in both players
@@ -244,8 +237,10 @@ void game::updateGameState(){
 				(*it)->position.X = tmp.getX();
 				(*it)->position.Y = tmp.getY();
 				(*it)->position.Z = tmp.getZ();
+				(*it)->health = tmp.getHealth();
 
 				// later on -> update other attributes of the unit
+				(*it)->node->setPosition((*it)->position);
 
 				unitUpdated = true;
 			}
@@ -262,6 +257,7 @@ void game::updateGameState(){
 				(*it)->position.X = tmp.getX();
 				(*it)->position.Y = tmp.getY();
 				(*it)->position.Z = tmp.getZ();
+				(*it)->health = tmp.getHealth();
 
 				// updates the unit's position visually on the map (hopefully)
 				(*it)->node->setPosition((*it)->position);
@@ -271,16 +267,12 @@ void game::updateGameState(){
 		}
 
 		if (! unitUpdated) 
-			throw new IllegalStateException("Unit is not assigned to a player.");
-
-		
-		// output properties of unit
-		std::cout << "Unit ID: " << tmp.getId() << std::endl;
-		std::cout << "Unit player: " << tmp.getPlayer() << std::endl;
-		std::cout << "X: " << tmp.getX() << std::endl;
-		std::cout << "Y: " << tmp.getY() << std::endl;
-		std::cout << "Z: " << tmp.getZ() << std::endl << std::endl;
-		
+			throw new IllegalStateException("Unit is not assigned to a player.");		
+	}
+	// show message if player lost
+	if (gameState->getVictory()) {
+		std::cout << "YOU LOSE: " << gameState->getVictory() << std::endl;	
+		device->getGUIEnvironment()->addMessageBox(L"YOU LOSE!", L"Your opponent won the game. You lose.", true, EMBF_OK);
 	}
 
 	// update which player is active (just invert)
