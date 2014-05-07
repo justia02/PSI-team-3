@@ -237,8 +237,10 @@ void game::updateGameState(){
 				(*it)->position.X = tmp.getX();
 				(*it)->position.Y = tmp.getY();
 				(*it)->position.Z = tmp.getZ();
+				(*it)->health = tmp.getHealth();
 
 				// later on -> update other attributes of the unit
+				(*it)->node->setPosition((*it)->position);
 
 				unitUpdated = true;
 			}
@@ -255,6 +257,7 @@ void game::updateGameState(){
 				(*it)->position.X = tmp.getX();
 				(*it)->position.Y = tmp.getY();
 				(*it)->position.Z = tmp.getZ();
+				(*it)->health = tmp.getHealth();
 
 				// updates the unit's position visually on the map (hopefully)
 				(*it)->node->setPosition((*it)->position);
