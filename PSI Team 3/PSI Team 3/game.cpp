@@ -152,6 +152,7 @@ void game::passTurn() {
 		tmp.setY((*it)->position.Y);
 		tmp.setZ((*it)->position.Z);
 		tmp.setPlayer(true);
+		tmp.setHealth((*it)->health);
 
 		// output properties of unit
 
@@ -176,6 +177,7 @@ void game::passTurn() {
 		tmp.setY((*it)->position.Y);
 		tmp.setZ((*it)->position.Z);
 		tmp.setPlayer(false);
+		tmp.setHealth((*it)->health);
 
 		// output properties of unit
 		std::cout << "Unit ID: " << tmp.getId() << std::endl;
