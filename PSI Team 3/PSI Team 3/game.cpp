@@ -198,7 +198,7 @@ void game::passTurn() {
 	
 	if (gameState->victory) {
 		std::cout << "YOU WIN: " << gameState->victory << std::endl;
-		device->getGUIEnvironment()->addMessageBox(L"YOU WIN!", L"Congratulations, you win the game!", true, EMBF_OK);	
+		//device->getGUIEnvironment()->addMessageBox(L"YOU WIN!", L"Congratulations, you win the game!", true, EMBF_OK);	
 	}
 
 	try {
@@ -223,7 +223,7 @@ void game::updateGameState(){
 	gameState->deserialize(networkUtilities->getBuffer());
 	if (gameState->victory) {
 		std::cout << "YOU LOSE: " << gameState->victory << std::endl;	
-		device->getGUIEnvironment()->addMessageBox(L"YOU LOSE!", L"Your opponent won the game. You lose.", true, EMBF_OK);
+		//device->getGUIEnvironment()->addMessageBox(L"YOU LOSE!", L"Your opponent won the game. You lose.", true, EMBF_OK);
 		return;
 	}
 
