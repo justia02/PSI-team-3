@@ -241,6 +241,7 @@ void game::updateGameState(){
 
 				// later on -> update other attributes of the unit
 				(*it)->node->setPosition((*it)->position);
+				(*it)->updateHealthBar();
 
 				unitUpdated = true;
 			}
@@ -261,6 +262,7 @@ void game::updateGameState(){
 
 				// updates the unit's position visually on the map (hopefully)
 				(*it)->node->setPosition((*it)->position);
+				(*it)->updateHealthBar();
 
 				unitUpdated = true;
 			}
