@@ -20,8 +20,9 @@ private:
 	BaseUnitDTO* units; // Array of units
 	bool giveUp; // part of the victory/defeat condition
 	bool player1Turn; // true - its player1's turn, false - it's player2's turn
+	bool victory; // true if player who passes the turn wins	
 
-	// serialization stuff
+	// serialization
 	friend class boost::serialization::access;
     template<class Archive>	
     void serialize(Archive & ar, const unsigned int version)
@@ -30,12 +31,14 @@ private:
 			ar & units[i];
 		}
         ar & giveUp;
+		ar & victory;
     }
 
 public:
 	GameStateDTO() { 
 		giveUp = false;
 		player1Turn = true;
+		victory = false;
 	};
 	GameStateDTO(int length); // amount of units, needed to allocate memory
 	~GameStateDTO();
@@ -47,10 +50,12 @@ public:
 	bool getGiveUp() { return giveUp; }
 	void setPlayer1Turn(bool player1Turn) { this->player1Turn = player1Turn; }
 	bool getPlayer1Turn() { return player1Turn; }
+	bool getVictory() {  return victory; };
+	void setVictory(bool v) { victory = v; };
 
-	// serialization
 	char* serializeGameState();
 	void deserialize(std::string serializationString);
 	int unitLength;
+
 
 };

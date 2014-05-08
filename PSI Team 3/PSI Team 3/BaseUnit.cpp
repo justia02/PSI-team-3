@@ -11,7 +11,8 @@ BaseUnit::BaseUnit(irr::core::vector3d<float> pos, bool player, IrrlichtDevice* 
 	position = pos;
 	health = 100;
 	damage = 25;
-	maxDistance = 1;
+	maxDistance = 2;
+	shootingRange = 2;
 
 	selected = false;
 
@@ -30,9 +31,18 @@ BaseUnit::BaseUnit(irr::core::vector3d<float> pos, bool player, IrrlichtDevice* 
 		texturePathHighlight = "../media/Unit_P2_Highlight.jpg";
 		texturePathSelected = "../media/Unit_P2_Selected.jpg";
 	}
+
 	createMesh();
 
 	//this->initUnitHighLight();
+}
+
+void BaseUnit::updateHealthBar() {
+
+	std::string healthText = std::string(std::to_string(static_cast<long long>(getHealth())) + "%");
+	healthBar->setText(std::wstring(healthText.begin(), healthText.end()).c_str());
+	healthBar->setColor(irr::video::SColor(0, 0, 0, 0));
+
 }
 
 
@@ -40,18 +50,18 @@ BaseUnit::~BaseUnit(void)
 {
 }
 
-BaseUnit::direction BaseUnit::revertMoveDirection(direction moveDirection) {
+BaseUnit::direction BaseUnit::revertDirection(direction direction) {
 
-	if (moveDirection == LEFT)
-		moveDirection = RIGHT;
-	else if (moveDirection == RIGHT)
-		moveDirection = LEFT;
-	else if (moveDirection == BACK)
-		moveDirection = FORWARD;
-	else if (moveDirection == FORWARD)
-		moveDirection = BACK;
+	if (direction == LEFT)
+		direction = RIGHT;
+	else if (direction == RIGHT)
+		direction = LEFT;
+	else if (direction == BACK)
+		direction = FORWARD;
+	else if (direction == FORWARD)
+		direction = BACK;
 
-	return moveDirection;
+	return direction;
 
 }
 
@@ -106,7 +116,29 @@ bool BaseUnit::canMove(direction moveDirection, float distance, std::vector<Base
 
 }
 
-void BaseUnit::shoot(std::vector<BaseUnit*>* units) {
+void BaseUnit::shoot(direction shootDirection, std::vector<BaseUnit*>* units) {
+
+	if (player1 == false)
+		shootDirection = revertDirection(shootDirection);
+
+	switch(shootDirection){
+			case LEFT:{
+				
+				break;
+				}
+			case RIGHT:{
+				
+				break;
+				}
+			case BACK:{
+				
+				break;
+				}
+			case FORWARD:{
+				
+				break;
+				}
+		}
 
 	float minZ = 10; // veeery biiiig at the beginning
 	float dist;
@@ -136,10 +168,17 @@ void BaseUnit::shoot(std::vector<BaseUnit*>* units) {
 	for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it) {
 
 		if ((*it)->position.X == position.X && (*it)->position.Z == minZ) {
-			// Attack!
+			// Attack! :D
+			// Update health
 			(*it)->setHealth((*it)->getHealth() - damage);
-			if (dist <= 1) // Counter attack
+			// Update health bar
+			(*it)->updateHealthBar();
+			if (dist <= 1) { // Counter attack
+				// Update health
 				setHealth(getHealth() - (damage/2));
+				// Update health bar
+				updateHealthBar();
+			}
 			std::cout << "My HP after attack: " << health << std::endl;
 			std::cout << "Opponent's unit HP after attack: " << (*it)->getHealth() << std::endl;
 
@@ -175,7 +214,7 @@ void BaseUnit::Move(direction moveDirection, float distance, std::vector<BaseUni
 	
 	// Revert move direction if we're player2
 	if (player1 == false)
-		moveDirection = revertMoveDirection(moveDirection);
+		moveDirection = revertDirection(moveDirection);
 
 	if (canMove(moveDirection, distance, units)) {
 		switch(moveDirection){
@@ -210,10 +249,6 @@ void BaseUnit::SelectUnit(){
 		node->setMaterialTexture(0, driver->getTexture(texturePathSelected));
 	else if(!selected)
 		node->setMaterialTexture(0, driver->getTexture(texturePath));
-//	if(selected)
-//		selected = !selected;
-//	else
-//		selected = true;
 
 }
 
@@ -242,7 +277,8 @@ bool BaseUnit::createMesh(){
         cout << "The mesh could not be created in MashViewer->createMesh";
         return false;
     }
-    node = sceneManager->addAnimatedMeshSceneNode( mesh );
+
+    node = sceneManager->addAnimatedMeshSceneNode(mesh);
     
     if (node)
     {
@@ -254,7 +290,11 @@ bool BaseUnit::createMesh(){
         node->setMaterialTexture( 0, driver->getTexture(texturePath) );
         node->setPosition(position);
         node->setScale(core::vector3df(scale,scale,scale));
+		// Add health bar
+		healthBar = sceneManager->addBillboardTextSceneNode(device->getGUIEnvironment()->getBuiltInFont(), L"100%", node, core::dimension2d<f32>(0.6f, 0.6f), core::vector3df(0.5f, 2.5f, 0));
+		healthBar->setColor(irr::video::SColor(0, 0, 0, 0));
     }
+
 	irr::core::vector3df extent = node->getTransformedBoundingBox().getExtent();
 	std::cout << "unit mesh bounding box X: " << extent.X << " Y: " << extent.Y << " Z: " << extent.Z << endl;
     return true;

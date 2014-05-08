@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "PlayerCamera.h"
 #include "GameStateDTO.h"
+#include <stdlib.h>
 
 using namespace irr;
 
@@ -51,6 +52,8 @@ public:
 	void game::init_map(IrrlichtDevice *device_map);
 	void startGame();
 	void passTurn();
+	bool checkVictory(); 
+	bool checkDefeat();
 
 	// players
 	Player* localPlayer;

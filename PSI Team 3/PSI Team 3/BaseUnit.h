@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <string>
 
 using namespace irr;
 using namespace core;
@@ -27,6 +28,8 @@ public:
 	int maxDistance;
 	int health;
 	int damage;
+	int shootingRange;
+
 	irr::core::vector3d<float> position;
 	
 	//model variables
@@ -38,10 +41,12 @@ public:
     IrrlichtDevice* device;
     IAnimatedMeshSceneNode* node;
     IVideoDriver* driver;
-
+	scene::IBillboardTextSceneNode* healthBar;
 
 	bool selected;
 	bool player1;
+
+	int onBaseCounter;
 
 	BaseUnit(vector3d<float> position, bool player, IrrlichtDevice* dev, int id);
 	BaseUnit();
@@ -57,7 +62,7 @@ public:
 	// there needs to be some sort of target class to be made idk how yet
 	//void ShootTarget(target);
 
-	void shoot(std::vector<BaseUnit*>* units);
+	void shoot(direction moveDirection, std::vector<BaseUnit*>* units);
 	void setHealth(int health) {
 		this->health = health;
 	};
@@ -65,12 +70,13 @@ public:
 		return health;
 	};
 	void remove();
+	void updateHealthBar();
 
 private:
 	ILightSceneNode* selectIndication;
 	IBillboardSceneNode* indicationBoard;
 	bool canMove(direction moveDirection, float distance, std::vector<BaseUnit*>* units);
-	direction revertMoveDirection(direction moveDirection);
+	direction revertDirection(direction direction);
 
 };
 

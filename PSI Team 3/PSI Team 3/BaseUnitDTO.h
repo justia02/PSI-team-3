@@ -19,6 +19,7 @@ private:
 	float y;
 	float z;
 	bool player1;
+	int health;
 
 	// serialization stuff
 	friend class boost::serialization::access;
@@ -30,6 +31,7 @@ private:
 		ar & y;
 		ar & z; 
 		ar & player1;
+		ar & health;
     };
 
 
@@ -42,18 +44,28 @@ public:
 		this->z = z;
 		this->player1 = player1;
 	};
+
+	BaseUnitDTO(float x, float y, float z, bool player1, int health) {
+		this->x = x;
+		this->y = y;
+		this->z = z;
+		this->player1 = player1;
+		this->health = health;
+	};
 	
 	int getId() {return this->id; };
 	float getX() { return this->x; };
 	float getY() { return this->y; };
 	float getZ() { return this->z; };
 	bool  getPlayer() { return this->player1; };
+	int getHealth() { return this->health; };
 
 	void setId(int id) {this->id = id; };
 	void setX(float x) { this->x = x; };
 	void setY(float y) {this->y = y; };
 	void setZ(float z) {this->z = z;};
 	void setPlayer(bool player1) { this->player1 = player1; };
+	void setHealth(int health) { this->health = health; };
 
 	// serialization
 	char* serialize();

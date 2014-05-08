@@ -35,22 +35,6 @@ game::game(void)
 	menu* m = new menu(device, driver, smgr, guienv);
 	// m->run(this);
 		smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
-
-	// TEST --> should only serialize game state to file (seralizationFileGameState)
-
-	// passTurn();
-
-	// init_map(device);
-
-	//networkUtilities = new NonRealtimeNetworkingUtilities();
-	//gameStateDTO = new GameStateDTO(4);
-	//gameStateDTO->setUnits(initializeUnits());
-
-	//camera
-
-	//make a new terrain
-	//mapterrain map = mapterrain(device, smgr);
-
 }
 
 game::~game(void)
@@ -121,7 +105,6 @@ void game::startGame(bool asPlayer1, char* ipAddress) {
 		localPlayer->initUnits();
 		opposingPlayer->initUnits();
 		// passTurn();
-
 	} else {
 		networkUtilities->joinGame(ipAddress, portNumber); 
 
@@ -151,9 +134,10 @@ void game::startGame(bool asPlayer1, char* ipAddress) {
 }
 
 void game::passTurn() {
-
 	// in the game state both player's units will be contained --> allocate memory for all units
 	gameState = new GameStateDTO(localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size());
+	gameState->setVictory(checkVictory());
+
 	BaseUnitDTO* units = new BaseUnitDTO[localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size()];
 	int i = 0;
 
@@ -168,6 +152,7 @@ void game::passTurn() {
 		tmp.setY((*it)->position.Y);
 		tmp.setZ((*it)->position.Z);
 		tmp.setPlayer(true);
+		tmp.setHealth((*it)->health);
 
 		// output properties of unit
 
@@ -192,6 +177,7 @@ void game::passTurn() {
 		tmp.setY((*it)->position.Y);
 		tmp.setZ((*it)->position.Z);
 		tmp.setPlayer(false);
+		tmp.setHealth((*it)->health);
 
 		// output properties of unit
 		std::cout << "Unit ID: " << tmp.getId() << std::endl;
@@ -206,12 +192,14 @@ void game::passTurn() {
 
 	// put units in the game state DTO
 	gameState->setUnits(units);
-
 	// serialize the gamestateDTO (unitDTOs should be serialized along with them...)
 	char* buffer = gameState->serializeGameState();
-	// std::cout<<buffer;
-	// send it it to opposing player
 	
+	if (gameState->getVictory()) {
+		std::cout << "YOU WIN: " << gameState->getVictory() << std::endl;
+		device->getGUIEnvironment()->addMessageBox(L"YOU WIN!", L"Congratulations, you win the game!", true, EMBF_OK);	
+	}
+
 	try {
 		networkUtilities->setBuffer(buffer);
 		networkUtilities->sendData();
@@ -220,7 +208,6 @@ void game::passTurn() {
 	}
 	catch(NonRealtimeNetworkingException e) {
 		std::cout << "Error: " << e.what() << std::endl;
-		
 		device->getGUIEnvironment()->addMessageBox(L"Oops an Error", L"Something went wrong, probably connection lost", true, EMBF_OK);
 	}
 
@@ -250,8 +237,11 @@ void game::updateGameState(){
 				(*it)->position.X = tmp.getX();
 				(*it)->position.Y = tmp.getY();
 				(*it)->position.Z = tmp.getZ();
+				(*it)->health = tmp.getHealth();
 
 				// later on -> update other attributes of the unit
+				(*it)->node->setPosition((*it)->position);
+				(*it)->updateHealthBar();
 
 				unitUpdated = true;
 			}
@@ -262,31 +252,29 @@ void game::updateGameState(){
 			if (unitUpdated) break;
 			if (tmp.getId() == (*it)->id) {
 				if((*it)->player1 != opposingPlayer->getPlayer1())
-					throw new IllegalStateException("Unit does is not assigned correctly!");
+					throw new IllegalStateException("Unit is not assigned correctly!");
 
 				// update position attributes of unit
 				(*it)->position.X = tmp.getX();
 				(*it)->position.Y = tmp.getY();
 				(*it)->position.Z = tmp.getZ();
+				(*it)->health = tmp.getHealth();
 
 				// updates the unit's position visually on the map (hopefully)
 				(*it)->node->setPosition((*it)->position);
+				(*it)->updateHealthBar();
 
 				unitUpdated = true;
 			}
 		}
 
 		if (! unitUpdated) 
-			throw new IllegalStateException("Unit is not assigned to a player.");
-
-		
-		// output properties of unit
-		std::cout << "Unit ID: " << tmp.getId() << std::endl;
-		std::cout << "Unit player: " << tmp.getPlayer() << std::endl;
-		std::cout << "X: " << tmp.getX() << std::endl;
-		std::cout << "Y: " << tmp.getY() << std::endl;
-		std::cout << "Z: " << tmp.getZ() << std::endl << std::endl;
-		
+			throw new IllegalStateException("Unit is not assigned to a player.");		
+	}
+	// show message if player lost
+	if (gameState->getVictory()) {
+		std::cout << "YOU LOSE: " << gameState->getVictory() << std::endl;	
+		device->getGUIEnvironment()->addMessageBox(L"YOU LOSE!", L"Your opponent won the game. You lose.", true, EMBF_OK);
 	}
 
 	// update which player is active (just invert)
@@ -298,5 +286,73 @@ void game::init_map(IrrlichtDevice *device_map)
 	//make a new terrain
 	mapterrain map = mapterrain(device_map, smgr);
 }
+
+bool game::checkVictory() {
+	// check victory conditions -- at the end of a turn
+	bool victory = true;
+
+	// #1 all units of opponent are dead
+	for(vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
+		// if there is at least one of the opposing units is still alive, this condition isn't met
+		if ((*it)->getHealth() > 0) {
+			victory = false;
+		}
+	}
+
+	// #2 opponent's base was captured --> local unit is on opponent's base for at least 2 turns
+	bool isOnBase = false;
+	for(vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
+		for (int i = 0; i < 2; i++) {
+			if (opposingPlayer->basePositions[i] == (*it)->position) {
+				isOnBase = true;
+				(*it)->onBaseCounter++;
+				if ((*it)->onBaseCounter > 1) {
+					victory = true;
+				}
+			}
+		}
+		// reset the counter if unit is not on a base field
+		if (!isOnBase) {
+			(*it)->onBaseCounter = 0;
+		}
+	}
+
+	return victory;
+}
+
+/*
+bool game::checkDefeat() {
+	// check defeat conditions (invert victory conditions) -- at the beginning of a turn
+	bool defeat = true;
+
+	// #1 all my units are dead
+	for(vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
+		// if there is at least one of my units is still alive, this condition isn't met
+		if ((*it)->getHealth() > 0) {
+			defeat = false;
+		}
+	}
+
+	// #2 my base was captured --> opposing unit is on my base for at least 2 turns
+	bool isOnBase = false;
+	for(vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
+		for (int i = 0; i < 2; i++) {
+			if (localPlayer->basePositions[i] == (*it)->position) {
+				isOnBase = true;
+				(*it)->onBaseCounter++;
+				if ((*it)->onBaseCounter > 1) {
+					defeat = true;
+				}
+			}
+		}
+		// reset the counter if unit is not on a base field
+		if (!isOnBase) {
+			(*it)->onBaseCounter = 0;
+		}
+	}
+
+	return defeat;
+}
+*/
 
 
