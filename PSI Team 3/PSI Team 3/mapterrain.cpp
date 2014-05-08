@@ -1,5 +1,7 @@
 #include "mapterrain.h"
 #include <iostream>
+
+
 using namespace std;
 mapterrain::mapterrain(void)
 {
@@ -7,6 +9,8 @@ mapterrain::mapterrain(void)
 
 mapterrain::mapterrain(IrrlichtDevice *device, ISceneManager *smgr)
 {
+	loadBases(smgr);
+
 		//code to load a map  ../media/map.irrmesh
 	IAnimatedMesh* mesh = smgr->getMesh("../media/map.irrmesh");
 	if (!mesh)
@@ -15,11 +19,31 @@ mapterrain::mapterrain(IrrlichtDevice *device, ISceneManager *smgr)
 		
 	}
 	IAnimatedMeshSceneNode* node = smgr->addAnimatedMeshSceneNode( mesh );
-	//node->setScale(core::vector3df(20,20,20));
-	
+
 	irr::core::vector3df extent = node->getTransformedBoundingBox().getExtent();
 	std::cout << "map mesh bounding box X: " << extent.X << " Y: " << extent.Y << " Z: " << extent.Z << endl;
 }
 mapterrain::~mapterrain(void)
 {
+}
+
+void mapterrain::loadBases(ISceneManager *smgr)
+{
+	//load the base models here
+	IAnimatedMesh* base1 = smgr->getMesh("../media/base1.irrmesh");
+	IAnimatedMesh* base2 = smgr->getMesh("../media/base2.irrmesh");
+
+	//put the bases in the scene
+	IAnimatedMeshSceneNode* node1 = smgr->addAnimatedMeshSceneNode( base1 );
+	IAnimatedMeshSceneNode* node2 = smgr->addAnimatedMeshSceneNode( base2 );
+
+	
+	irr::core::vector3df pos1 = vector3d<float>(0, 0, -3.55);
+	irr::core::vector3df pos2 = vector3d<float>(0, 0, 3.25);
+
+	node1->setPosition(pos1);
+	node2->setPosition(pos2);
+	
+
+
 }

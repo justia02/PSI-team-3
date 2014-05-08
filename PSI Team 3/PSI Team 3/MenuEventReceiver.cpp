@@ -92,15 +92,14 @@ void MenuEventReceiver::HOST_GAME()
 
 void MenuEventReceiver::JOIN_GAME_SECOND()
 {
+
 	const wchar_t* t;
 	t = box->getText();
 	size_t   i;
 	ch = (char *)malloc(30);
 	wcstombs_s(&i, ch, (size_t)30, t, (size_t)30 );
-
 	IGUIEnvironment* guienv = Context.device->getGUIEnvironment();
 	guienv->clear();
-
 	Context.game_->startGame(false, ch);
 	Context.game_->init_map(Context.device);
 	menuDone = true;
