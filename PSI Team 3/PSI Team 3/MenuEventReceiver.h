@@ -44,6 +44,7 @@ class MenuEventReceiver : public irr::menuReceiver
 			camera = smgr->getActiveCamera();
 			selectedUnit = hoveredUnit = NULL;
 			allUnits = NULL;
+			shootingMode = false;
 		};
 		bool OnEvent(const SEvent& event);
 

@@ -36,7 +36,6 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 				Context.game_->localPlayer->setActionsLeft();
 			}
 			else if (Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasMoved()) { // Moving
-				// move
 				this->selectedUnit->Move(moveDirection, this->selectedUnit->maxDistance, allUnits, Context.game_->localPlayer->getPlayer1());
 				Context.game_->localPlayer->setActionsLeft();
 			}
@@ -147,7 +146,7 @@ void MenuEventReceiver::START_GAME()
 	Context.game_->opposingPlayer->setPlayer1(false);
 	Context.game_->localPlayer->initUnits();
 	Context.game_->opposingPlayer->initUnits();
-
+	Context.game_->localPlayer->setActionsLeft();
 	menuDone = true;
 }
 
