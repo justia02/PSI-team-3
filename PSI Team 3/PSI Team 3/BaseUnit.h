@@ -69,7 +69,7 @@ public:
 	// there needs to be some sort of target class to be made idk how yet
 	//void ShootTarget(target);
 
-	void shoot(direction moveDirection, std::vector<BaseUnit*>* units);
+	void shoot(direction shootDirection, std::vector<BaseUnit*>* units);
 	void setHealth(int health) {
 		this->health = health;
 	};
@@ -84,10 +84,7 @@ private:
 	IBillboardSceneNode* indicationBoard;
 	bool canMove(direction moveDirection, float distance, std::vector<BaseUnit*>* units);
 	direction revertDirection(direction direction);
-	void shootLeft(std::vector<BaseUnit*>* units);
-	void shootRight(std::vector<BaseUnit*>* units);
-	void shootBack(std::vector<BaseUnit*>* units);
-	void shootForward(std::vector<BaseUnit*>* units);
+	void attack(BaseUnit* opponent, float distance);
 
 };
 
