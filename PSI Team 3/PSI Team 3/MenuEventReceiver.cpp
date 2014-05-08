@@ -18,8 +18,6 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 	// if there is a key input and there is a unit selected
 	if(event.EventType == EET_KEY_INPUT_EVENT && this->isUnitSelected)
 	{
-		// set the direction from the keycode
-		setDirection(event.KeyInput.Key);
 
 		// Create a list of all units if such doesn't exist yet
 		//if (allUnits == NULL || allUnits->size() == 0) {
@@ -28,8 +26,19 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 			allUnits->insert(allUnits->end(), Context.game_->opposingPlayer->getUnits()->begin(), Context.game_->opposingPlayer->getUnits()->end());
 		//}
 
-		// move
-		this->selectedUnit->Move(moveDirection, 1, allUnits, Context.game_->localPlayer->getPlayer1());
+		// Space was pressed - we're shooting :D
+		if (event.KeyInput.Key == irr::KEY_SPACE) {
+
+			this->selectedUnit->shoot(Context.game_->opposingPlayer->getUnits());
+
+		}
+		else { // Moving
+			// set the direction from the keycode
+			setDirection(event.KeyInput.Key);
+
+			// move
+			this->selectedUnit->Move(moveDirection, 1, allUnits, Context.game_->localPlayer->getPlayer1());
+		}
 
 		// deselect the unit
 		this->selectedUnit->SelectUnit();

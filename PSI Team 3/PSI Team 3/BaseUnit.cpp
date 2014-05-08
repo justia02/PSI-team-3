@@ -106,6 +106,68 @@ bool BaseUnit::canMove(direction moveDirection, float distance, std::vector<Base
 
 }
 
+void BaseUnit::shoot(std::vector<BaseUnit*>* units) {
+
+	float minZ = 10; // veeery biiiig at the beginning
+	float dist;
+	int opponnentHealth;
+
+	for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it) {
+		if ((*it)->position.X == position.X) {
+			if (fabs((*it)->position.Z - position.Z) < minZ) {
+				minZ = (*it)->position.Z;
+				opponnentHealth = (*it)->getHealth();
+				dist = fabs((*it)->position.Z - position.Z);
+			}
+		}
+	}
+
+	if (minZ == 10) { // No units in the way
+		std::cout << "Nothing to shoot!" << std::endl;
+		return;
+	}
+
+	std::cout << "My Z-coord is: " << position.Z << std::endl;
+	std::cout << "I'm going to attack the unit with Z-coord: " << minZ << std::endl;
+
+	std::cout << "My HP before attack: " << health << std::endl;
+	std::cout << "Opponent's unit HP before attack: " << opponnentHealth << std::endl;
+
+	for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it) {
+
+		if ((*it)->position.X == position.X && (*it)->position.Z == minZ) {
+			// Attack!
+			(*it)->setHealth((*it)->getHealth() - damage);
+			if (dist <= 1) // Counter attack
+				setHealth(getHealth() - (damage/2));
+			std::cout << "My HP after attack: " << health << std::endl;
+			std::cout << "Opponent's unit HP after attack: " << (*it)->getHealth() << std::endl;
+
+			// Remove the units from the map once they are dead
+			if ((*it)->getHealth() <= 0) {
+				(*it)->setHealth(0);
+				(*it)->remove();
+			}
+			if (getHealth() <= 0) {
+				setHealth(0);
+				remove();
+			}
+			break;
+		}	
+
+	}
+
+}
+
+void BaseUnit::remove() {
+
+	position.X = 100;
+	position.Z = 100;
+
+	node->setPosition(position);
+
+}
+
 void BaseUnit::Move(direction moveDirection, float distance, std::vector<BaseUnit*>* units, bool player1) {
 
 	if(distance > maxDistance)
