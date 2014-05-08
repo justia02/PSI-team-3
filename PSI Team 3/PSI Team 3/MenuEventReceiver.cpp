@@ -31,12 +31,14 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 			setDirection(event.KeyInput.Key);
 
 			// Space was pressed - we're shooting :D
-			if (shootingMode == true) {
+			if (shootingMode == true && Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasShot()) {
 				this->selectedUnit->shoot(moveDirection, Context.game_->opposingPlayer->getUnits());
+				Context.game_->localPlayer->setActionsLeft();
 			}
-			else { // Moving
+			else if (Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasMoved()) { // Moving
 				// move
 				this->selectedUnit->Move(moveDirection, this->selectedUnit->maxDistance, allUnits, Context.game_->localPlayer->getPlayer1());
+				Context.game_->localPlayer->setActionsLeft();
 			}
 
 			// deselect the unit

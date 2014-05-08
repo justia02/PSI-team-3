@@ -1,5 +1,6 @@
 #pragma once
 #include <irrlicht.h>
+#include "Player.h"
 
 using namespace irr;
 using namespace scene;
@@ -13,6 +14,8 @@ public:
 
 	~mapterrain(void);
 
-	
+	void loadBases(ISceneManager* smgr);
+
+
 };
 

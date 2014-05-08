@@ -7,6 +7,7 @@ Player::Player(IrrlichtDevice* dev){
 	device = dev;
 	units = new std::vector<BaseUnit*>;
 	basePositions = new irr::core::vector3d<float>[2];
+	actionsLeft = -1;
 }
 
 Player::~Player()
@@ -23,10 +24,10 @@ void Player::initUnits() {
 	while(infile >> x >> y >> z >> pl >> type){
 		if(type == 0){
 			if(pl == 1 && player1){
-				units->push_back(new BaseUnit(vector3d<float>(x, y, z), player1, device, id));
+				units->push_back(new BaseUnit(vector3d<float>(x, y, z), getPlayer1(), device, id));
 			}
 			else if(pl == 2 && !player1){
-				units->push_back(new BaseUnit(vector3d<float>(x, y, z), player1, device, id));
+				units->push_back(new BaseUnit(vector3d<float>(x, y, z), getPlayer1(), device, id));
 			}
 			id++;
 		}
@@ -45,4 +46,21 @@ void Player::initUnits() {
 
 void Player::setDevice(IrrlichtDevice* dev){
 	device = dev;
+}
+
+bool Player::actionAllowed(){
+	if(actionsLeft > 0)
+		return true;
+	else
+		return false;
+}
+
+void Player::setActionsLeft(){
+	if(actionsLeft > 0){
+		actionsLeft -= 1;
+	}
+	else if(actionsLeft <= 0){
+		actionsLeft = 4;
+	}
+	cout << "Actionsleft: " << actionsLeft << endl;
 }

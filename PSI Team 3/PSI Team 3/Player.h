@@ -9,6 +9,7 @@ class Player
 {
 private:
 	bool player1;
+	int actionsLeft;
 	std::vector<BaseUnit*>* units;
 	
 
@@ -18,7 +19,10 @@ public:
 	irr::core::vector3d<float>* basePositions;
 
 	std::vector<BaseUnit*>* getUnits() { return units; }
+	int getActionsLeft() { return actionsLeft; }
+	void setActionsLeft();// { actionsLeft = 4; }
 	bool getPlayer1() { return player1; }
+	bool actionAllowed();
 	IrrlichtDevice* device;
 
 	// void setUnits(std::vector<BaseUnit>* units) { this->units = units; }
