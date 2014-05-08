@@ -30,12 +30,14 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 		setDirection(event.KeyInput.Key);
 
 		// Space was pressed - we're shooting :D
-		if (event.KeyInput.Key == irr::KEY_SPACE) {
+		if (event.KeyInput.Key == irr::KEY_SPACE && Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasShot()) {
 			this->selectedUnit->shoot(moveDirection, Context.game_->opposingPlayer->getUnits());
+			Context.game_->localPlayer->setActionsLeft();
 		}
-		else { // Moving
+		else if(Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasMoved()){ // Moving
 			// move
 			this->selectedUnit->Move(moveDirection, 1, allUnits, Context.game_->localPlayer->getPlayer1());
+			Context.game_->localPlayer->setActionsLeft();
 		}
 
 		// deselect the unit
@@ -126,7 +128,7 @@ void MenuEventReceiver::START_GAME()
 	Context.game_->opposingPlayer->setPlayer1(false);
 	Context.game_->localPlayer->initUnits();
 	Context.game_->opposingPlayer->initUnits();
-
+	Context.game_->localPlayer->setActionsLeft();
 	menuDone = true;
 }
 

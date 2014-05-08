@@ -14,6 +14,9 @@ using namespace std;
 
 class BaseUnit
 {
+private:	
+	bool hasShot;
+	bool hasMoved;
 
 public:
 	enum direction{
@@ -48,7 +51,7 @@ public:
 
 	int onBaseCounter;
 
-	BaseUnit(vector3d<float> position, bool player, IrrlichtDevice* dev, int id);
+	BaseUnit(vector3d<float> position, bool player1, IrrlichtDevice* dev, int id);
 	BaseUnit();
 	~BaseUnit(void);
 
@@ -56,7 +59,11 @@ public:
 	void SelectUnit();
 	
 	bool createMesh();
-    void setShininess(float value);
+	bool getHasMoved() { return hasMoved;}
+	bool getHasShot() { return hasShot;}
+	void setHasMoved(bool moved) {hasMoved = moved;}
+	void setHasShot(bool shot) {hasShot = shot;}
+	void setShininess(float value);
 
 	void highLightUnit(bool highLight);
 	// there needs to be some sort of target class to be made idk how yet

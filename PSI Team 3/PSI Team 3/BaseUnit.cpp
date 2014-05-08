@@ -5,7 +5,7 @@
 
 #define HALF_SIZE 4
 
-BaseUnit::BaseUnit(irr::core::vector3d<float> pos, bool player, IrrlichtDevice* dev, int id)
+BaseUnit::BaseUnit(irr::core::vector3d<float> pos, bool player1, IrrlichtDevice* dev, int id)
 {
 	this->id = id;
 	position = pos;
@@ -15,11 +15,13 @@ BaseUnit::BaseUnit(irr::core::vector3d<float> pos, bool player, IrrlichtDevice* 
 	shootingRange = 2;
 
 	selected = false;
+	hasMoved = false;
+	hasShot = false;
 
     device = dev;
     sceneManager = device->getSceneManager();
     driver = device->getVideoDriver();
-	player1 = player;
+	this->player1 = player1;
 
     meshPath = "../media/testunit.irrmesh";
 	if(player1){
@@ -118,7 +120,7 @@ bool BaseUnit::canMove(direction moveDirection, float distance, std::vector<Base
 
 void BaseUnit::shoot(direction shootDirection, std::vector<BaseUnit*>* units) {
 
-	if (player1 == false)
+	if (!player1)
 		shootDirection = revertDirection(shootDirection);
 
 	switch(shootDirection){
@@ -193,9 +195,8 @@ void BaseUnit::shoot(direction shootDirection, std::vector<BaseUnit*>* units) {
 			}
 			break;
 		}	
-
 	}
-
+	setHasShot(true);
 }
 
 void BaseUnit::remove() {
@@ -213,7 +214,7 @@ void BaseUnit::Move(direction moveDirection, float distance, std::vector<BaseUni
 		distance = maxDistance;
 	
 	// Revert move direction if we're player2
-	if (player1 == false)
+	if (!player1)
 		moveDirection = revertDirection(moveDirection);
 
 	if (canMove(moveDirection, distance, units)) {
@@ -236,9 +237,9 @@ void BaseUnit::Move(direction moveDirection, float distance, std::vector<BaseUni
 				}
 		}
 	}
-
+	
+	setHasMoved(true);
 	node->setPosition(position);
-
 	cout << "the unit: " << "ID: " << id << "Position: " << position.X << ", " << position.Y << ", " << position.Z;
 
 }

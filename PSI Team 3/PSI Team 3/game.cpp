@@ -104,6 +104,7 @@ void game::startGame(bool asPlayer1, char* ipAddress) {
 
 		localPlayer->initUnits();
 		opposingPlayer->initUnits();
+		localPlayer->setActionsLeft();
 		// passTurn();
 	} else {
 		networkUtilities->joinGame(ipAddress, portNumber); 
@@ -242,6 +243,8 @@ void game::updateGameState(){
 				// later on -> update other attributes of the unit
 				(*it)->node->setPosition((*it)->position);
 				(*it)->updateHealthBar();
+				(*it)->setHasMoved(false);
+				(*it)->setHasShot(false);
 
 				unitUpdated = true;
 			}
@@ -263,6 +266,8 @@ void game::updateGameState(){
 				// updates the unit's position visually on the map (hopefully)
 				(*it)->node->setPosition((*it)->position);
 				(*it)->updateHealthBar();
+				(*it)->setHasMoved(false);
+				(*it)->setHasShot(false);
 
 				unitUpdated = true;
 			}
@@ -279,6 +284,12 @@ void game::updateGameState(){
 
 	// update which player is active (just invert)
 	gameState->setPlayer1Turn(!gameState->getPlayer1Turn());
+
+	if(localPlayer->getPlayer1() && gameState->getPlayer1Turn()){
+		localPlayer->setActionsLeft();
+	} else if(!localPlayer->getPlayer1() && !gameState->getPlayer1Turn()){
+		localPlayer->setActionsLeft();
+	}
 }
 
 void game::init_map(IrrlichtDevice *device_map)
