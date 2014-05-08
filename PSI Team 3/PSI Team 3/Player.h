@@ -21,6 +21,7 @@ public:
 	std::vector<BaseUnit*>* getUnits() { return units; }
 	int getActionsLeft() { return actionsLeft; }
 	void setActionsLeft();// { actionsLeft = 4; }
+	void resetActionsLeft();
 	bool getPlayer1() { return player1; }
 	bool actionAllowed();
 	IrrlichtDevice* device;
