@@ -116,29 +116,19 @@ bool BaseUnit::canMove(direction moveDirection, float distance, std::vector<Base
 
 }
 
-void BaseUnit::shoot(direction shootDirection, std::vector<BaseUnit*>* units) {
+void BaseUnit::shootLeft(std::vector<BaseUnit*>* units) {
 
-	if (player1 == false)
-		shootDirection = revertDirection(shootDirection);
+}
 
-	switch(shootDirection){
-			case LEFT:{
-				
-				break;
-				}
-			case RIGHT:{
-				
-				break;
-				}
-			case BACK:{
-				
-				break;
-				}
-			case FORWARD:{
-				
-				break;
-				}
-		}
+void BaseUnit::shootRight(std::vector<BaseUnit*>* units) {
+
+}
+
+void BaseUnit::shootBack(std::vector<BaseUnit*>* units) {
+
+}
+
+void BaseUnit::shootForward(std::vector<BaseUnit*>* units) {
 
 	float minZ = 10; // veeery biiiig at the beginning
 	float dist;
@@ -194,6 +184,32 @@ void BaseUnit::shoot(direction shootDirection, std::vector<BaseUnit*>* units) {
 			break;
 		}	
 
+	}
+
+}
+
+void BaseUnit::shoot(direction shootDirection, std::vector<BaseUnit*>* units) {
+
+	if (player1 == false)
+		shootDirection = revertDirection(shootDirection);
+
+	switch(shootDirection){
+		case LEFT:{
+			shootLeft(units);
+			break;
+		}
+		case RIGHT:{
+			shootRight(units);
+			break;
+		}
+		case BACK:{
+			shootBack(units);
+			break;
+		}
+		case FORWARD:{
+			shootForward(units);
+			break;
+		}
 	}
 
 }

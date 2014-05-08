@@ -77,6 +77,10 @@ private:
 	IBillboardSceneNode* indicationBoard;
 	bool canMove(direction moveDirection, float distance, std::vector<BaseUnit*>* units);
 	direction revertDirection(direction direction);
+	void shootLeft(std::vector<BaseUnit*>* units);
+	void shootRight(std::vector<BaseUnit*>* units);
+	void shootBack(std::vector<BaseUnit*>* units);
+	void shootForward(std::vector<BaseUnit*>* units);
 
 };
 

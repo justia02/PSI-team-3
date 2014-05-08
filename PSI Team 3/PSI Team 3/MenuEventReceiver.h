@@ -42,6 +42,8 @@ class MenuEventReceiver : public irr::menuReceiver
 			unitList = context.game_->localPlayer->getUnits();
 			smgr = context.device->getSceneManager();
 			camera = smgr->getActiveCamera();
+			selectedUnit = hoveredUnit = NULL;
+			allUnits = NULL;
 		};
 		bool OnEvent(const SEvent& event);
 
@@ -68,8 +70,10 @@ class MenuEventReceiver : public irr::menuReceiver
 		bool isUnitSelected;
 		bool isHoveringUnit;
 		BaseUnit *selectedUnit;
+		BaseUnit* hoveredUnit;
 		vector<BaseUnit*>* unitList;
 		vector<BaseUnit*>* allUnits;
 		ICameraSceneNode* camera;
 		ISceneManager* smgr;
+		bool shootingMode;
 };
