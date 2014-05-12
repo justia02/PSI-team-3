@@ -31,19 +31,13 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 			setDirection(event.KeyInput.Key);
 
 			// Space was pressed - we're shooting :D
-			//if (shootingMode == true && Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasShot()) {
-			//	this->selectedUnit->shoot(moveDirection, Context.game_->opposingPlayer->getUnits());
-			//	Context.game_->localPlayer->setActionsLeft();
-			//}
-			//else if (Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasMoved()) { // Moving
-			//	this->selectedUnit->Move(moveDirection, this->selectedUnit->maxDistance, allUnits, Context.game_->localPlayer->getPlayer1());
-			//	Context.game_->localPlayer->setActionsLeft();
-			//}
-			if (shootingMode == true) {
+			if (shootingMode == true && Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasShot()) {
 				this->selectedUnit->shoot(moveDirection, Context.game_->opposingPlayer->getUnits());
+				Context.game_->localPlayer->setActionsLeft();
 			}
-			else { // Moving
+			else if (Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasMoved()) { // Moving
 				this->selectedUnit->Move(moveDirection, this->selectedUnit->maxDistance, allUnits, Context.game_->localPlayer->getPlayer1());
+				Context.game_->localPlayer->setActionsLeft();
 			}
 
 			// deselect the unit
@@ -57,7 +51,7 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 			if(event.KeyInput.Key == irr::KEY_KEY_P) {
 				Context.game_->passTurn();
 			}
-			if (event.KeyInput.Key == irr::KEY_SPACE) {
+			if (event.KeyInput.PressedDown == true && event.KeyInput.Key == irr::KEY_SPACE) {
 				shootingMode = !shootingMode;
 				std::cout << ((shootingMode == true) ? "Shooting mode!" : "Moving mode!") << std::endl;
 				return true;
