@@ -35,6 +35,10 @@ game::game(void)
 	menu* m = new menu(device, driver, smgr, guienv);
 	// m->run(this);
 	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
+
+	// unitModeLabel = guienv->getBuiltInFont();
+	unitModeLabel = guienv->getFont("./fonts/candara14.bmp");
+	unitModeLabelText = new std::wstring(L"");
 }
 
 game::~game(void)
@@ -58,6 +62,7 @@ int game::run(void)
 		MenuEventReceiver receiver(context);
 		receiver.init(guienv, 640, 480);
 		receiver.setIsUnitSelected(false);
+		receiver.setUnitModeLabelText(unitModeLabelText);
 		receiver.menuDone = false;
 
 		// specify our custom event receiver in the device	
@@ -72,6 +77,7 @@ int game::run(void)
 			driver->beginScene(true, true, SColor(0,200,200,200));
 			smgr->drawAll();
 			guienv->drawAll();
+			unitModeLabel->draw((*unitModeLabelText).c_str(), core::rect<s32>(20,20,0,0), video::SColor(255,100,100,100));
 			driver->endScene();
 		}
 		device->drop();

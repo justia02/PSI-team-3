@@ -34,6 +34,8 @@ private:
 	IGUIEnvironment* guienv;
 	PlayerCamera* playerCamera;
 	GameStateDTO* gameState;
+	IGUIFont* unitModeLabel;
+	std::wstring* unitModeLabelText;
 
 	// private methods
 	BaseUnit* initializeUnits();

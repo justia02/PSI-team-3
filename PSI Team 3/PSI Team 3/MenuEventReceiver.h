@@ -51,6 +51,9 @@ class MenuEventReceiver : public irr::menuReceiver
 		void setIsUnitSelected(bool value) {
 			isUnitSelected = value;
 		};
+		void setUnitModeLabelText(std::wstring* text) {
+			unitModeLabelText = text;
+		}
 	    SAppContext & Context;
 
 		//implementation of the functions from the engine.
@@ -77,4 +80,6 @@ class MenuEventReceiver : public irr::menuReceiver
 		ICameraSceneNode* camera;
 		ISceneManager* smgr;
 		bool shootingMode;
+		std::wstring* unitModeLabelText;
+
 };
