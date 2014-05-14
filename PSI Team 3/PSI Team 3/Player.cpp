@@ -64,3 +64,6 @@ void Player::setActionsLeft(){
 	}
 	cout << "Actionsleft: " << actionsLeft << endl;
 }
+void Player::resetActionsLeft(){
+	actionsLeft = 4;
+}

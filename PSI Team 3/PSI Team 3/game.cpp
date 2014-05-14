@@ -289,9 +289,9 @@ void game::updateGameState(){
 	gameState->setPlayer1Turn(!gameState->getPlayer1Turn());
 
 	if(localPlayer->getPlayer1() && gameState->getPlayer1Turn()){
-		localPlayer->setActionsLeft();
+		localPlayer->resetActionsLeft();
 	} else if(!localPlayer->getPlayer1() && !gameState->getPlayer1Turn()){
-		localPlayer->setActionsLeft();
+		localPlayer->resetActionsLeft();
 	}
 }
 

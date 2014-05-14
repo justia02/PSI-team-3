@@ -51,7 +51,7 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 			if(event.KeyInput.Key == irr::KEY_KEY_P) {
 				Context.game_->passTurn();
 			}
-			if (event.KeyInput.Key == irr::KEY_SPACE && !isUnitSelected) {
+			if (event.KeyInput.PressedDown == true && event.KeyInput.Key == irr::KEY_SPACE) {
 				shootingMode = !shootingMode;
 				std::cout << ((shootingMode == true) ? "Shooting mode!" : "Moving mode!") << std::endl;
 				return true;
