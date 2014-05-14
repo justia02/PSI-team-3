@@ -347,7 +347,7 @@ bool game::checkVictory() {
 
 void game::resetGame() {
 	// initialize networkUtilities - holds socket with all information about connection
-	networkUtilities = new NonRealtimeNetworkingUtilities();
+	// networkUtilities = new NonRealtimeNetworkingUtilities();
 
 	// initialize gameStateDTO
 	gameState = new GameStateDTO(5);
