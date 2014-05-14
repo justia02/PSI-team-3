@@ -34,7 +34,7 @@ game::game(void)
 	// run menu
 	menu* m = new menu(device, driver, smgr, guienv);
 	// m->run(this);
-		smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
+	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
 }
 
 game::~game(void)
@@ -198,7 +198,8 @@ void game::passTurn() {
 	
 	if (gameState->getVictory()) {
 		std::cout << "YOU WIN: " << gameState->getVictory() << std::endl;
-		device->getGUIEnvironment()->addMessageBox(L"YOU WIN!", L"Congratulations, you win the game!", true, EMBF_OK);	
+		device->getGUIEnvironment()->addMessageBox(L"YOU WIN!", L"Congratulations, you win the game!", true, EMBF_OK);
+		resetGame();
 	}
 
 	try {
@@ -210,6 +211,7 @@ void game::passTurn() {
 	catch(NonRealtimeNetworkingException e) {
 		std::cout << "Error: " << e.what() << std::endl;
 		device->getGUIEnvironment()->addMessageBox(L"Oops an Error", L"Something went wrong, probably connection lost", true, EMBF_OK);
+		resetGame();
 	}
 
 }
@@ -280,6 +282,7 @@ void game::updateGameState(){
 	if (gameState->getVictory()) {
 		std::cout << "YOU LOSE: " << gameState->getVictory() << std::endl;	
 		device->getGUIEnvironment()->addMessageBox(L"YOU LOSE!", L"Your opponent won the game. You lose.", true, EMBF_OK);
+		resetGame();
 	}
 
 	// update which player is active (just invert)
@@ -331,39 +334,21 @@ bool game::checkVictory() {
 	return victory;
 }
 
-/*
-bool game::checkDefeat() {
-	// check defeat conditions (invert victory conditions) -- at the beginning of a turn
-	bool defeat = true;
+void game::resetGame() {
+	// initialize networkUtilities - holds socket with all information about connection
+	networkUtilities = new NonRealtimeNetworkingUtilities();
 
-	// #1 all my units are dead
-	for(vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
-		// if there is at least one of my units is still alive, this condition isn't met
-		if ((*it)->getHealth() > 0) {
-			defeat = false;
-		}
-	}
+	// initialize gameStateDTO
+	gameState = new GameStateDTO(5);
 
-	// #2 my base was captured --> opposing unit is on my base for at least 2 turns
-	bool isOnBase = false;
-	for(vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
-		for (int i = 0; i < 2; i++) {
-			if (localPlayer->basePositions[i] == (*it)->position) {
-				isOnBase = true;
-				(*it)->onBaseCounter++;
-				if ((*it)->onBaseCounter > 1) {
-					defeat = true;
-				}
-			}
-		}
-		// reset the counter if unit is not on a base field
-		if (!isOnBase) {
-			(*it)->onBaseCounter = 0;
-		}
-	}
+	// initialize players
+	localPlayer = new Player(device);
+	opposingPlayer = new Player(device);
 
-	return defeat;
+	//device->setEventReceiver(new TempReceiver(device, localPlayer));
+
+	// run menu
+	menu* m = new menu(device, driver, smgr, guienv);
+	// m->run(this);
+	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
 }
-*/
-
-

@@ -53,7 +53,7 @@ public:
 	void startGame();
 	void passTurn();
 	bool checkVictory(); 
-	bool checkDefeat();
+	void resetGame();
 
 	// players
 	Player* localPlayer;
