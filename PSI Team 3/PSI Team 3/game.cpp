@@ -202,16 +202,16 @@ void game::passTurn(bool giveUp) {
 	gameState->setUnits(units);
 	// serialize the gamestateDTO (unitDTOs should be serialized along with them...)
 	char* buffer = gameState->serializeGameState();
-	
+	bool endOfGame = false;
 	if (gameState->getVictory()) {
 		std::cout << "YOU WIN: " << gameState->getVictory() << std::endl;
 		device->getGUIEnvironment()->addMessageBox(L"YOU WIN!", L"Congratulations, you win the game!", true, EMBF_OK);
-		resetGame();
+		endOfGame = true;
 	}
 	if (gameState->getGiveUp()) {
 		std::cout << "YOU SURRENDER: " << gameState->getVictory() << std::endl;	
 		device->getGUIEnvironment()->addMessageBox(L"YOU SURRENDER!", L"Your opponent won the game. You surrendered.", true, EMBF_OK);
-		resetGame();
+		endOfGame = true;
 	}
 
 	try {
@@ -223,8 +223,11 @@ void game::passTurn(bool giveUp) {
 	catch(NonRealtimeNetworkingException e) {
 		std::cout << "Error: " << e.what() << std::endl;
 		device->getGUIEnvironment()->addMessageBox(L"Oops an Error", L"Something went wrong, probably connection lost", true, EMBF_OK);
-		resetGame();
+		endOfGame = true;
 	}
+
+	if (endOfGame) 
+		resetGame();
 
 }
 
@@ -290,16 +293,18 @@ void game::updateGameState(){
 		if (! unitUpdated) 
 			throw new IllegalStateException("Unit is not assigned to a player.");		
 	}
+
+	bool endOfGame = false;
 	// show message if player lost
 	if (gameState->getVictory()) {
 		std::cout << "YOU LOSE: " << gameState->getVictory() << std::endl;	
 		device->getGUIEnvironment()->addMessageBox(L"YOU LOSE!", L"Your opponent won the game. You lose.", true, EMBF_OK);
-		resetGame();
+		endOfGame = true;
 	}
 	if(gameState->getGiveUp()) {
 		std::cout << "YOU WIN: " << gameState->getVictory() << std::endl;	
 		device->getGUIEnvironment()->addMessageBox(L"YOU WIN!", L"Your opponent surrendered.", true, EMBF_OK);
-		resetGame();
+		endOfGame = true;
 	}
 
 	// update which player is active (just invert)
@@ -310,6 +315,9 @@ void game::updateGameState(){
 	} else if(!localPlayer->getPlayer1() && !gameState->getPlayer1Turn()){
 		localPlayer->resetActionsLeft();
 	}
+
+	if (endOfGame) 
+		resetGame();
 }
 
 void game::init_map(IrrlichtDevice *device_map)
@@ -352,8 +360,9 @@ bool game::checkVictory() {
 }
 
 void game::resetGame() {
+	guienv->clear();
 	// initialize networkUtilities - holds socket with all information about connection
-	// networkUtilities = new NonRealtimeNetworkingUtilities();
+	networkUtilities = new NonRealtimeNetworkingUtilities();
 
 	// initialize gameStateDTO
 	gameState = new GameStateDTO(5);
