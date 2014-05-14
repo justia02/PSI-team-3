@@ -88,6 +88,7 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 					isUnitSelected = true;
 					selectedUnit->SelectUnit();
 					shootingMode = false;
+					*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
 					cout << "Select the direction you want to " << ((shootingMode == true) ? "shoot" : "move") << " (w,s,a,d)" << endl;
 				}
 			}

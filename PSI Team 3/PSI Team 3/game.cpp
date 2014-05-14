@@ -36,7 +36,8 @@ game::game(void)
 	// m->run(this);
 	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
 
-	unitModeLabel = guienv->getBuiltInFont();
+	// unitModeLabel = guienv->getBuiltInFont();
+	unitModeLabel = guienv->getFont("./fonts/candara14.bmp");
 	unitModeLabelText = new std::wstring(L"");
 }
 
