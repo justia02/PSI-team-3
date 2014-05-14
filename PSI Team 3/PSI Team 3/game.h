@@ -51,7 +51,7 @@ public:
 	void startGame(bool asPlayer1, char* ipAddress = NULL); 
 	void game::init_map(IrrlichtDevice *device_map);
 	void startGame();
-	void passTurn();
+	void passTurn(bool giveUp);
 	bool checkVictory(); 
 	void resetGame();
 

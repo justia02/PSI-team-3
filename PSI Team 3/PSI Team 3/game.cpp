@@ -134,10 +134,11 @@ void game::startGame(bool asPlayer1, char* ipAddress) {
 
 }
 
-void game::passTurn() {
+void game::passTurn(bool giveUp) {
 	// in the game state both player's units will be contained --> allocate memory for all units
 	gameState = new GameStateDTO(localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size());
 	gameState->setVictory(checkVictory());
+	gameState->setGiveUp(giveUp);
 
 	BaseUnitDTO* units = new BaseUnitDTO[localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size()];
 	int i = 0;
@@ -351,4 +352,9 @@ void game::resetGame() {
 	menu* m = new menu(device, driver, smgr, guienv);
 	// m->run(this);
 	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
+}
+
+void game::giveUp() {
+
+
 }
