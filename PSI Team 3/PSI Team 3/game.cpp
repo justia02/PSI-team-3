@@ -363,8 +363,3 @@ void game::resetGame() {
 	// m->run(this);
 	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
 }
-
-void game::giveUp() {
-
-
-}
