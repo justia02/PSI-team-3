@@ -3,6 +3,8 @@
 #include <fstream>
 
 char* BaseUnitDTO::serialize() {
+	// return serializer_.serialize(this);
+	
 	std::ofstream ofs(BASE_UNIT_FILE_NAME);
 	// save data to archive
     {
@@ -30,6 +32,7 @@ char* BaseUnitDTO::serialize() {
 	ifs.close();
 
 	return buffer;
+	
 }
 
 void BaseUnitDTO::deserialize(std::string serializationString) {

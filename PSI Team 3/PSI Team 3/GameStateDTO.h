@@ -7,9 +7,11 @@
  * and whose turn it is
  * --> just a container!
  */
+#pragma once 
 #include <BaseUnitDTO.h>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include "Serializer.h"
 
 #define GAME_STATE_FILE_NAME "serializationFileGameState"
 
@@ -23,6 +25,7 @@ private:
 	bool victory; // true if player who passes the turn wins	
 
 	// serialization
+	// Serializer serializer_;	
 	friend class boost::serialization::access;
     template<class Archive>	
     void serialize(Archive & ar, const unsigned int version)
