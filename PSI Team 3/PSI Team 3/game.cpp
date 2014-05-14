@@ -202,6 +202,11 @@ void game::passTurn(bool giveUp) {
 		device->getGUIEnvironment()->addMessageBox(L"YOU WIN!", L"Congratulations, you win the game!", true, EMBF_OK);
 		resetGame();
 	}
+	if (gameState->getGiveUp()) {
+		std::cout << "YOU SURRENDER: " << gameState->getVictory() << std::endl;	
+		device->getGUIEnvironment()->addMessageBox(L"YOU SURRENDER!", L"Your opponent won the game. You surrendered.", true, EMBF_OK);
+		resetGame();
+	}
 
 	try {
 		networkUtilities->setBuffer(buffer);
@@ -283,6 +288,11 @@ void game::updateGameState(){
 	if (gameState->getVictory()) {
 		std::cout << "YOU LOSE: " << gameState->getVictory() << std::endl;	
 		device->getGUIEnvironment()->addMessageBox(L"YOU LOSE!", L"Your opponent won the game. You lose.", true, EMBF_OK);
+		resetGame();
+	}
+	if(gameState->getGiveUp()) {
+		std::cout << "YOU WIN: " << gameState->getVictory() << std::endl;	
+		device->getGUIEnvironment()->addMessageBox(L"YOU WIN!", L"Your opponent surrendered.", true, EMBF_OK);
 		resetGame();
 	}
 
