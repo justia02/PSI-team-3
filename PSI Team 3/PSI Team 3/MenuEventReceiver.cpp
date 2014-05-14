@@ -54,6 +54,7 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 			if (event.KeyInput.PressedDown == true && event.KeyInput.Key == irr::KEY_SPACE) {
 				shootingMode = !shootingMode;
 				std::cout << ((shootingMode == true) ? "Shooting mode!" : "Moving mode!") << std::endl;
+				*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
 				return true;
 			}
 		}
@@ -83,6 +84,7 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 					selectedUnit = hoveredUnit;
 					isUnitSelected = true;
 					selectedUnit->SelectUnit();
+					shootingMode = false;
 					cout << "Select the direction you want to " << ((shootingMode == true) ? "shoot" : "move") << " (w,s,a,d)" << endl;
 				}
 			}
@@ -114,6 +116,7 @@ void MenuEventReceiver::HOST_GAME()
 	Context.game_->init_map(Context.device);
 	Context.game_->startGame(true, ""); // call without ip, since we want to host 
 	menuDone = true;
+	*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
 }
 
 void MenuEventReceiver::JOIN_GAME_SECOND()
@@ -130,6 +133,7 @@ void MenuEventReceiver::JOIN_GAME_SECOND()
 	Context.game_->startGame(false, ch);
 	Context.game_->init_map(Context.device);
 	menuDone = true;
+	*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
 }
 
 void MenuEventReceiver::JOIN_WSDL()
@@ -137,6 +141,7 @@ void MenuEventReceiver::JOIN_WSDL()
 	Context.game_->init_map(Context.device);
 	Context.game_->startGame();
 	menuDone = true;
+	*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
 }
 
 void MenuEventReceiver::START_GAME()
@@ -148,6 +153,7 @@ void MenuEventReceiver::START_GAME()
 	Context.game_->opposingPlayer->initUnits();
 	Context.game_->localPlayer->setActionsLeft();
 	menuDone = true;
+	*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
 }
 
 /**
