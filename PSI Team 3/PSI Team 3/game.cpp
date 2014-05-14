@@ -37,7 +37,7 @@ game::game(void)
 	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
 
 	// unitModeLabel = guienv->getBuiltInFont();
-	unitModeLabel = guienv->getFont("./fonts/candara14.bmp");
+	unitModeLabel = guienv->getFont("../media/fonts/candara14.bmp");
 	unitModeLabelText = new std::wstring(L"");
 }
 
@@ -226,8 +226,8 @@ void game::passTurn(bool giveUp) {
 		endOfGame = true;
 	}
 
-	if (endOfGame) 
-		resetGame();
+	/*if (endOfGame) 
+		resetGame();*/
 
 }
 
@@ -316,8 +316,8 @@ void game::updateGameState(){
 		localPlayer->resetActionsLeft();
 	}
 
-	if (endOfGame) 
-		resetGame();
+	/*if (endOfGame) 
+		resetGame();*/
 }
 
 void game::init_map(IrrlichtDevice *device_map)
