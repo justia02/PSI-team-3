@@ -16,8 +16,6 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 	if (!menuDone)
 		return false;
 
-	std::cout<<"EVENT TYPE:"; 
-	std::cout<<event.EventType;
 	// for gui events - from message boxes mainly
 	if(event.EventType == EET_GUI_EVENT) {
 		switch (event.GUIEvent.EventType) {
