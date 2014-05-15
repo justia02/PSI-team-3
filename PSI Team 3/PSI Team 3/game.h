@@ -36,6 +36,7 @@ private:
 	GameStateDTO* gameState;
 	IGUIFont* unitModeLabel;
 	std::wstring* unitModeLabelText;
+	bool endOfGame;
 
 	// private methods
 	BaseUnit* initializeUnits();
@@ -56,6 +57,8 @@ public:
 	void passTurn(bool giveUp);
 	bool checkVictory(); 
 	void resetGame();
+	bool getEndOfGame() { return endOfGame; };
+	void setEndOfGame(bool endOfGame) { this->endOfGame = endOfGame; };
 
 	// players
 	Player* localPlayer;

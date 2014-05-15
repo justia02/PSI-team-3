@@ -197,7 +197,6 @@ void game::passTurn(bool giveUp) {
 	gameState->setUnits(units);
 	// serialize the gamestateDTO (unitDTOs should be serialized along with them...)
 	char* buffer = gameState->serializeGameState();
-	bool endOfGame = false;
 	if (gameState->getVictory()) {
 		std::cout << "YOU WIN: " << gameState->getVictory() << std::endl;
 		device->getGUIEnvironment()->addMessageBox(L"YOU WIN!", L"Congratulations, you win the game!", true, EMBF_OK);
@@ -220,10 +219,6 @@ void game::passTurn(bool giveUp) {
 		device->getGUIEnvironment()->addMessageBox(L"Oops an Error", L"Something went wrong, probably connection lost", true, EMBF_OK);
 		endOfGame = true;
 	}
-
-	if (endOfGame) 
-		resetGame();
-
 }
 
 void game::updateGameState(){
@@ -289,7 +284,6 @@ void game::updateGameState(){
 			throw new IllegalStateException("Unit is not assigned to a player.");		
 	}
 
-	bool endOfGame = false;
 	// show message if player lost
 	if (gameState->getVictory()) {
 		std::cout << "YOU LOSE: " << gameState->getVictory() << std::endl;	
@@ -310,9 +304,6 @@ void game::updateGameState(){
 	} else if(!localPlayer->getPlayer1() && !gameState->getPlayer1Turn()){
 		localPlayer->resetActionsLeft();
 	}
-
-	if (endOfGame) 
-		resetGame();
 }
 
 void game::init_map(IrrlichtDevice *device_map)
@@ -361,9 +352,11 @@ void game::resetGame() {
 	guienv->clear();
 	smgr->clear();
 
+	// reset all the relevant properties
 	localPlayer = new Player(device);
 	opposingPlayer = new Player(device);
 	networkUtilities = new NonRealtimeNetworkingUtilities();
+	endOfGame = false;
 
 	// initialize gameStateDTO
 	gameState = new GameStateDTO(5);

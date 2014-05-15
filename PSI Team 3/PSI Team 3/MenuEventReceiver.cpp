@@ -16,8 +16,23 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 	if (!menuDone)
 		return false;
 
+	std::cout<<"EVENT TYPE:"; 
+	std::cout<<event.EventType;
+	// for gui events - from message boxes mainly
+	if(event.EventType == EET_GUI_EVENT) {
+		switch (event.GUIEvent.EventType) {
+			// message boxes only appear when game has been ended in one way or another - end it in that case
+			case EGET_MESSAGEBOX_OK: 
+				if (Context.game_->getEndOfGame()) {
+					Context.game_->resetGame();
+				}
+				break;
+			default: 
+				break;
+		}
+	}
 	// if there is a key input and there is a unit selected
-	if(event.EventType == EET_KEY_INPUT_EVENT)
+	else if(event.EventType == EET_KEY_INPUT_EVENT)
 	{
 		if (this->isUnitSelected && event.KeyInput.Key != irr::KEY_KEY_P && event.KeyInput.Key != irr::KEY_SPACE) {
 			// Create a list of all units if such doesn't exist yet
@@ -57,7 +72,6 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 			if (event.KeyInput.PressedDown == true && event.KeyInput.Key == irr::KEY_SPACE) {
 				shootingMode = !shootingMode;
 				std::cout << ((shootingMode == true) ? "Shooting mode!" : "Moving mode!") << std::endl;
-				*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
 				return true;
 			}
 		}
@@ -87,8 +101,6 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 					selectedUnit = hoveredUnit;
 					isUnitSelected = true;
 					selectedUnit->SelectUnit();
-					shootingMode = false;
-					*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
 					cout << "Select the direction you want to " << ((shootingMode == true) ? "shoot" : "move") << " (w,s,a,d)" << endl;
 				}
 			}
@@ -99,7 +111,6 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 			break;
 		}
 	}
-
     return false;
 }
 
@@ -120,7 +131,6 @@ void MenuEventReceiver::HOST_GAME()
 	Context.game_->init_map(Context.device);
 	Context.game_->startGame(true, ""); // call without ip, since we want to host 
 	menuDone = true;
-	*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
 }
 
 void MenuEventReceiver::JOIN_GAME_SECOND()
@@ -137,7 +147,6 @@ void MenuEventReceiver::JOIN_GAME_SECOND()
 	Context.game_->startGame(false, ch);
 	Context.game_->init_map(Context.device);
 	menuDone = true;
-	*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
 }
 
 void MenuEventReceiver::JOIN_WSDL()
@@ -145,7 +154,6 @@ void MenuEventReceiver::JOIN_WSDL()
 	Context.game_->init_map(Context.device);
 	Context.game_->startGame();
 	menuDone = true;
-	*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
 }
 
 void MenuEventReceiver::START_GAME()
@@ -157,7 +165,6 @@ void MenuEventReceiver::START_GAME()
 	Context.game_->opposingPlayer->initUnits();
 	Context.game_->localPlayer->setActionsLeft();
 	menuDone = true;
-	*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
 }
 
 /**
