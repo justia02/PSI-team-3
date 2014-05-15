@@ -331,7 +331,7 @@ bool game::checkVictory() {
 			if (opposingPlayer->basePositions[i] == (*it)->position) {
 				isOnBase = true;
 				(*it)->onBaseCounter++;
-				if ((*it)->onBaseCounter > 1) {
+				if ((*it)->onBaseCounter > 2) {
 					victory = true;
 				}
 			}
@@ -346,7 +346,7 @@ bool game::checkVictory() {
 }
 
 void game::resetGame() {
-	// TODO
+	// release some memory...	
 	delete localPlayer;
 	delete opposingPlayer;
 	guienv->clear();
@@ -357,15 +357,10 @@ void game::resetGame() {
 	opposingPlayer = new Player(device);
 	networkUtilities = new NonRealtimeNetworkingUtilities();
 	endOfGame = false;
-
-	// initialize gameStateDTO
 	gameState = new GameStateDTO(5);
 
-	//device->setEventReceiver(new TempReceiver(device, localPlayer));
-
-	// run menu
+	// re-run menu + game
 	menu* m = new menu(device, driver, smgr, guienv);
-	// m->run(this);
 	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
 	this->run();
 }
