@@ -221,8 +221,8 @@ void game::passTurn(bool giveUp) {
 		endOfGame = true;
 	}
 
-	/*if (endOfGame) 
-		resetGame();*/
+	if (endOfGame) 
+		resetGame();
 
 }
 
@@ -311,8 +311,8 @@ void game::updateGameState(){
 		localPlayer->resetActionsLeft();
 	}
 
-	/*if (endOfGame) 
-		resetGame();*/
+	if (endOfGame) 
+		resetGame();
 }
 
 void game::init_map(IrrlichtDevice *device_map)
@@ -361,11 +361,6 @@ void game::resetGame() {
 	guienv->clear();
 	smgr->clear();
 
-	// clear all objects of the game - players/networkutilites --> need to be recreated and initialized!!
-	/*delete localPlayer;
-	delete opposingPlayer;
-	delete networkUtilities;
-	*/
 	localPlayer = new Player(device);
 	opposingPlayer = new Player(device);
 	networkUtilities = new NonRealtimeNetworkingUtilities();
