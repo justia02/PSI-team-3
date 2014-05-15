@@ -19,7 +19,7 @@ game::game(void)
 	guienv = device->getGUIEnvironment();
 	playerCamera = new PlayerCamera(device);
 
-	// initialize networkUtilities (all networking stuff is handled in game)
+	// initialize networkUtilities (all networking stuff is handled in in this class)
 	networkUtilities = new NonRealtimeNetworkingUtilities();
 
 	// initialize gameStateDTO
@@ -29,11 +29,8 @@ game::game(void)
 	localPlayer = new Player(device);
 	opposingPlayer = new Player(device);
 
-	//device->setEventReceiver(new TempReceiver(device, localPlayer));
-
 	// run menu
 	menu* m = new menu(device, driver, smgr, guienv);
-	// m->run(this);
 	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
 
 	// unitModeLabel = guienv->getBuiltInFont();
@@ -47,16 +44,12 @@ game::~game(void)
 
 int game::run(void)
 {
-
-		//m->run(device);
-
-		// setup menu
+		// setup context
 		SAppContext context;
 		context.device = device;
 		context.counter = 0;
 		context.networkUtilities = networkUtilities;
 		context.game_ = this;
-
 		
 		// setup event receiver to handle user input on menu            
 		MenuEventReceiver receiver(context);
@@ -77,7 +70,9 @@ int game::run(void)
 			driver->beginScene(true, true, SColor(0,200,200,200));
 			smgr->drawAll();
 			guienv->drawAll();
-			unitModeLabel->draw((*unitModeLabelText).c_str(), core::rect<s32>(20,20,0,0), video::SColor(255,100,100,100));
+			if (receiver.menuDone) {
+				unitModeLabel->draw((*unitModeLabelText).c_str(), core::rect<s32>(20,20,0,0), video::SColor(255,100,100,100));
+			}
 			driver->endScene();
 		}
 		device->drop();
@@ -360,16 +355,23 @@ bool game::checkVictory() {
 }
 
 void game::resetGame() {
+	// TODO
+	delete localPlayer;
+	delete opposingPlayer;
 	guienv->clear();
-	// initialize networkUtilities - holds socket with all information about connection
+	smgr->clear();
+
+	// clear all objects of the game - players/networkutilites --> need to be recreated and initialized!!
+	/*delete localPlayer;
+	delete opposingPlayer;
+	delete networkUtilities;
+	*/
+	localPlayer = new Player(device);
+	opposingPlayer = new Player(device);
 	networkUtilities = new NonRealtimeNetworkingUtilities();
 
 	// initialize gameStateDTO
 	gameState = new GameStateDTO(5);
-
-	// initialize players
-	localPlayer = new Player(device);
-	opposingPlayer = new Player(device);
 
 	//device->setEventReceiver(new TempReceiver(device, localPlayer));
 
@@ -377,4 +379,5 @@ void game::resetGame() {
 	menu* m = new menu(device, driver, smgr, guienv);
 	// m->run(this);
 	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
+	this->run();
 }
