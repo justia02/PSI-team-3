@@ -50,7 +50,7 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 				Context.game_->localPlayer->setActionsLeft();
 			}
 			else if (Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasMoved()) { // Moving
-				this->selectedUnit->Move(moveDirection, this->selectedUnit->maxDistance, allUnits, Context.game_->localPlayer->getPlayer1());
+				this->selectedUnit->Move(moveDirection, this->selectedUnit->maxDistance, allUnits, obstacles, Context.game_->localPlayer->getPlayer1());
 				Context.game_->localPlayer->setActionsLeft();
 			}
 
@@ -94,15 +94,19 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 						selectedUnit = NULL;
 						return true;
 					}
-					else // do nothing - cannot select two units at a time!
+					else { // Deselect the unit which was selected and select another one
+						selectedUnit->SelectUnit();
+						selectedUnit = NULL;
+						selectedUnit = hoveredUnit;
+						selectedUnit->SelectUnit();
+						cout << "Select the direction you want to " << ((shootingMode == true) ? "shoot" : "move") << " (w,s,a,d)" << endl;
 						return true;
+					}						
 				}
 				else { // Select a unit
 					selectedUnit = hoveredUnit;
 					isUnitSelected = true;
 					selectedUnit->SelectUnit();
-					shootingMode = false;
-					*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
 					cout << "Select the direction you want to " << ((shootingMode == true) ? "shoot" : "move") << " (w,s,a,d)" << endl;
 				}
 			}
@@ -131,7 +135,7 @@ void MenuEventReceiver::JOIN_GAME()
 
 void MenuEventReceiver::HOST_GAME()
 {
-	Context.game_->init_map(Context.device);
+	Context.game_->init_map(Context.device, obstacles);
 	Context.game_->startGame(true, ""); // call without ip, since we want to host 
 	menuDone = true;
 	*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
@@ -149,14 +153,14 @@ void MenuEventReceiver::JOIN_GAME_SECOND()
 	guienv->clear();
 
 	Context.game_->startGame(false, ch);
-	Context.game_->init_map(Context.device);
+	Context.game_->init_map(Context.device, obstacles);
 	menuDone = true;
 	*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
 }
 
 void MenuEventReceiver::JOIN_WSDL()
 {
-	Context.game_->init_map(Context.device);
+	Context.game_->init_map(Context.device, obstacles);
 	Context.game_->startGame();
 	menuDone = true;
 	*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
@@ -164,7 +168,7 @@ void MenuEventReceiver::JOIN_WSDL()
 
 void MenuEventReceiver::START_GAME()
 {
-	Context.game_->init_map(Context.device);
+	Context.game_->init_map(Context.device, obstacles);
 	Context.game_->localPlayer->setPlayer1(true);
 	Context.game_->opposingPlayer->setPlayer1(false);
 	Context.game_->localPlayer->initUnits();

@@ -67,7 +67,7 @@ BaseUnit::direction BaseUnit::revertDirection(direction direction) {
 
 }
 
-bool BaseUnit::canMove(direction moveDirection, float distance, std::vector<BaseUnit*>* units) {
+bool BaseUnit::canMove(direction moveDirection, float distance, std::vector<BaseUnit*>* units, std::vector<Obstacle*>* obstacles) {
 
 	// Check whether selected unit can move in a given direction or not	
 	switch(moveDirection) {
@@ -77,6 +77,10 @@ bool BaseUnit::canMove(direction moveDirection, float distance, std::vector<Base
 				return false;
 			// Check if another unit isn't already there
 			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it)
+				if (irr::core::vector3d<float>(position.X - distance, position.Y, position.Z) == (*it)->position)
+					return false;
+			// Check if an obstacle is not there
+			for(vector<Obstacle*>::iterator it = obstacles->begin(); it != obstacles->end(); ++it)
 				if (irr::core::vector3d<float>(position.X - distance, position.Y, position.Z) == (*it)->position)
 					return false;
 			break;
@@ -89,6 +93,10 @@ bool BaseUnit::canMove(direction moveDirection, float distance, std::vector<Base
 			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it)
 				if (irr::core::vector3d<float>(position.X + distance, position.Y, position.Z) == (*it)->position)
 					return false;
+			// Check if an obstacle is not there
+			for(vector<Obstacle*>::iterator it = obstacles->begin(); it != obstacles->end(); ++it)
+				if (irr::core::vector3d<float>(position.X + distance, position.Y, position.Z) == (*it)->position)
+					return false;
 			break;
 		}
 		case BACK: {
@@ -99,6 +107,10 @@ bool BaseUnit::canMove(direction moveDirection, float distance, std::vector<Base
 			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it)
 				if (irr::core::vector3d<float>(position.X, position.Y, position.Z - distance) == (*it)->position)
 					return false;
+			// Check if an obstacle is not there
+			for(vector<Obstacle*>::iterator it = obstacles->begin(); it != obstacles->end(); ++it)
+				if (irr::core::vector3d<float>(position.X, position.Y, position.Z - distance) == (*it)->position)
+					return false;
 			break;
 		}
 		case FORWARD: {
@@ -107,6 +119,10 @@ bool BaseUnit::canMove(direction moveDirection, float distance, std::vector<Base
 				return false;
 			// Check if another unit isn't already there
 			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it)
+				if (irr::core::vector3d<float>(position.X, position.Y, position.Z + distance) == (*it)->position)
+					return false;
+			// Check if an obstacle is not there
+			for(vector<Obstacle*>::iterator it = obstacles->begin(); it != obstacles->end(); ++it)
 				if (irr::core::vector3d<float>(position.X, position.Y, position.Z + distance) == (*it)->position)
 					return false;
 			break;
@@ -270,7 +286,7 @@ void BaseUnit::remove() {
 
 }
 
-void BaseUnit::Move(direction moveDirection, float distance, std::vector<BaseUnit*>* units, bool player1) {
+void BaseUnit::Move(direction moveDirection, float distance, std::vector<BaseUnit*>* units, std::vector<Obstacle*>* obstacles, bool player1) {
 
 	if(distance > maxDistance)
 		distance = maxDistance;
@@ -279,12 +295,12 @@ void BaseUnit::Move(direction moveDirection, float distance, std::vector<BaseUni
 	if (!player1)
 		moveDirection = revertDirection(moveDirection);
 
-	bool movePossible = canMove(moveDirection, distance, units);
+	bool movePossible = canMove(moveDirection, distance, units, obstacles);
 
 	if (!movePossible) {
 		if (distance == 1)
 			return;
-		movePossible = canMove(moveDirection, 1, units); // Check if a unit can move by one
+		movePossible = canMove(moveDirection, 1, units, obstacles); // Check if a unit can move by one
 		if (!movePossible)
 			return;
 		else

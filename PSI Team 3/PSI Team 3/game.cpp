@@ -58,6 +58,12 @@ int game::run(void)
 		receiver.setUnitModeLabelText(unitModeLabelText);
 		receiver.menuDone = false;
 
+		// Create obstacles
+		std::vector<Obstacle*>* obstacles = new std::vector<Obstacle*>();
+		obstacles->push_back(new Obstacle(type::PYRAMID, context.device));
+		obstacles->push_back(new Obstacle(type::BIG_PYRAMID, context.device));
+		receiver.setObstacles(obstacles);
+
 		// specify our custom event receiver in the device	
 		device->setEventReceiver(&receiver);
 		
@@ -306,10 +312,10 @@ void game::updateGameState(){
 	}
 }
 
-void game::init_map(IrrlichtDevice *device_map)
+void game::init_map(IrrlichtDevice* device_map, std::vector<Obstacle*>* obstacles)
 {
 	//make a new terrain
-	mapterrain map = mapterrain(device_map, smgr);
+	mapterrain map = mapterrain(device_map, smgr, obstacles);
 }
 
 bool game::checkVictory() {
