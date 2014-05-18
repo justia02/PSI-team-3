@@ -70,7 +70,7 @@ public:
 	// there needs to be some sort of target class to be made idk how yet
 	//void ShootTarget(target);
 
-	void shoot(direction shootDirection, std::vector<BaseUnit*>* units);
+	void shoot(direction shootDirection, std::vector<BaseUnit*>* units, std::vector<Obstacle*>* obstacles);
 	void setHealth(int health) {
 		this->health = health;
 	};

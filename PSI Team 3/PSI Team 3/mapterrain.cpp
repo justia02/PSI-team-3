@@ -26,9 +26,9 @@ mapterrain::mapterrain(IrrlichtDevice *device, ISceneManager *smgr, std::vector<
 
 	// Obstacles:	
 	obstacles->at(0)->createMesh();
-	obstacles->at(0)->setPosition(vector3d<float>(-3, 0, 2));
+	obstacles->at(0)->setPosition(vector3d<float>(-1.75, 0.75, -1.75));
 	obstacles->at(1)->createMesh();
-	obstacles->at(1)->setPosition(vector3d<float>(0, 3, -1.75));
+	obstacles->at(1)->setPosition(vector3d<float>(0.25, 0.75, 1.25));
 
 }
 mapterrain::~mapterrain(void)

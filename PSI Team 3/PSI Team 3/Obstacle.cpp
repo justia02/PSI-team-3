@@ -37,8 +37,10 @@ void Obstacle::createMesh() {
     {
         node->setMaterialFlag(EMF_LIGHTING, false);
         node->setMD2Animation(scene::EMAT_STAND);
-		node->setScale(vector3df(0.12, 0.12, 0.12));
-		node->setMaterialTexture(0, device->getVideoDriver()->getTexture("../media/wall_light.jpg"));
+		node->setScale(vector3df(0.9, 0.9, 0.9));
+		// node->setPosition(vector3df(position.X + 0.2, position.Y, position.Z));
+		node->setRotation(vector3df(0, 45, 0));
+		// node->setMaterialTexture(0, device->getVideoDriver()->getTexture("../media/wall_light.jpg"));
     }
 
 	irr::core::vector3df extent = node->getTransformedBoundingBox().getExtent();
@@ -49,5 +51,6 @@ void Obstacle::createMesh() {
 void Obstacle::setPosition(vector3df position) {
 
 	node->setPosition(this->position = position);
+	// node->setPosition(vector3df(position.X + 0.25, position.Y, position.Z));
 
 }
