@@ -45,20 +45,20 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 			setDirection(event.KeyInput.Key);
 
 			// Space was pressed - we're shooting :D
-			//if (shootingMode == true && Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasShot()) {
-			//	this->selectedUnit->shoot(moveDirection, Context.game_->opposingPlayer->getUnits(), obstacles);
-			//	Context.game_->localPlayer->setActionsLeft();
-			//}
-			//else if (Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasMoved()) { // Moving
-			//	this->selectedUnit->Move(moveDirection, this->selectedUnit->maxDistance, allUnits, obstacles, Context.game_->localPlayer->getPlayer1());
-			//	Context.game_->localPlayer->setActionsLeft();
-			//}
-			if (shootingMode == true) {
+			if (shootingMode == true && Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasShot()) {
 				this->selectedUnit->shoot(moveDirection, Context.game_->opposingPlayer->getUnits(), obstacles);
+				Context.game_->localPlayer->setActionsLeft();
 			}
-			else { // Moving
+			else if (Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasMoved()) { // Moving
 				this->selectedUnit->Move(moveDirection, this->selectedUnit->maxDistance, allUnits, obstacles, Context.game_->localPlayer->getPlayer1());
+				Context.game_->localPlayer->setActionsLeft();
 			}
+			//if (shootingMode == true) {
+			//	this->selectedUnit->shoot(moveDirection, Context.game_->opposingPlayer->getUnits(), obstacles);
+			//}
+			//else { // Moving
+			//	this->selectedUnit->Move(moveDirection, this->selectedUnit->maxDistance, allUnits, obstacles, Context.game_->localPlayer->getPlayer1());
+			//}
 
 			// deselect the unit
 			this->selectedUnit->SelectUnit();
