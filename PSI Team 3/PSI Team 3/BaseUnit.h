@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <string>
+#include "Obstacle.h"
 
 using namespace irr;
 using namespace core;
@@ -55,7 +56,7 @@ public:
 	BaseUnit();
 	~BaseUnit(void);
 
-	void Move(direction moveDirection, float distance, std::vector<BaseUnit*>* units, bool player1);
+	void Move(direction moveDirection, float distance, std::vector<BaseUnit*>* units, std::vector<Obstacle*>* obstacles, bool player1);
 	void SelectUnit();
 	
 	bool createMesh();
@@ -69,7 +70,7 @@ public:
 	// there needs to be some sort of target class to be made idk how yet
 	//void ShootTarget(target);
 
-	void shoot(direction shootDirection, std::vector<BaseUnit*>* units);
+	void shoot(direction shootDirection, std::vector<BaseUnit*>* units, std::vector<Obstacle*>* obstacles);
 	void setHealth(int health) {
 		this->health = health;
 	};
@@ -82,7 +83,7 @@ public:
 private:
 	ILightSceneNode* selectIndication;
 	IBillboardSceneNode* indicationBoard;
-	bool canMove(direction moveDirection, float distance, std::vector<BaseUnit*>* units);
+	bool canMove(direction moveDirection, float distance, std::vector<BaseUnit*>* units, std::vector<Obstacle*>* obstacles);
 	direction revertDirection(direction direction);
 	void attack(BaseUnit* opponent, float distance);
 

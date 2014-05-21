@@ -16,6 +16,20 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 	if (!menuDone)
 		return false;
 
+	// for gui events - from message boxes mainly
+	if(event.EventType == EET_GUI_EVENT) {
+		switch (event.GUIEvent.EventType) {
+			// message boxes only appear when game has been ended in one way or another - end it in that case
+			case EGET_MESSAGEBOX_OK: 
+				if (Context.game_->getEndOfGame()) {
+					Context.game_->resetGame();
+				}
+				break;
+			default: 
+				break;
+		}
+	}
+
 	// if there is a key input and there is a unit selected
 	if(event.EventType == EET_KEY_INPUT_EVENT)
 	{
@@ -32,13 +46,19 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 
 			// Space was pressed - we're shooting :D
 			if (shootingMode == true && Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasShot()) {
-				this->selectedUnit->shoot(moveDirection, Context.game_->opposingPlayer->getUnits());
+				this->selectedUnit->shoot(moveDirection, Context.game_->opposingPlayer->getUnits(), obstacles);
 				Context.game_->localPlayer->setActionsLeft();
 			}
 			else if (Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasMoved()) { // Moving
-				this->selectedUnit->Move(moveDirection, this->selectedUnit->maxDistance, allUnits, Context.game_->localPlayer->getPlayer1());
+				this->selectedUnit->Move(moveDirection, this->selectedUnit->maxDistance, allUnits, obstacles, Context.game_->localPlayer->getPlayer1());
 				Context.game_->localPlayer->setActionsLeft();
 			}
+			//if (shootingMode == true) {
+			//	this->selectedUnit->shoot(moveDirection, Context.game_->opposingPlayer->getUnits(), obstacles);
+			//}
+			//else { // Moving
+			//	this->selectedUnit->Move(moveDirection, this->selectedUnit->maxDistance, allUnits, obstacles, Context.game_->localPlayer->getPlayer1());
+			//}
 
 			// deselect the unit
 			this->selectedUnit->SelectUnit();
@@ -80,15 +100,19 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 						selectedUnit = NULL;
 						return true;
 					}
-					else // do nothing - cannot select two units at a time!
+					else { // Deselect the unit which was selected and select another one
+						selectedUnit->SelectUnit();
+						selectedUnit = NULL;
+						selectedUnit = hoveredUnit;
+						selectedUnit->SelectUnit();
+						cout << "Select the direction you want to " << ((shootingMode == true) ? "shoot" : "move") << " (w,s,a,d)" << endl;
 						return true;
+					}						
 				}
 				else { // Select a unit
 					selectedUnit = hoveredUnit;
 					isUnitSelected = true;
 					selectedUnit->SelectUnit();
-					shootingMode = false;
-					*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
 					cout << "Select the direction you want to " << ((shootingMode == true) ? "shoot" : "move") << " (w,s,a,d)" << endl;
 				}
 			}
@@ -117,7 +141,7 @@ void MenuEventReceiver::JOIN_GAME()
 
 void MenuEventReceiver::HOST_GAME()
 {
-	Context.game_->init_map(Context.device);
+	Context.game_->init_map(Context.device, obstacles);
 	Context.game_->startGame(true, ""); // call without ip, since we want to host 
 	menuDone = true;
 	*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
@@ -135,14 +159,14 @@ void MenuEventReceiver::JOIN_GAME_SECOND()
 	guienv->clear();
 
 	Context.game_->startGame(false, ch);
-	Context.game_->init_map(Context.device);
+	Context.game_->init_map(Context.device, obstacles);
 	menuDone = true;
 	*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
 }
 
 void MenuEventReceiver::JOIN_WSDL()
 {
-	Context.game_->init_map(Context.device);
+	Context.game_->init_map(Context.device, obstacles);
 	Context.game_->startGame();
 	menuDone = true;
 	*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
@@ -150,7 +174,7 @@ void MenuEventReceiver::JOIN_WSDL()
 
 void MenuEventReceiver::START_GAME()
 {
-	Context.game_->init_map(Context.device);
+	Context.game_->init_map(Context.device, obstacles);
 	Context.game_->localPlayer->setPlayer1(true);
 	Context.game_->opposingPlayer->setPlayer1(false);
 	Context.game_->localPlayer->initUnits();

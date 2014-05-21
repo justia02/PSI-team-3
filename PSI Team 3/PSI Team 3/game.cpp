@@ -58,6 +58,12 @@ int game::run(void)
 		receiver.setUnitModeLabelText(unitModeLabelText);
 		receiver.menuDone = false;
 
+		// Create obstacles
+		std::vector<Obstacle*>* obstacles = new std::vector<Obstacle*>();
+		obstacles->push_back(new Obstacle(type::PYRAMID, context.device));
+		obstacles->push_back(new Obstacle(type::PYRAMID, context.device));
+		receiver.setObstacles(obstacles);
+
 		// specify our custom event receiver in the device	
 		device->setEventReceiver(&receiver);
 		
@@ -197,7 +203,6 @@ void game::passTurn(bool giveUp) {
 	gameState->setUnits(units);
 	// serialize the gamestateDTO (unitDTOs should be serialized along with them...)
 	char* buffer = gameState->serializeGameState();
-	bool endOfGame = false;
 	if (gameState->getVictory()) {
 		std::cout << "YOU WIN: " << gameState->getVictory() << std::endl;
 		device->getGUIEnvironment()->addMessageBox(L"YOU WIN!", L"Congratulations, you win the game!", true, EMBF_OK);
@@ -220,10 +225,6 @@ void game::passTurn(bool giveUp) {
 		device->getGUIEnvironment()->addMessageBox(L"Oops an Error", L"Something went wrong, probably connection lost", true, EMBF_OK);
 		endOfGame = true;
 	}
-
-	/*if (endOfGame) 
-		resetGame();*/
-
 }
 
 void game::updateGameState(){
@@ -290,7 +291,6 @@ void game::updateGameState(){
 			throw new IllegalStateException("Unit is not assigned to a player.");		
 	}
 
-	bool endOfGame = false;
 	// show message if player lost
 	if (gameState->getVictory()) {
 		std::cout << "YOU LOSE: " << gameState->getVictory() << std::endl;	
@@ -311,15 +311,12 @@ void game::updateGameState(){
 	} else if(!localPlayer->getPlayer1() && !gameState->getPlayer1Turn()){
 		localPlayer->resetActionsLeft();
 	}
-
-	/*if (endOfGame) 
-		resetGame();*/
 }
 
-void game::init_map(IrrlichtDevice *device_map)
+void game::init_map(IrrlichtDevice* device_map, std::vector<Obstacle*>* obstacles)
 {
 	//make a new terrain
-	mapterrain map = mapterrain(device_map, smgr);
+	mapterrain map = mapterrain(device_map, smgr, obstacles);
 }
 
 bool game::checkVictory() {
@@ -341,7 +338,7 @@ bool game::checkVictory() {
 			if (opposingPlayer->basePositions[i] == (*it)->position) {
 				isOnBase = true;
 				(*it)->onBaseCounter++;
-				if ((*it)->onBaseCounter > 1) {
+				if ((*it)->onBaseCounter > 2) {
 					victory = true;
 				}
 			}
@@ -356,29 +353,21 @@ bool game::checkVictory() {
 }
 
 void game::resetGame() {
-	// TODO
+	// release some memory...	
 	delete localPlayer;
 	delete opposingPlayer;
 	guienv->clear();
 	smgr->clear();
 
-	// clear all objects of the game - players/networkutilites --> need to be recreated and initialized!!
-	/*delete localPlayer;
-	delete opposingPlayer;
-	delete networkUtilities;
-	*/
+	// reset all the relevant properties
 	localPlayer = new Player(device);
 	opposingPlayer = new Player(device);
 	networkUtilities = new NonRealtimeNetworkingUtilities();
-
-	// initialize gameStateDTO
+	endOfGame = false;
 	gameState = new GameStateDTO(5);
 
-	//device->setEventReceiver(new TempReceiver(device, localPlayer));
-
-	// run menu
+	// re-run menu + game
 	menu* m = new menu(device, driver, smgr, guienv);
-	// m->run(this);
 	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
 	this->run();
 }

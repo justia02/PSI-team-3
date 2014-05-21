@@ -36,6 +36,7 @@ private:
 	GameStateDTO* gameState;
 	IGUIFont* unitModeLabel;
 	std::wstring* unitModeLabelText;
+	bool endOfGame;
 
 	// private methods
 	BaseUnit* initializeUnits();
@@ -51,11 +52,13 @@ public:
 	// public methods
 	int run(void);
 	void startGame(bool asPlayer1, char* ipAddress = NULL); 
-	void game::init_map(IrrlichtDevice *device_map);
+	void init_map(IrrlichtDevice *device_map, std::vector<Obstacle*>* obstacles);
 	void startGame();
 	void passTurn(bool giveUp);
 	bool checkVictory(); 
 	void resetGame();
+	bool getEndOfGame() { return endOfGame; };
+	void setEndOfGame(bool endOfGame) { this->endOfGame = endOfGame; };
 
 	// players
 	Player* localPlayer;
