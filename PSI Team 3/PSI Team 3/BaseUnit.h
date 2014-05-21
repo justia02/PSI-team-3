@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <string>
+#include "Obstacle.h"
 
 using namespace irr;
 using namespace core;
@@ -14,6 +15,9 @@ using namespace std;
 
 class BaseUnit
 {
+private:	
+	bool hasShot;
+	bool hasMoved;
 
 public:
 	enum direction{
@@ -48,21 +52,25 @@ public:
 
 	int onBaseCounter;
 
-	BaseUnit(vector3d<float> position, bool player, IrrlichtDevice* dev, int id);
+	BaseUnit(vector3d<float> position, bool player1, IrrlichtDevice* dev, int id);
 	BaseUnit();
 	~BaseUnit(void);
 
-	void Move(direction moveDirection, float distance, std::vector<BaseUnit*>* units, bool player1);
+	void Move(direction moveDirection, float distance, std::vector<BaseUnit*>* units, std::vector<Obstacle*>* obstacles, bool player1);
 	void SelectUnit();
 	
 	bool createMesh();
-    void setShininess(float value);
+	bool getHasMoved() { return hasMoved;}
+	bool getHasShot() { return hasShot;}
+	void setHasMoved(bool moved) {hasMoved = moved;}
+	void setHasShot(bool shot) {hasShot = shot;}
+	void setShininess(float value);
 
 	void highLightUnit(bool highLight);
 	// there needs to be some sort of target class to be made idk how yet
 	//void ShootTarget(target);
 
-	void shoot(direction moveDirection, std::vector<BaseUnit*>* units);
+	void shoot(direction shootDirection, std::vector<BaseUnit*>* units, std::vector<Obstacle*>* obstacles);
 	void setHealth(int health) {
 		this->health = health;
 	};
@@ -75,8 +83,9 @@ public:
 private:
 	ILightSceneNode* selectIndication;
 	IBillboardSceneNode* indicationBoard;
-	bool canMove(direction moveDirection, float distance, std::vector<BaseUnit*>* units);
+	bool canMove(direction moveDirection, float distance, std::vector<BaseUnit*>* units, std::vector<Obstacle*>* obstacles);
 	direction revertDirection(direction direction);
+	void attack(BaseUnit* opponent, float distance);
 
 };
 

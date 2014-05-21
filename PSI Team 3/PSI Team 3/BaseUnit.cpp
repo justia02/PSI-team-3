@@ -5,7 +5,7 @@
 
 #define HALF_SIZE 4
 
-BaseUnit::BaseUnit(irr::core::vector3d<float> pos, bool player, IrrlichtDevice* dev, int id)
+BaseUnit::BaseUnit(irr::core::vector3d<float> pos, bool player1, IrrlichtDevice* dev, int id)
 {
 	this->id = id;
 	position = pos;
@@ -15,11 +15,13 @@ BaseUnit::BaseUnit(irr::core::vector3d<float> pos, bool player, IrrlichtDevice* 
 	shootingRange = 2;
 
 	selected = false;
+	hasMoved = false;
+	hasShot = false;
 
     device = dev;
     sceneManager = device->getSceneManager();
     driver = device->getVideoDriver();
-	player1 = player;
+	this->player1 = player1;
 
     meshPath = "../media/testunit.irrmesh";
 	if(player1){
@@ -65,7 +67,7 @@ BaseUnit::direction BaseUnit::revertDirection(direction direction) {
 
 }
 
-bool BaseUnit::canMove(direction moveDirection, float distance, std::vector<BaseUnit*>* units) {
+bool BaseUnit::canMove(direction moveDirection, float distance, std::vector<BaseUnit*>* units, std::vector<Obstacle*>* obstacles) {
 
 	// Check whether selected unit can move in a given direction or not	
 	switch(moveDirection) {
@@ -75,7 +77,11 @@ bool BaseUnit::canMove(direction moveDirection, float distance, std::vector<Base
 				return false;
 			// Check if another unit isn't already there
 			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it)
-				if (irr::core::vector3d<float>(position.X - distance, position.Y, position.Z) == (*it)->position)
+				if ((position.X - distance) == (*it)->position.X && position.Z == (*it)->position.Z)
+					return false;
+			// Check if an obstacle is not there
+			for(vector<Obstacle*>::iterator it = obstacles->begin(); it != obstacles->end(); ++it)
+				if ((position.X - distance) == (*it)->position.X && position.Z == (*it)->position.Z)
 					return false;
 			break;
 		}
@@ -85,7 +91,11 @@ bool BaseUnit::canMove(direction moveDirection, float distance, std::vector<Base
 				return false;
 			// Check if another unit isn't already there
 			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it)
-				if (irr::core::vector3d<float>(position.X + distance, position.Y, position.Z) == (*it)->position)
+				if ((position.X + distance) == (*it)->position.X && position.Z == (*it)->position.Z)
+					return false;
+			// Check if an obstacle is not there
+			for(vector<Obstacle*>::iterator it = obstacles->begin(); it != obstacles->end(); ++it)
+				if ((position.X + distance) == (*it)->position.X && position.Z == (*it)->position.Z)
 					return false;
 			break;
 		}
@@ -95,7 +105,11 @@ bool BaseUnit::canMove(direction moveDirection, float distance, std::vector<Base
 				return false;
 			// Check if another unit isn't already there
 			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it)
-				if (irr::core::vector3d<float>(position.X, position.Y, position.Z - distance) == (*it)->position)
+				if (position.X == (*it)->position.X && (position.Z - distance) == (*it)->position.Z)
+					return false;
+			// Check if an obstacle is not there
+			for(vector<Obstacle*>::iterator it = obstacles->begin(); it != obstacles->end(); ++it)
+				if (position.X == (*it)->position.X && (position.Z - distance) == (*it)->position.Z)
 					return false;
 			break;
 		}
@@ -105,7 +119,11 @@ bool BaseUnit::canMove(direction moveDirection, float distance, std::vector<Base
 				return false;
 			// Check if another unit isn't already there
 			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it)
-				if (irr::core::vector3d<float>(position.X, position.Y, position.Z + distance) == (*it)->position)
+				if (position.X == (*it)->position.X && (position.Z + distance) == (*it)->position.Z)
+					return false;
+			// Check if an obstacle is not there
+			for(vector<Obstacle*>::iterator it = obstacles->begin(); it != obstacles->end(); ++it)
+				if (position.X == (*it)->position.X && (position.Z + distance) == (*it)->position.Z)
 					return false;
 			break;
 		}
@@ -116,84 +134,169 @@ bool BaseUnit::canMove(direction moveDirection, float distance, std::vector<Base
 
 }
 
-void BaseUnit::shoot(direction shootDirection, std::vector<BaseUnit*>* units) {
+void BaseUnit::shoot(direction shootDirection, std::vector<BaseUnit*>* units, std::vector<Obstacle*>* obstacles) {
 
 	if (player1 == false)
 		shootDirection = revertDirection(shootDirection);
 
-	switch(shootDirection){
-			case LEFT:{
-				
-				break;
+	float minAttackDirectionCoordinate = 10; // Bigger than board size, will be used to find a minimum
+	float minDistance = 10; // Bigger than board size, will be used to find a minimum
+	float distanceFromTheOpponent = 0;
+	
+	switch(shootDirection) {
+		case LEFT: {
+			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it) {
+				if ((*it)->position.Z == position.Z && (*it)->position.X < position.X) {
+					if (fabs((*it)->position.X - position.X) < minDistance) {
+						minDistance = fabs((*it)->position.X - position.X);
+						minAttackDirectionCoordinate = (*it)->position.X;
+						if (minDistance <= shootingRange)
+							distanceFromTheOpponent = minDistance;
+					}
 				}
-			case RIGHT:{
-				
-				break;
-				}
-			case BACK:{
-				
-				break;
-				}
-			case FORWARD:{
-				
-				break;
-				}
-		}
-
-	float minZ = 10; // veeery biiiig at the beginning
-	float dist;
-	int opponnentHealth;
-
-	for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it) {
-		if ((*it)->position.X == position.X) {
-			if (fabs((*it)->position.Z - position.Z) < minZ) {
-				minZ = (*it)->position.Z;
-				opponnentHealth = (*it)->getHealth();
-				dist = fabs((*it)->position.Z - position.Z);
-			}
-		}
-	}
-
-	if (minZ == 10) { // No units in the way
-		std::cout << "Nothing to shoot!" << std::endl;
-		return;
-	}
-
-	std::cout << "My Z-coord is: " << position.Z << std::endl;
-	std::cout << "I'm going to attack the unit with Z-coord: " << minZ << std::endl;
-
-	std::cout << "My HP before attack: " << health << std::endl;
-	std::cout << "Opponent's unit HP before attack: " << opponnentHealth << std::endl;
-
-	for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it) {
-
-		if ((*it)->position.X == position.X && (*it)->position.Z == minZ) {
-			// Attack! :D
-			// Update health
-			(*it)->setHealth((*it)->getHealth() - damage);
-			// Update health bar
-			(*it)->updateHealthBar();
-			if (dist <= 1) { // Counter attack
-				// Update health
-				setHealth(getHealth() - (damage/2));
-				// Update health bar
-				updateHealthBar();
-			}
-			std::cout << "My HP after attack: " << health << std::endl;
-			std::cout << "Opponent's unit HP after attack: " << (*it)->getHealth() << std::endl;
-
-			// Remove the units from the map once they are dead
-			if ((*it)->getHealth() <= 0) {
-				(*it)->setHealth(0);
-				(*it)->remove();
-			}
-			if (getHealth() <= 0) {
-				setHealth(0);
-				remove();
 			}
 			break;
-		}	
+		}
+		case RIGHT: {
+			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it) {
+				if ((*it)->position.Z == position.Z && (*it)->position.X > position.X) {
+					if (fabs((*it)->position.X - position.X) < minDistance) {
+						minDistance = fabs((*it)->position.X - position.X);
+						minAttackDirectionCoordinate = (*it)->position.X;
+						if (minDistance <= shootingRange)
+							distanceFromTheOpponent = minDistance;
+					}
+				}
+			}
+			break;
+		}
+		case BACK: {
+			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it) {
+				if ((*it)->position.X == position.X && (*it)->position.Z < position.Z) {
+					if (fabs((*it)->position.Z - position.Z) < minDistance) {
+						minDistance = fabs((*it)->position.Z - position.Z);
+						minAttackDirectionCoordinate = (*it)->position.Z;
+						if (minDistance <= shootingRange)
+							distanceFromTheOpponent = minDistance;
+					}
+				}
+			}
+			break;
+		}
+		case FORWARD: {
+			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it) {
+				if ((*it)->position.X == position.X && (*it)->position.Z > position.Z) {
+					if (fabs((*it)->position.Z - position.Z) < minDistance) {
+						minDistance = fabs((*it)->position.Z - position.Z);
+						minAttackDirectionCoordinate = (*it)->position.Z;
+						if (minDistance <= shootingRange)
+							distanceFromTheOpponent = minDistance;
+					}
+				}
+			}
+			break;
+		}
+	}
 
+	if (distanceFromTheOpponent == 0) { // No enemy in the range
+		std::cout << "No opponent is in your range!" << std::endl;
+		return;
+	}
+	if (minAttackDirectionCoordinate == 10) { // No enemy units in the way
+		std::cout << "Nothing to shoot!" << std::endl;
+		return;
+	}	
+
+	switch(shootDirection) {
+		case LEFT: {
+			for(vector<Obstacle*>::iterator it = obstacles->begin(); it != obstacles->end(); ++it) {
+				if ((*it)->position.Z == position.Z && (*it)->position.X < position.X && (*it)->position.X > minAttackDirectionCoordinate) {
+					cout << "You shot an obstacle moron... :/" << endl;
+					return;
+				}
+			}
+			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it) {
+				if ((*it)->position.Z == position.Z && (*it)->position.X == minAttackDirectionCoordinate) {
+					attack((*it), distanceFromTheOpponent);
+					setHasShot(true);
+					return;
+				}
+			}
+			break;
+		}
+		case RIGHT: {
+			for(vector<Obstacle*>::iterator it = obstacles->begin(); it != obstacles->end(); ++it) {
+				if ((*it)->position.Z == position.Z && (*it)->position.X > position.X && (*it)->position.X < minAttackDirectionCoordinate) {
+					cout << "You shot an obstacle moron... :/" << endl;
+					return;
+				}
+			}
+			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it) {
+				if ((*it)->position.Z == position.Z && (*it)->position.X == minAttackDirectionCoordinate) {
+					attack((*it), distanceFromTheOpponent);
+					setHasShot(true);
+					return;
+				}	
+			}
+			break;
+		}
+		case BACK: {
+			for(vector<Obstacle*>::iterator it = obstacles->begin(); it != obstacles->end(); ++it) {
+				if ((*it)->position.X == position.X && (*it)->position.Z < position.Z && (*it)->position.Z > minAttackDirectionCoordinate) {
+					cout << "You shot an obstacle moron... :/" << endl;
+					return;
+				}
+			}
+			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it) {
+				if ((*it)->position.X == position.X && (*it)->position.Z == minAttackDirectionCoordinate) {
+					attack((*it), distanceFromTheOpponent);
+					setHasShot(true);
+					return;
+				}	
+			}
+			break;
+		}
+		case FORWARD: {
+			for(vector<Obstacle*>::iterator it = obstacles->begin(); it != obstacles->end(); ++it) {
+				if ((*it)->position.X == position.X && (*it)->position.Z > position.Z && (*it)->position.Z < minAttackDirectionCoordinate) {
+					cout << "You shot an obstacle moron... :/" << endl;
+					return;
+				}
+			}
+			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it) {
+				if ((*it)->position.X == position.X && (*it)->position.Z == minAttackDirectionCoordinate) {
+					attack((*it), distanceFromTheOpponent);
+					setHasShot(true);
+					return;
+				}	
+			}
+			break;
+		}
+	}
+
+}
+
+void BaseUnit::attack(BaseUnit* opponent, float distance) {
+
+	// Update health
+	opponent->setHealth(opponent->getHealth() - damage);
+	// Update health bar
+	opponent->updateHealthBar();
+	if (distance <= 1) { // Counter attack
+		// Update health
+		setHealth(getHealth() - (damage/2));
+		// Update health bar
+		updateHealthBar();
+	}
+
+	// Remove the units from the map once they are dead
+	if (opponent->getHealth() <= 0) {
+		opponent->setHealth(0);
+		opponent->remove();
+	}
+	if (getHealth() <= 0) {
+		setHealth(0);
+		remove();
 	}
 
 }
@@ -207,38 +310,48 @@ void BaseUnit::remove() {
 
 }
 
-void BaseUnit::Move(direction moveDirection, float distance, std::vector<BaseUnit*>* units, bool player1) {
+void BaseUnit::Move(direction moveDirection, float distance, std::vector<BaseUnit*>* units, std::vector<Obstacle*>* obstacles, bool player1) {
 
 	if(distance > maxDistance)
 		distance = maxDistance;
 	
 	// Revert move direction if we're player2
-	if (player1 == false)
+	if (!player1)
 		moveDirection = revertDirection(moveDirection);
 
-	if (canMove(moveDirection, distance, units)) {
-		switch(moveDirection){
-			case LEFT:{
-				position.X -= distance;
-				break;
-				}
-			case RIGHT:{
-				position.X += distance;
-				break;
-				}
-			case BACK:{
-				position.Z -= distance;
-				break;
-				}
-			case FORWARD:{
-				position.Z += distance;
-				break;
-				}
-		}
+	bool movePossible = canMove(moveDirection, distance, units, obstacles);
+
+	if (!movePossible) {
+		if (distance == 1)
+			return;
+		movePossible = canMove(moveDirection, 1, units, obstacles); // Check if a unit can move by one
+		if (!movePossible)
+			return;
+		else
+			distance = 1;
 	}
-
+	
+	switch(moveDirection){
+		case LEFT:{
+			position.X -= distance;
+			break;
+			}
+		case RIGHT:{
+			position.X += distance;
+			break;
+			}
+		case BACK:{
+			position.Z -= distance;
+			break;
+			}
+		case FORWARD:{
+			position.Z += distance;
+			break;
+			}
+	}
+	
+	setHasMoved(true);
 	node->setPosition(position);
-
 	cout << "the unit: " << "ID: " << id << "Position: " << position.X << ", " << position.Y << ", " << position.Z;
 
 }
@@ -249,7 +362,6 @@ void BaseUnit::SelectUnit(){
 		node->setMaterialTexture(0, driver->getTexture(texturePathSelected));
 	else if(!selected)
 		node->setMaterialTexture(0, driver->getTexture(texturePath));
-
 }
 
 void BaseUnit::setShininess(float value){

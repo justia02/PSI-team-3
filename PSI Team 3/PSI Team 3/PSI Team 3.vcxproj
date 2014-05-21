@@ -76,9 +76,11 @@
     <ClCompile Include="mapterrain.cpp" />
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="MenuEventReceiver.cpp" />
+    <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerCamera.cpp" />
     <ClCompile Include="Serializable.cpp" />
+    <ClCompile Include="Serializer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseUnit.h" />
@@ -90,9 +92,11 @@
     <ClInclude Include="menu.h" />
     <ClInclude Include="MenuEventReceiver.h" />
     <ClInclude Include="Mover.h" />
+    <ClInclude Include="Obstacle.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerCamera.h" />
     <ClInclude Include="Serializable.h" />
+    <ClInclude Include="Serializer.h" />
     <ClInclude Include="Shooter.h" />
   </ItemGroup>
   <ItemGroup>

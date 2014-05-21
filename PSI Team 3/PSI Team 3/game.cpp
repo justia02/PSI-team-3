@@ -28,7 +28,7 @@ game::game(void)
 	guienv = device->getGUIEnvironment();
 	playerCamera = new PlayerCamera(device);
 
-	// initialize networkUtilities (all networking stuff is handled in game)
+	// initialize networkUtilities (all networking stuff is handled in in this class)
 	networkUtilities = new NonRealtimeNetworkingUtilities();
 
 	// initialize gameStateDTO
@@ -38,7 +38,13 @@ game::game(void)
 	localPlayer = new Player(device);
 	opposingPlayer = new Player(device);
 
+
 	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
+
+	// unitModeLabel = guienv->getBuiltInFont();
+	unitModeLabel = guienv->getFont("../media/fonts/candara14.bmp");
+	unitModeLabelText = new std::wstring(L"");
+
 }
 
 game::~game(void)
@@ -48,19 +54,25 @@ game::~game(void)
 int game::run(void)
 {
 
-		// setup menu
+		// setup context
 		SAppContext context;
 		context.device = device;
 		context.counter = 0;
 		context.networkUtilities = networkUtilities;
 		context.game_ = this;
-
 		
 		// setup event receiver to handle user input on menu            
 		MenuEventReceiver receiver(context);
 		receiver.init(guienv, horizontal, vertical);
 		receiver.setIsUnitSelected(false);
+		receiver.setUnitModeLabelText(unitModeLabelText);
 		receiver.menuDone = false;
+
+		// Create obstacles
+		std::vector<Obstacle*>* obstacles = new std::vector<Obstacle*>();
+		obstacles->push_back(new Obstacle(type::PYRAMID, context.device));
+		obstacles->push_back(new Obstacle(type::PYRAMID, context.device));
+		receiver.setObstacles(obstacles);
 
 		// specify our custom event receiver in the device	
 		device->setEventReceiver(&receiver);
@@ -74,6 +86,9 @@ int game::run(void)
 			driver->beginScene(true, true, SColor(0,200,200,200));
 			smgr->drawAll();
 			guienv->drawAll();
+			if (receiver.menuDone) {
+				unitModeLabel->draw((*unitModeLabelText).c_str(), core::rect<s32>(20,20,0,0), video::SColor(255,100,100,100));
+			}
 			driver->endScene();
 		}
 		device->drop();
@@ -106,6 +121,7 @@ void game::startGame(bool asPlayer1, char* ipAddress) {
 
 		localPlayer->initUnits();
 		opposingPlayer->initUnits();
+		localPlayer->setActionsLeft();
 		// passTurn();
 	} else {
 		networkUtilities->joinGame(ipAddress, portNumber); 
@@ -135,10 +151,11 @@ void game::startGame(bool asPlayer1, char* ipAddress) {
 
 }
 
-void game::passTurn() {
+void game::passTurn(bool giveUp) {
 	// in the game state both player's units will be contained --> allocate memory for all units
 	gameState = new GameStateDTO(localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size());
 	gameState->setVictory(checkVictory());
+	gameState->setGiveUp(giveUp);
 
 	BaseUnitDTO* units = new BaseUnitDTO[localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size()];
 	int i = 0;
@@ -196,10 +213,15 @@ void game::passTurn() {
 	gameState->setUnits(units);
 	// serialize the gamestateDTO (unitDTOs should be serialized along with them...)
 	char* buffer = gameState->serializeGameState();
-	
 	if (gameState->getVictory()) {
 		std::cout << "YOU WIN: " << gameState->getVictory() << std::endl;
-		device->getGUIEnvironment()->addMessageBox(L"YOU WIN!", L"Congratulations, you win the game!", true, EMBF_OK);	
+		device->getGUIEnvironment()->addMessageBox(L"YOU WIN!", L"Congratulations, you win the game!", true, EMBF_OK);
+		endOfGame = true;
+	}
+	if (gameState->getGiveUp()) {
+		std::cout << "YOU SURRENDER: " << gameState->getVictory() << std::endl;	
+		device->getGUIEnvironment()->addMessageBox(L"YOU SURRENDER!", L"Your opponent won the game. You surrendered.", true, EMBF_OK);
+		endOfGame = true;
 	}
 
 	try {
@@ -211,13 +233,14 @@ void game::passTurn() {
 	catch(NonRealtimeNetworkingException e) {
 		std::cout << "Error: " << e.what() << std::endl;
 		device->getGUIEnvironment()->addMessageBox(L"Oops an Error", L"Something went wrong, probably connection lost", true, EMBF_OK);
+		endOfGame = true;
 	}
-
 }
 
 void game::updateGameState(){
 	// create a GameStateDTO object and fill in data we received by deserializing it
 	networkUtilities->receiveData();
+	//networkUtilities->receiveDataThread();
 	std::cout << "Buffer: " << networkUtilities->getBuffer() << std::endl;
 	// gameState = new GameStateDTO();
 	gameState->deserialize(networkUtilities->getBuffer());
@@ -244,6 +267,8 @@ void game::updateGameState(){
 				// later on -> update other attributes of the unit
 				(*it)->node->setPosition((*it)->position);
 				(*it)->updateHealthBar();
+				(*it)->setHasMoved(false);
+				(*it)->setHasShot(false);
 
 				unitUpdated = true;
 			}
@@ -265,6 +290,8 @@ void game::updateGameState(){
 				// updates the unit's position visually on the map (hopefully)
 				(*it)->node->setPosition((*it)->position);
 				(*it)->updateHealthBar();
+				(*it)->setHasMoved(false);
+				(*it)->setHasShot(false);
 
 				unitUpdated = true;
 			}
@@ -273,20 +300,33 @@ void game::updateGameState(){
 		if (! unitUpdated) 
 			throw new IllegalStateException("Unit is not assigned to a player.");		
 	}
+
 	// show message if player lost
 	if (gameState->getVictory()) {
 		std::cout << "YOU LOSE: " << gameState->getVictory() << std::endl;	
 		device->getGUIEnvironment()->addMessageBox(L"YOU LOSE!", L"Your opponent won the game. You lose.", true, EMBF_OK);
+		endOfGame = true;
+	}
+	if(gameState->getGiveUp()) {
+		std::cout << "YOU WIN: " << gameState->getVictory() << std::endl;	
+		device->getGUIEnvironment()->addMessageBox(L"YOU WIN!", L"Your opponent surrendered.", true, EMBF_OK);
+		endOfGame = true;
 	}
 
 	// update which player is active (just invert)
 	gameState->setPlayer1Turn(!gameState->getPlayer1Turn());
+
+	if(localPlayer->getPlayer1() && gameState->getPlayer1Turn()){
+		localPlayer->resetActionsLeft();
+	} else if(!localPlayer->getPlayer1() && !gameState->getPlayer1Turn()){
+		localPlayer->resetActionsLeft();
+	}
 }
 
-void game::init_map(IrrlichtDevice *device_map)
+void game::init_map(IrrlichtDevice* device_map, std::vector<Obstacle*>* obstacles)
 {
-	//make a new terrain
-	mapterrain map = mapterrain(device_map, smgr);
+	//make a new terrain	
+	mapterrain map = mapterrain(device_map, smgr, obstacles);
 	
 }
 
@@ -314,7 +354,7 @@ bool game::checkVictory() {
 			if (opposingPlayer->basePositions[i] == (*it)->position) {
 				isOnBase = true;
 				(*it)->onBaseCounter++;
-				if ((*it)->onBaseCounter > 1) {
+				if ((*it)->onBaseCounter > 2) {
 					victory = true;
 				}
 			}
@@ -328,39 +368,22 @@ bool game::checkVictory() {
 	return victory;
 }
 
-/*
-bool game::checkDefeat() {
-	// check defeat conditions (invert victory conditions) -- at the beginning of a turn
-	bool defeat = true;
+void game::resetGame() {
+	// release some memory...	
+	delete localPlayer;
+	delete opposingPlayer;
+	guienv->clear();
+	smgr->clear();
 
-	// #1 all my units are dead
-	for(vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
-		// if there is at least one of my units is still alive, this condition isn't met
-		if ((*it)->getHealth() > 0) {
-			defeat = false;
-		}
-	}
+	// reset all the relevant properties
+	localPlayer = new Player(device);
+	opposingPlayer = new Player(device);
+	networkUtilities = new NonRealtimeNetworkingUtilities();
+	endOfGame = false;
+	gameState = new GameStateDTO(5);
 
-	// #2 my base was captured --> opposing unit is on my base for at least 2 turns
-	bool isOnBase = false;
-	for(vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
-		for (int i = 0; i < 2; i++) {
-			if (localPlayer->basePositions[i] == (*it)->position) {
-				isOnBase = true;
-				(*it)->onBaseCounter++;
-				if ((*it)->onBaseCounter > 1) {
-					defeat = true;
-				}
-			}
-		}
-		// reset the counter if unit is not on a base field
-		if (!isOnBase) {
-			(*it)->onBaseCounter = 0;
-		}
-	}
-
-	return defeat;
+	// re-run menu + game
+	menu* m = new menu(device, driver, smgr, guienv);
+	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
+	this->run();
 }
-*/
-
-

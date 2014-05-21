@@ -3,9 +3,10 @@
  * implementation of GameStateDTO
  */
 
+
+#include <GameStateDTO.h>
 #include <iostream>
 #include <fstream>
-#include <GameStateDTO.h>
 
 GameStateDTO::GameStateDTO(int length) {
 	unitLength = length;
@@ -37,6 +38,7 @@ void GameStateDTO::deserialize(std::string serializationString) {
 }
 
 char* GameStateDTO::serializeGameState() {
+	//return serializer_.serialize(this);
 
 	// create and open a character archive for serialized vector instance
     std::ofstream ofs(GAME_STATE_FILE_NAME);
@@ -67,5 +69,4 @@ char* GameStateDTO::serializeGameState() {
 	ifs.close();
 
 	return buffer;
-
 }

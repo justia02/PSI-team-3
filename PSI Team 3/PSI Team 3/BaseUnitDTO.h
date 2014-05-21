@@ -5,6 +5,7 @@
 #pragma once
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include "Serializer.h"
 
 #define BASE_UNIT_FILE_NAME "serializationFileBaseUnit"
 
@@ -22,6 +23,7 @@ private:
 	int health;
 
 	// serialization stuff
+	Serializer serializer_;
 	friend class boost::serialization::access;
     template<class Archive>	
 	void serialize(Archive & ar, const unsigned int version)
@@ -33,7 +35,6 @@ private:
 		ar & player1;
 		ar & health;
     };
-
 
 public:
 	BaseUnitDTO() { };

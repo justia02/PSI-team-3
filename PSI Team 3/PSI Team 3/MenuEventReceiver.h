@@ -42,11 +42,20 @@ class MenuEventReceiver : public irr::menuReceiver
 			unitList = context.game_->localPlayer->getUnits();
 			smgr = context.device->getSceneManager();
 			camera = smgr->getActiveCamera();
+			selectedUnit = hoveredUnit = NULL;
+			allUnits = NULL;
+			shootingMode = false;
 		};
 		bool OnEvent(const SEvent& event);
 
 		void setIsUnitSelected(bool value) {
 			isUnitSelected = value;
+		};
+		void setUnitModeLabelText(std::wstring* text) {
+			unitModeLabelText = text;
+		};
+		void setObstacles(std::vector<Obstacle*>* obstacles) {
+			this->obstacles = obstacles;
 		};
 	    SAppContext & Context;
 
@@ -68,8 +77,13 @@ class MenuEventReceiver : public irr::menuReceiver
 		bool isUnitSelected;
 		bool isHoveringUnit;
 		BaseUnit *selectedUnit;
+		BaseUnit* hoveredUnit;
 		vector<BaseUnit*>* unitList;
 		vector<BaseUnit*>* allUnits;
+		vector<Obstacle*>* obstacles;
 		ICameraSceneNode* camera;
 		ISceneManager* smgr;
+		bool shootingMode;
+		std::wstring* unitModeLabelText;
+
 };
