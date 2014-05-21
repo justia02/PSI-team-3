@@ -229,6 +229,7 @@ void game::passTurn(bool giveUp) {
 void game::updateGameState(){
 	// create a GameStateDTO object and fill in data we received by deserializing it
 	networkUtilities->receiveData();
+	//networkUtilities->receiveDataThread();
 	std::cout << "Buffer: " << networkUtilities->getBuffer() << std::endl;
 	// gameState = new GameStateDTO();
 	gameState->deserialize(networkUtilities->getBuffer());
