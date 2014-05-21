@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "PlayerCamera.h"
 #include "GameStateDTO.h"
+#include "menu.h"
 #include <stdlib.h>
 
 using namespace irr;
@@ -53,7 +54,10 @@ public:
 	// public methods
 	int run(void);
 	void startGame(bool asPlayer1, char* ipAddress = NULL); 
+
+	void init_ingame_menu();
 	void init_map(IrrlichtDevice *device_map, std::vector<Obstacle*>* obstacles);
+
 	void startGame();
 	void passTurn(bool giveUp);
 	bool checkVictory(); 
@@ -61,8 +65,14 @@ public:
 	bool getEndOfGame() { return endOfGame; };
 	void setEndOfGame(bool endOfGame) { this->endOfGame = endOfGame; };
 
+	int horizontal;
+	int vertical;
+
 	// players
 	Player* localPlayer;
 	Player* opposingPlayer;
+
+	//menu
+	menu* m;
 
 };

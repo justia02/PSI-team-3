@@ -1,14 +1,23 @@
 #include "game.h"
-#include "MenuEventReceiver.h" // this include MUST NOT be in the .h file!
+#include "MenuEventReceiver.h" 
 #include "Player.h"
-#include "menu.h"
+//#include "menu.h"
 #include "IllegalStateException.h"
+#include <non-realtime-networking/NonRealtimeNetworkingException.h>
+#include "wtypes.h"
 
 game::game(void)
 {
 	//create the device
-	
-	device = createDevice( video::EDT_OPENGL, dimension2d<u32>(640, 480), 16, false, false, false, 0);
+	//and get desktop width and height
+	RECT desktop;
+	const HWND hDesktop = GetDesktopWindow();
+	GetWindowRect(hDesktop, &desktop);
+	//assign the width and height
+	horizontal = desktop.right;
+	vertical = desktop.bottom;
+
+	device = createDevice( video::EDT_OPENGL, dimension2d<u32>(horizontal, vertical), 16, false, false, false, 0);
 
 	device->setWindowCaption(L"PSI TEAM 3");
 	device->setResizable(false);
@@ -29,13 +38,13 @@ game::game(void)
 	localPlayer = new Player(device);
 	opposingPlayer = new Player(device);
 
-	// run menu
-	menu* m = new menu(device, driver, smgr, guienv);
+
 	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
 
 	// unitModeLabel = guienv->getBuiltInFont();
 	unitModeLabel = guienv->getFont("../media/fonts/candara14.bmp");
 	unitModeLabelText = new std::wstring(L"");
+
 }
 
 game::~game(void)
@@ -44,6 +53,7 @@ game::~game(void)
 
 int game::run(void)
 {
+
 		// setup context
 		SAppContext context;
 		context.device = device;
@@ -53,7 +63,7 @@ int game::run(void)
 		
 		// setup event receiver to handle user input on menu            
 		MenuEventReceiver receiver(context);
-		receiver.init(guienv, 640, 480);
+		receiver.init(guienv, horizontal, vertical);
 		receiver.setIsUnitSelected(false);
 		receiver.setUnitModeLabelText(unitModeLabelText);
 		receiver.menuDone = false;
@@ -315,8 +325,14 @@ void game::updateGameState(){
 
 void game::init_map(IrrlichtDevice* device_map, std::vector<Obstacle*>* obstacles)
 {
-	//make a new terrain
+	//make a new terrain	
 	mapterrain map = mapterrain(device_map, smgr, obstacles);
+	
+}
+
+void game::init_ingame_menu()
+{
+	m = new menu(device, driver, smgr, guienv, horizontal, vertical);
 }
 
 bool game::checkVictory() {

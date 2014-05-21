@@ -179,7 +179,9 @@ void MenuEventReceiver::START_GAME()
 	Context.game_->opposingPlayer->setPlayer1(false);
 	Context.game_->localPlayer->initUnits();
 	Context.game_->opposingPlayer->initUnits();
+	Context.game_->init_ingame_menu();
 	Context.game_->localPlayer->setActionsLeft();
+
 	menuDone = true;
 	*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
 }
