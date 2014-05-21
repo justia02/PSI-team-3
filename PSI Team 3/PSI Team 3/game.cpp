@@ -383,7 +383,7 @@ void game::resetGame() {
 	gameState = new GameStateDTO(5);
 
 	// re-run menu + game
-	menu* m = new menu(device, driver, smgr, guienv);
+	m->init();
 	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
 	this->run();
 }
