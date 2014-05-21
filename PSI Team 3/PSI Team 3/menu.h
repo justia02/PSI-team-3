@@ -2,14 +2,9 @@
 #include <irrlicht.h>
 #include "mapterrain.h"
 #include <iostream>
-#include <non-realtime-networking/NonRealtimeNetworkingUtilities.h>
-#include <non-realtime-networking/NonRealtimeNetworkingException.h>
-#include <iostream>
-#include "game.h"
-#include "MenuEventReceiver.h"
 
 using namespace irr;
-using namespace irrlicht_nonrealtimenetworking;
+
 
 
 using namespace core;
@@ -18,8 +13,8 @@ using namespace video;
 using namespace io;
 using namespace gui;
 
-/** class for a networking menu
-*   to provide facilities to establish a connection between two users
+/** class for the ingame menu
+*   this menu will be visible for every player so that they can see important information about the game
 */
 class menu
 {
@@ -28,15 +23,17 @@ public:
 	IVideoDriver* driver;
 	ISceneManager* smgr;
 	IGUIEnvironment* guienv;
-	//NonRealtimeNetworkingUtilities* networkUtilities;
+	wchar_t *text;
 
-	void init_console(SAppContext context);
-	//const wchar_t *text;
+	IGUIStaticText *text1;
 
-	menu(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, IGUIEnvironment* guienv);
+	int height;
+	int width;
+
+	menu(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, IGUIEnvironment* guienv, int horizontal, int vertical);
 	~menu(void);
-	/*IrrlichtDevice* device,*/
-	void run(game* g);
+
 	void init();
+	void setMainText(char t);
 };
 

@@ -27,6 +27,7 @@ mapterrain::~mapterrain(void)
 {
 }
 
+//this function loads the basses on the map
 void mapterrain::loadBases(ISceneManager *smgr)
 {
 	//load the base models here
@@ -37,10 +38,11 @@ void mapterrain::loadBases(ISceneManager *smgr)
 	IAnimatedMeshSceneNode* node1 = smgr->addAnimatedMeshSceneNode( base1 );
 	IAnimatedMeshSceneNode* node2 = smgr->addAnimatedMeshSceneNode( base2 );
 
-	
+	//these are the positions for the basses
 	irr::core::vector3df pos1 = vector3d<float>(0, 0, -3.55);
-	irr::core::vector3df pos2 = vector3d<float>(0, 0, 3.25);
+	irr::core::vector3df pos2 = vector3d<float>(0, 0, 3.45);
 
+	//reposition the basses to their place
 	node1->setPosition(pos1);
 	node2->setPosition(pos2);
 	

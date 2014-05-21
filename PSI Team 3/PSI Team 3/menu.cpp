@@ -3,95 +3,46 @@
 /**
   * Implementation of menu
   */
-using namespace irrlicht_nonrealtimenetworking;
 
-menu::menu(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, IGUIEnvironment* guienv) 
+menu::menu(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, IGUIEnvironment* guienv, int horizontal, int vertical) 
 {
 	this->device = device;
 	this->driver = driver;
 	this->smgr = smgr;
 	this->guienv = guienv;
 
-	// initalizes graphical menu
-	//init();
+	width = horizontal;
+	height = vertical;
+
+	// initalizes the in game info menu
+	init();
 }
 
 menu::~menu(void)
 {
 }
 
-void menu::run(game* g) {
-
-	// setup context
-	SAppContext context;
-	context.device = device;
-	context.counter = 0;
-	context.game_ = g;
-
-	// runs the console menu
-	init_console(context);
-}
 
 /**
  * inializes the graphical menu
  */
 void menu::init(void)
 {
+	//guienv->addImage(
+	
 	// TODO: add text?!
-	guienv->addStaticText(L"Welcome! Please select an option.",
-        rect<s32>((640 / 3), (480/ 30) * 5, (640 / 3) * 2, (480/ 30) * 6), true);
+	text1 = guienv->addStaticText(L"You are Player 1", rect<s32>(0, (height/ 30) * 1, (width / 5), (height/ 30) * 2), true);
+	
 	// add gui elements
-	guienv->addButton(rect<s32>((640 / 3), (480/ 30) * 8, (640 / 3) * 2, (480/ 30) * 11), 0, GUI_ID_JOIN_GAME, L"Join Game", L"Joins a game");
-	guienv->addButton(rect<s32>((640 / 3), (480/ 30) * 12, (640 / 3) * 2, (480/ 30) * 15), 0, GUI_ID_HOST_GAME, L"Host Game", L"Hosts a game");
-	guienv->addButton(rect<s32>((640 / 3), (480/ 30) * 16, (640 / 3) * 2, (480/ 30) * 19), 0, GUI_ID_JOIN_WSDL, L"Quick Match", L"Starts a quick match, opponent will be automatically assigned.");
-	guienv->addButton(rect<s32>((640 / 3), (480/ 30) * 20, (640 / 3) * 2, (480/ 30) * 23), 0, GUI_ID_START_GAME, L"Start Game", L"Start game without network for test");
+	//guienv->addButton(rect<s32>((640 / 3), (480/ 30) * 8, (640 / 3) * 2, (480/ 30) * 11), 0, GUI_ID_JOIN_GAME, L"Join Game", L"Joins a game");
+	//guienv->addButton(rect<s32>((640 / 3), (480/ 30) * 12, (640 / 3) * 2, (480/ 30) * 15), 0, GUI_ID_HOST_GAME, L"Host Game", L"Hosts a game");
+	//guienv->addButton(rect<s32>((640 / 3), (480/ 30) * 16, (640 / 3) * 2, (480/ 30) * 19), 0, GUI_ID_JOIN_WSDL, L"Quick Match", L"Starts a quick match, opponent will be automatically assigned.");
+	//guienv->addButton(rect<s32>((640 / 3), (480/ 30) * 20, (640 / 3) * 2, (480/ 30) * 23), 0, GUI_ID_START_GAME, L"Start Game", L"Start game without network for test");
 }
 
-/**
- * initializes an alternative console menu, mainly for testing purpose
- */
-void menu::init_console(SAppContext context)
+void menu::setMainText(char t)
 {
-		int portNo = 6;
-		int option;
-		char* ipAddress = new char[15];
-
-		while (true) {
-		std::cout << "welcome! would you like to host(1) a game or join(2) a game, connect(3) to the Web Service or just start(4)?";
-		std::cin >> option;
-
-		if (option == 1) {
-			try {
-				context.game_->startGame(true);
-			}
-			catch(NonRealtimeNetworkingException e) {
-				std::cout << "NonRealtimeNetworkingException: " << e.what() << std::endl;
-			}
-			break;
-		} else if (option == 2) {
-			std::cout << "Please enter the IP address of your opponent" << std::endl;
-			std::cin >> ipAddress;
-			try {
-				context.game_->startGame(false, ipAddress);
-			}
-			catch(NonRealtimeNetworkingException e) {
-				std::cout << "NonRealtimeNetworkingException: " << e.what() << std::endl;
-			}
-			break;
-		} else if (option == 3) {
-			try {
-				context.game_->startGame();
-			}
-			catch(NonRealtimeNetworkingException e) {
-				std::cout << "NonRealtimeNetworkingException: " << e.what() << std::endl;
-			}
-			break;
-		} else if (option == 4) {
-			context.game_->localPlayer->setPlayer1(true);
-			context.game_->opposingPlayer->setPlayer1(false);
-			context.game_->localPlayer->initUnits();
-			context.game_->opposingPlayer->initUnits();
-			break;
-		}
-	}
+	text1->setText(L"You are Player 2");
+	//text1->setOverrideFont();
+	//text1->setText(t);
 }

@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "PlayerCamera.h"
 #include "GameStateDTO.h"
+#include "menu.h"
 #include <stdlib.h>
 
 using namespace irr;
@@ -49,14 +50,21 @@ public:
 	// public methods
 	int run(void);
 	void startGame(bool asPlayer1, char* ipAddress = NULL); 
-	void game::init_map(IrrlichtDevice *device_map);
+	void init_map(IrrlichtDevice *device_map);
+	void init_ingame_menu();
 	void startGame();
 	void passTurn();
 	bool checkVictory(); 
 	bool checkDefeat();
 
+	int horizontal;
+	int vertical;
+
 	// players
 	Player* localPlayer;
 	Player* opposingPlayer;
+
+	//menu
+	menu* m;
 
 };
