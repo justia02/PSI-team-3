@@ -11,7 +11,7 @@ using namespace std;
 
 enum type {
 	PYRAMID,
-	TREE,
+	CAT,
 	SPIDER
 };
 

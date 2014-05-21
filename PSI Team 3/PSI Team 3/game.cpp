@@ -72,6 +72,7 @@ int game::run(void)
 		std::vector<Obstacle*>* obstacles = new std::vector<Obstacle*>();
 		obstacles->push_back(new Obstacle(type::PYRAMID, context.device));
 		obstacles->push_back(new Obstacle(type::SPIDER, context.device));
+		obstacles->push_back(new Obstacle(type::CAT, context.device));
 		receiver.setObstacles(obstacles);
 
 		// specify our custom event receiver in the device	

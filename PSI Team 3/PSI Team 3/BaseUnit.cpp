@@ -319,15 +319,16 @@ void BaseUnit::Move(direction moveDirection, float distance, std::vector<BaseUni
 	if (!player1)
 		moveDirection = revertDirection(moveDirection);
 
-	bool movePossible = canMove(moveDirection, distance, units, obstacles);
+	// Check if nothing is right next to us
+	bool movePossible = canMove(moveDirection, 1, units, obstacles);
 
-	if (!movePossible) {
-		if (distance == 1)
+	if (!movePossible)
 			return;
-		movePossible = canMove(moveDirection, 1, units, obstacles); // Check if a unit can move by one
+
+	// If we want to move by more than 1 one
+	if (distance > 1) {
+		movePossible = canMove(moveDirection, distance, units, obstacles);
 		if (!movePossible)
-			return;
-		else
 			distance = 1;
 	}
 	
@@ -404,7 +405,7 @@ bool BaseUnit::createMesh(){
         node->setScale(core::vector3df(scale,scale,scale));
 		// Add health bar
 		healthBar = sceneManager->addBillboardTextSceneNode(device->getGUIEnvironment()->getBuiltInFont(), L"100%", node, core::dimension2d<f32>(0.6f, 0.6f), core::vector3df(0.5f, 2.5f, 0));
-		healthBar->setColor(irr::video::SColor(0, 0, 0, 0));
+		healthBar->setColor(irr::video::SColor(0, 255, 0, 0));
     }
 
 	irr::core::vector3df extent = node->getTransformedBoundingBox().getExtent();
