@@ -53,7 +53,10 @@ class MenuEventReceiver : public irr::menuReceiver
 		};
 		void setUnitModeLabelText(std::wstring* text) {
 			unitModeLabelText = text;
-		}
+		};
+		void setObstacles(std::vector<Obstacle*>* obstacles) {
+			this->obstacles = obstacles;
+		};
 	    SAppContext & Context;
 
 		//implementation of the functions from the engine.
@@ -77,6 +80,7 @@ class MenuEventReceiver : public irr::menuReceiver
 		BaseUnit* hoveredUnit;
 		vector<BaseUnit*>* unitList;
 		vector<BaseUnit*>* allUnits;
+		vector<Obstacle*>* obstacles;
 		ICameraSceneNode* camera;
 		ISceneManager* smgr;
 		bool shootingMode;
