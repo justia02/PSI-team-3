@@ -12,12 +12,12 @@ void Obstacle::createMesh() {
 			mesh = device->getSceneManager()->getMesh("../media/pyramid.irrmesh");
 			break;
 		}
-		case type::BIG_PYRAMID: {
-			mesh = device->getSceneManager()->getMesh("../media/bigPyramid.irrmesh");
+		case type::SPIDER: {
+			mesh = device->getSceneManager()->getMesh("../media/spider.irrmesh");
 			break;
 		}
 		case type::TREE: {
-			// mesh = sceneManager->getMesh("../media/pyramid3.irrmesh");
+			mesh = device->getSceneManager()->getMesh("../media/tree.irrmesh");
 			break;
 		}
 		default: { // None of above
@@ -37,7 +37,11 @@ void Obstacle::createMesh() {
     {
         node->setMaterialFlag(EMF_LIGHTING, false);
         node->setMD2Animation(scene::EMAT_STAND);
-		node->setScale(vector3df(0.9, 0.9, 0.9));
+		node->setScale(vector3df(0.3, 0.3, 0.3));
+		if (obstacleType == type::SPIDER) {
+			node->setScale(vector3df(0.004, 0.004, 0.004));
+			node->setMaterialTexture(0, device->getVideoDriver()->getTexture("../media/black.jpg"));
+		}
 		// node->setPosition(vector3df(position.X + 0.2, position.Y, position.Z));
 		node->setRotation(vector3df(0, 45, 0));
 		// node->setMaterialTexture(0, device->getVideoDriver()->getTexture("../media/wall_light.jpg"));
@@ -50,7 +54,7 @@ void Obstacle::createMesh() {
 
 void Obstacle::setPosition(vector3df position) {
 
-	node->setPosition(this->position = position);
-	// node->setPosition(vector3df(position.X + 0.25, position.Y, position.Z));
+	this->position = position;
+	node->setPosition(vector3df(position.X + 0.3, position.Y - 0.3, position.Z));
 
 }

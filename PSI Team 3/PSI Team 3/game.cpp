@@ -61,7 +61,7 @@ int game::run(void)
 		// Create obstacles
 		std::vector<Obstacle*>* obstacles = new std::vector<Obstacle*>();
 		obstacles->push_back(new Obstacle(type::PYRAMID, context.device));
-		obstacles->push_back(new Obstacle(type::PYRAMID, context.device));
+		obstacles->push_back(new Obstacle(type::SPIDER, context.device));
 		receiver.setObstacles(obstacles);
 
 		// specify our custom event receiver in the device	
@@ -230,7 +230,7 @@ void game::passTurn(bool giveUp) {
 void game::updateGameState(){
 	// create a GameStateDTO object and fill in data we received by deserializing it
 	networkUtilities->receiveData();
-	//networkUtilities->receiveDataThread();
+	// networkUtilities->receiveDataThread();
 	std::cout << "Buffer: " << networkUtilities->getBuffer() << std::endl;
 	// gameState = new GameStateDTO();
 	gameState->deserialize(networkUtilities->getBuffer());

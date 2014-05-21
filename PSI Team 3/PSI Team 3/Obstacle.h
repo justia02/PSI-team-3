@@ -11,8 +11,8 @@ using namespace std;
 
 enum type {
 	PYRAMID,
-	BIG_PYRAMID,
-	TREE
+	TREE,
+	SPIDER
 };
 
 class Obstacle {
