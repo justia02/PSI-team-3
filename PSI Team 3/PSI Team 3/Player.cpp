@@ -62,7 +62,7 @@ void Player::setActionsLeft(){
 	else if(actionsLeft <= 0){
 		actionsLeft = 4;
 	}
-	cout << "Actionsleft: " << actionsLeft << endl;
+	cout << "Actions+left: " << actionsLeft << endl;
 }
 void Player::resetActionsLeft(){
 	actionsLeft = 4;

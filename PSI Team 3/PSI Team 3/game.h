@@ -37,6 +37,7 @@ private:
 	IGUIFont* unitModeLabel;
 	std::wstring* unitModeLabelText;
 	bool endOfGame;
+	bool firstTime;
 
 	// private methods
 	BaseUnit* initializeUnits();

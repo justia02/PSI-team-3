@@ -7,21 +7,20 @@
 game::game(void)
 {
 	//create the device
-	
-	device = createDevice( video::EDT_OPENGL, dimension2d<u32>(640, 480), 16, false, false, false, 0);
+		device = createDevice( video::EDT_OPENGL, dimension2d<u32>(640, 480), 16, false, false, false, 0);
 
-	device->setWindowCaption(L"PSI TEAM 3");
-	device->setResizable(false);
+		device->setWindowCaption(L"PSI TEAM 3");
+		device->setResizable(false);
 
-	// initialize driver, scenemanager and gui environment
-	driver = device->getVideoDriver();
-	smgr = device->getSceneManager();
-	guienv = device->getGUIEnvironment();
-	playerCamera = new PlayerCamera(device);
+		// initialize driver, scenemanager and gui environment
+		driver = device->getVideoDriver();
+		smgr = device->getSceneManager();
+		guienv = device->getGUIEnvironment();
+		playerCamera = new PlayerCamera(device);
 
 	// initialize networkUtilities (all networking stuff is handled in in this class)
 	networkUtilities = new NonRealtimeNetworkingUtilities();
-
+	endOfGame = false;
 	// initialize gameStateDTO
 	gameState = new GameStateDTO(5);
 
@@ -44,38 +43,42 @@ game::~game(void)
 
 int game::run(void)
 {
-		// setup context
-		SAppContext context;
-		context.device = device;
-		context.counter = 0;
-		context.networkUtilities = networkUtilities;
-		context.game_ = this;
-		
-		// setup event receiver to handle user input on menu            
-		MenuEventReceiver receiver(context);
-		receiver.init(guienv, 640, 480);
-		receiver.setIsUnitSelected(false);
-		receiver.setUnitModeLabelText(unitModeLabelText);
-		receiver.menuDone = false;
 
-		// specify our custom event receiver in the device	
+	// setup context
+	SAppContext context;
+	context.device = device;
+	context.counter = 0;
+	context.networkUtilities = networkUtilities;
+	context.game_ = this;
+		
+	// setup event receiver to handle user input on menu            
+	MenuEventReceiver receiver(context);
+	receiver.init(guienv, 640, 480);
+	receiver.setIsUnitSelected(false);
+	receiver.setUnitModeLabelText(unitModeLabelText);
+	receiver.menuDone = false;
+
+	// specify our custom event receiver in the device	
+	//if (! endOfGame) {
 		device->setEventReceiver(&receiver);
+	//}
+	endOfGame = false;
 		
 
-		while (device->run() && driver)
-		if (device->isWindowActive())
-		{
+	while (device->run() && driver)
+	if (device->isWindowActive())
+	{
 			
-			//device->run();
-			driver->beginScene(true, true, SColor(0,200,200,200));
-			smgr->drawAll();
-			guienv->drawAll();
-			if (receiver.menuDone) {
-				unitModeLabel->draw((*unitModeLabelText).c_str(), core::rect<s32>(20,20,0,0), video::SColor(255,100,100,100));
-			}
-			driver->endScene();
+		//device->run();
+		driver->beginScene(true, true, SColor(0,200,200,200));
+		smgr->drawAll();
+		guienv->drawAll();
+		if (receiver.menuDone) {
+			unitModeLabel->draw((*unitModeLabelText).c_str(), core::rect<s32>(20,20,0,0), video::SColor(255,100,100,100));
 		}
-		device->drop();
+		driver->endScene();
+	}
+	device->drop();
 	
 	return 0;
 }
@@ -136,6 +139,7 @@ void game::startGame(bool asPlayer1, char* ipAddress) {
 }
 
 void game::passTurn(bool giveUp) {
+	localPlayer->resetActionsLeft();
 	// in the game state both player's units will be contained --> allocate memory for all units
 	gameState = new GameStateDTO(localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size());
 	gameState->setVictory(checkVictory());
@@ -299,11 +303,13 @@ void game::updateGameState(){
 	// update which player is active (just invert)
 	gameState->setPlayer1Turn(!gameState->getPlayer1Turn());
 
+	/*
 	if(localPlayer->getPlayer1() && gameState->getPlayer1Turn()){
 		localPlayer->resetActionsLeft();
 	} else if(!localPlayer->getPlayer1() && !gameState->getPlayer1Turn()){
 		localPlayer->resetActionsLeft();
 	}
+	*/
 }
 
 void game::init_map(IrrlichtDevice *device_map)
@@ -331,7 +337,7 @@ bool game::checkVictory() {
 			if (opposingPlayer->basePositions[i] == (*it)->position) {
 				isOnBase = true;
 				(*it)->onBaseCounter++;
-				if ((*it)->onBaseCounter > 2) {
+				if ((*it)->onBaseCounter > 3) {
 					victory = true;
 				}
 			}
@@ -356,7 +362,6 @@ void game::resetGame() {
 	localPlayer = new Player(device);
 	opposingPlayer = new Player(device);
 	networkUtilities = new NonRealtimeNetworkingUtilities();
-	endOfGame = false;
 	gameState = new GameStateDTO(5);
 
 	// re-run menu + game
