@@ -173,6 +173,7 @@ void game::passTurn(bool giveUp) {
 		tmp.setZ((*it)->position.Z);
 		tmp.setPlayer(true);
 		tmp.setHealth((*it)->health);
+		std::cout<<"PASS TURN!";
 		// put unitDTOs in list that is given to gamestateDTO
 		units[i] = tmp;
 		i++;
