@@ -123,7 +123,6 @@ void game::startGame(bool asPlayer1, char* ipAddress) {
 		localPlayer->initUnits();
 		opposingPlayer->initUnits();
 		localPlayer->setActionsLeft();
-		// passTurn();
 	} else {
 		networkUtilities->joinGame(ipAddress, portNumber); 
 
@@ -155,7 +154,10 @@ void game::startGame(bool asPlayer1, char* ipAddress) {
 
 void game::passTurn(bool giveUp) {
 	// in the game state both player's units will be contained --> allocate memory for all units
+	
+	bool pl1turn = gameState->getPlayer1Turn();
 	gameState = new GameStateDTO(localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size());
+	gameState->setPlayer1Turn(!pl1turn);
 	gameState->setVictory(checkVictory());
 	gameState->setGiveUp(giveUp);
 
@@ -295,9 +297,6 @@ void * game::updateGameState(void * g){
 		gm->endOfGame = true;
 	}
 
-	// update which player is active (just invert)
-	gm->gameState->setPlayer1Turn(!gm->gameState->getPlayer1Turn());
-
 	if(gm->localPlayer->getPlayer1() && gm->gameState->getPlayer1Turn()){
 		gm->localPlayer->resetActionsLeft();
 	} else if(!gm->localPlayer->getPlayer1() && !gm->gameState->getPlayer1Turn()){
@@ -305,93 +304,6 @@ void * game::updateGameState(void * g){
 	}
 }
 
-/*
-void game::updateGameState(){
- // create a GameStateDTO object and fill in data we received by deserializing it
- networkUtilities->receiveData();
- // networkUtilities->receiveDataThread();
- std::cout << "Buffer: " << networkUtilities->getBuffer() << std::endl;
- // gameState = new GameStateDTO();
- gameState->deserialize(networkUtilities->getBuffer());
-
- bool unitUpdated;
- // update gamestate by updating all attributes in both players
- for (int i=0; i < gameState->unitLength; i++) { // calc length of array
-  BaseUnitDTO tmp = gameState->getUnits()[i];
-  unitUpdated = false;
-
-  // find referring unit
-  for(std::vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
-   if (unitUpdated) break;
-   if (tmp.getId() == (*it)->id) {
-    if((*it)->player1 != localPlayer->getPlayer1())
-     throw new IllegalStateException("Unit is not assigned correctly!");
-
-    // update position attributes of unit
-    (*it)->position.X = tmp.getX();
-    (*it)->position.Y = tmp.getY();
-    (*it)->position.Z = tmp.getZ();
-    (*it)->health = tmp.getHealth();
-
-    // later on -> update other attributes of the unit
-    (*it)->node->setPosition((*it)->position);
-    (*it)->updateHealthBar();
-    (*it)->setHasMoved(false);
-    (*it)->setHasShot(false);
-
-    unitUpdated = true;
-   }
-  }
-
-  // find referring unit
-  for(std::vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
-   if (unitUpdated) break;
-   if (tmp.getId() == (*it)->id) {
-    if((*it)->player1 != opposingPlayer->getPlayer1())
-     throw new IllegalStateException("Unit is not assigned correctly!");
-
-    // update position attributes of unit
-    (*it)->position.X = tmp.getX();
-    (*it)->position.Y = tmp.getY();
-    (*it)->position.Z = tmp.getZ();
-    (*it)->health = tmp.getHealth();
-
-    // updates the unit's position visually on the map (hopefully)
-    (*it)->node->setPosition((*it)->position);
-    (*it)->updateHealthBar();
-    (*it)->setHasMoved(false);
-    (*it)->setHasShot(false);
-
-    unitUpdated = true;
-   }
-  }
-
-  if (! unitUpdated) 
-   throw new IllegalStateException("Unit is not assigned to a player.");  
- }
-
- // show message if player lost
- if (gameState->getVictory()) {
-  std::cout << "YOU LOSE: " << gameState->getVictory() << std::endl; 
-  device->getGUIEnvironment()->addMessageBox(L"YOU LOSE!", L"Your opponent won the game. You lose.", true, EMBF_OK);
-  endOfGame = true;
- }
- if(gameState->getGiveUp()) {
-  std::cout << "YOU WIN: " << gameState->getVictory() << std::endl; 
-  device->getGUIEnvironment()->addMessageBox(L"YOU WIN!", L"Your opponent surrendered.", true, EMBF_OK);
-  endOfGame = true;
- }
-
- // update which player is active (just invert)
- gameState->setPlayer1Turn(!gameState->getPlayer1Turn());
-
- if(localPlayer->getPlayer1() && gameState->getPlayer1Turn()){
-  localPlayer->resetActionsLeft();
- } else if(!localPlayer->getPlayer1() && !gameState->getPlayer1Turn()){
-  localPlayer->resetActionsLeft();
- }
-}
-*/
 void game::init_map(IrrlichtDevice* device_map, std::vector<Obstacle*>* obstacles)
 {
 	//make a new terrain	

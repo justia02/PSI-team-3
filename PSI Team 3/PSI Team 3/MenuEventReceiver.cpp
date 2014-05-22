@@ -33,6 +33,10 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 	// if there is a key input and there is a unit selected
 	if(event.EventType == EET_KEY_INPUT_EVENT)
 	{	
+		cout<<"PLAYER 1 TURN:";
+		cout<<Context.game_->gameState->getPlayer1Turn();
+		cout<<"LOCAL PLAYER IS PLAYER 1";
+		cout<<Context.game_->localPlayer->getPlayer1();
 		if((Context.game_->gameState->getPlayer1Turn() && Context.game_->localPlayer->getPlayer1()) || (!Context.game_->gameState->getPlayer1Turn()
 			&& !Context.game_->localPlayer->getPlayer1())) {
 			if (this->isUnitSelected && event.KeyInput.Key != irr::KEY_KEY_P && event.KeyInput.Key != irr::KEY_SPACE) {
