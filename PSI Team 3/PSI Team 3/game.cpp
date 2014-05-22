@@ -154,7 +154,6 @@ void game::startGame(bool asPlayer1, char* ipAddress) {
 }
 
 void game::passTurn(bool giveUp) {
-	std::cout<<"PASS TURN!";
 	// in the game state both player's units will be contained --> allocate memory for all units
 	gameState = new GameStateDTO(localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size());
 	gameState->setVictory(checkVictory());
