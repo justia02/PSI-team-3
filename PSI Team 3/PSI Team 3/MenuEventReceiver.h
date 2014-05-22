@@ -5,6 +5,7 @@
 #include <iostream>
 #include <non-realtime-networking/NonRealtimeNetworkingUtilities.h>
 #include "game.h"
+#include <time.h>
 
 using namespace irr;
 
@@ -29,6 +30,7 @@ struct SAppContext
 class MenuEventReceiver : public irr::menuReceiver
 {
 	public:
+		time_t timeSincePassTurn;
 		IGUIEditBox *box;
 		bool menuDone;
 		wchar_t *text;

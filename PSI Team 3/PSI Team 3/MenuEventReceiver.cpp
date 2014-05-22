@@ -69,9 +69,11 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 		else {
 
 			if(event.KeyInput.Key == irr::KEY_KEY_P) {
-				if (! event.KeyInput.PressedDown) {
-					Context.game_->passTurn(false);
-				}
+					time_t tmp = time(0); 
+					if (tmp - timeSincePassTurn > 1) {
+						timeSincePassTurn = tmp;
+						Context.game_->passTurn(false);
+					}
 			}
 			if(event.KeyInput.Key == irr::KEY_KEY_G) {
 				Context.game_->passTurn(true);
