@@ -35,10 +35,12 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 	{	
 		cout<<"PLAYER 1 TURN:";
 		cout<<Context.game_->gameState->getPlayer1Turn();
-		cout<<"LOCAL PLAYER IS PLAYER 1";
+		cout<<"\n PLAYER IS PLAYER 1";
 		cout<<Context.game_->localPlayer->getPlayer1();
+		cout<<"\n";
 		if((Context.game_->gameState->getPlayer1Turn() && Context.game_->localPlayer->getPlayer1()) || (!Context.game_->gameState->getPlayer1Turn()
 			&& !Context.game_->localPlayer->getPlayer1())) {
+				cout<<"IT IS YOUR TURN \n";
 			if (this->isUnitSelected && event.KeyInput.Key != irr::KEY_KEY_P && event.KeyInput.Key != irr::KEY_SPACE) {
 				// Create a list of all units if such doesn't exist yet
 				if (allUnits == NULL) {
@@ -87,6 +89,7 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 			}
 		} else {
 			cout<<"NOT YOUR TURN";
+			cout<<"\n";
 		}
 
 	}

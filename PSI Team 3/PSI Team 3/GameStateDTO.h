@@ -35,6 +35,7 @@ private:
 		}
         ar & giveUp;
 		ar & victory;
+		ar & player1Turn;
     }
 
 public:
