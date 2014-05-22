@@ -35,7 +35,7 @@ private:
 	ISceneManager* smgr;
 	IGUIEnvironment* guienv;
 	PlayerCamera* playerCamera;
-	GameStateDTO* gameState;
+	
 	IGUIFont* unitModeLabel;
 	std::wstring* unitModeLabelText;
 	bool endOfGame;
@@ -53,6 +53,8 @@ public:
 	game(void);
 	game(IrrlichtDevice* device, ISceneManager* smgr, IGUIEnvironment* guienv);
 	~game(void);
+
+	GameStateDTO* gameState;
 
 	// public methods
 	int run(void);

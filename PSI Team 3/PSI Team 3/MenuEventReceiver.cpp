@@ -32,58 +32,57 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 
 	// if there is a key input and there is a unit selected
 	if(event.EventType == EET_KEY_INPUT_EVENT)
-	{
-		if (this->isUnitSelected && event.KeyInput.Key != irr::KEY_KEY_P && event.KeyInput.Key != irr::KEY_SPACE) {
-			// Create a list of all units if such doesn't exist yet
-			if (allUnits == NULL) {
-				allUnits = new std::vector<BaseUnit*>();
-				allUnits->insert(allUnits->end(), unitList->begin(), unitList->end());
-				allUnits->insert(allUnits->end(), Context.game_->opposingPlayer->getUnits()->begin(), Context.game_->opposingPlayer->getUnits()->end());
-			}
+	{	
+		if((Context.game_->gameState->getPlayer1Turn() && Context.game_->localPlayer->getPlayer1()) || (!Context.game_->gameState->getPlayer1Turn()
+			&& !Context.game_->localPlayer->getPlayer1())) {
+			if (this->isUnitSelected && event.KeyInput.Key != irr::KEY_KEY_P && event.KeyInput.Key != irr::KEY_SPACE) {
+				// Create a list of all units if such doesn't exist yet
+				if (allUnits == NULL) {
+					allUnits = new std::vector<BaseUnit*>();
+					allUnits->insert(allUnits->end(), unitList->begin(), unitList->end());
+					allUnits->insert(allUnits->end(), Context.game_->opposingPlayer->getUnits()->begin(), Context.game_->opposingPlayer->getUnits()->end());
+				}
 
-			// set the direction from the keycode
-			setDirection(event.KeyInput.Key);
+				// set the direction from the keycode
+				setDirection(event.KeyInput.Key);
 
-			// Space was pressed - we're shooting :D
-			if (shootingMode == true && Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasShot()) {
-				this->selectedUnit->shoot(moveDirection, Context.game_->opposingPlayer->getUnits(), obstacles);
-				Context.game_->localPlayer->setActionsLeft();
-			}
-			else if (Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasMoved()) { // Moving
-				this->selectedUnit->Move(moveDirection, this->selectedUnit->maxDistance, allUnits, obstacles, Context.game_->localPlayer->getPlayer1());
-				Context.game_->localPlayer->setActionsLeft();
-			}
-			//if (shootingMode == true) {
-			//	this->selectedUnit->shoot(moveDirection, Context.game_->opposingPlayer->getUnits(), obstacles);
-			//}
-			//else { // Moving
-			//	this->selectedUnit->Move(moveDirection, this->selectedUnit->maxDistance, allUnits, obstacles, Context.game_->localPlayer->getPlayer1());
-			//}
+				// Space was pressed - we're shooting :D
+				if (shootingMode == true && Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasShot()) {
+					this->selectedUnit->shoot(moveDirection, Context.game_->opposingPlayer->getUnits(), obstacles);
+					Context.game_->localPlayer->setActionsLeft();
+				}
+				else if (Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasMoved()) { // Moving
+					this->selectedUnit->Move(moveDirection, this->selectedUnit->maxDistance, allUnits, obstacles, Context.game_->localPlayer->getPlayer1());
+					Context.game_->localPlayer->setActionsLeft();
+				}
+				this->selectedUnit->SelectUnit();
+				this->selectedUnit = NULL;
+				this->isUnitSelected = false;
 
-			// deselect the unit
-			this->selectedUnit->SelectUnit();
-			this->selectedUnit = NULL;
-			this->isUnitSelected = false;
+			}
+			else {
 
-		}
-		else {
-
-			if(event.KeyInput.Key == irr::KEY_KEY_P) {
-					time_t tmp = time(0); 
-					if (tmp - timeSincePassTurn > 1) {
-						timeSincePassTurn = tmp;
-						Context.game_->passTurn(false);
-					}
+				if(event.KeyInput.Key == irr::KEY_KEY_P) {
+					// block the turn if not your turn!
+						time_t tmp = time(0); 
+						if (tmp - timeSincePassTurn > 1) {
+							timeSincePassTurn = tmp;
+							Context.game_->passTurn(false);
+						}	
+				}
+				if(event.KeyInput.Key == irr::KEY_KEY_G) {
+					// block the turn if it is NOT your turn!
+						Context.game_->passTurn(true);
+				}
+				if (event.KeyInput.PressedDown == true && event.KeyInput.Key == irr::KEY_SPACE) {
+					shootingMode = !shootingMode;
+					std::cout << ((shootingMode == true) ? "Shooting mode!" : "Moving mode!") << std::endl;
+					*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
+					return true;
+				}
 			}
-			if(event.KeyInput.Key == irr::KEY_KEY_G) {
-				Context.game_->passTurn(true);
-			}
-			if (event.KeyInput.PressedDown == true && event.KeyInput.Key == irr::KEY_SPACE) {
-				shootingMode = !shootingMode;
-				std::cout << ((shootingMode == true) ? "Shooting mode!" : "Moving mode!") << std::endl;
-				*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
-				return true;
-			}
+		} else {
+			cout<<"NOT YOUR TURN";
 		}
 
 	}
@@ -109,7 +108,6 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 						selectedUnit = NULL;
 						selectedUnit = hoveredUnit;
 						selectedUnit->SelectUnit();
-						cout << "Select the direction you want to " << ((shootingMode == true) ? "shoot" : "move") << " (w,s,a,d)" << endl;
 						return true;
 					}						
 				}
@@ -117,7 +115,6 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 					selectedUnit = hoveredUnit;
 					isUnitSelected = true;
 					selectedUnit->SelectUnit();
-					cout << "Select the direction you want to " << ((shootingMode == true) ? "shoot" : "move") << " (w,s,a,d)" << endl;
 				}
 			}
             break;
