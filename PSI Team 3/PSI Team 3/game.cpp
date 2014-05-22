@@ -135,17 +135,18 @@ void game::startGame(bool asPlayer1, char* ipAddress) {
 		opposingPlayer->initUnits();
 
 		vector3d<float> temp = smgr->getActiveCamera()->getPosition();
-		cout << temp.X << " " << temp.Y << " " << temp.Z;
 		temp.Z = !temp.Z;
 		temp.Y = 0;
 		playerCamera->setCameraPos(temp, localPlayer->getPlayer1());
 
 		try {
-			updateGameState();
+			
+			pthread_create(&thread, NULL, updateGameState, this);
+			//updateGameState();
 		}
 		// We should have a nice error box!
 		catch(NonRealtimeNetworkingException e) {
-			std::cout << "Error: " << e.what() << std::endl;
+	
 		}
 
 	}
@@ -162,7 +163,6 @@ void game::passTurn(bool giveUp) {
 	int i = 0;
 
 	// read units of this player
-	std::cout<<"UNITS OF LOCAL PLAYER" << std::endl;
 
 	for(std::vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
 		// create a DTO for each of them
@@ -173,22 +173,12 @@ void game::passTurn(bool giveUp) {
 		tmp.setZ((*it)->position.Z);
 		tmp.setPlayer(true);
 		tmp.setHealth((*it)->health);
-
-		// output properties of unit
-
-		std::cout << "Unit ID: " << tmp.getId() << std::endl;
-		std::cout << "Unit player: " << tmp.getPlayer() << std::endl;
-		std::cout << "X: " << tmp.getX() << std::endl;
-		std::cout << "Y: " << tmp.getY() << std::endl;
-		std::cout << "Z: " << tmp.getZ() << std::endl << std::endl;
 		// put unitDTOs in list that is given to gamestateDTO
 		units[i] = tmp;
 		i++;
 	}
 
 	// read units of opponent
-	std::cout<<"UNITS OF OPPOSING PLAYER";
-	std::cout<<"\n";
 	for(std::vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
 		// create a DTO for each of them
 		BaseUnitDTO tmp = BaseUnitDTO();
@@ -198,13 +188,6 @@ void game::passTurn(bool giveUp) {
 		tmp.setZ((*it)->position.Z);
 		tmp.setPlayer(false);
 		tmp.setHealth((*it)->health);
-
-		// output properties of unit
-		std::cout << "Unit ID: " << tmp.getId() << std::endl;
-		std::cout << "Unit player: " << tmp.getPlayer() << std::endl;
-		std::cout << "X: " << tmp.getX() << std::endl;
-		std::cout << "Y: " << tmp.getY() << std::endl;
-		std::cout << "Z: " << tmp.getZ() << std::endl << std::endl;
 		// put unitDTOs in list that is given to gamestateDTO
 		units[i] = tmp;
 		i++;
@@ -215,12 +198,10 @@ void game::passTurn(bool giveUp) {
 	// serialize the gamestateDTO (unitDTOs should be serialized along with them...)
 	char* buffer = gameState->serializeGameState();
 	if (gameState->getVictory()) {
-		std::cout << "YOU WIN: " << gameState->getVictory() << std::endl;
 		device->getGUIEnvironment()->addMessageBox(L"YOU WIN!", L"Congratulations, you win the game!", true, EMBF_OK);
 		endOfGame = true;
 	}
 	if (gameState->getGiveUp()) {
-		std::cout << "YOU SURRENDER: " << gameState->getVictory() << std::endl;	
 		device->getGUIEnvironment()->addMessageBox(L"YOU SURRENDER!", L"Your opponent won the game. You surrendered.", true, EMBF_OK);
 		endOfGame = true;
 	}
@@ -228,35 +209,36 @@ void game::passTurn(bool giveUp) {
 	try {
 		networkUtilities->setBuffer(buffer);
 		networkUtilities->sendData();
-
-		updateGameState();
+		//updateGameState();
+		pthread_create(&thread, NULL, updateGameState, this);
 	}
 	catch(NonRealtimeNetworkingException e) {
-		std::cout << "Error: " << e.what() << std::endl;
 		device->getGUIEnvironment()->addMessageBox(L"Oops an Error", L"Something went wrong, probably connection lost", true, EMBF_OK);
 		endOfGame = true;
 	}
 }
 
-void game::updateGameState(){
+void * game::updateGameState(void * g){
+
+	// cast parameter to game
+	game* gm = (game*) g;
+
 	// create a GameStateDTO object and fill in data we received by deserializing it
-	networkUtilities->receiveData();
-	// networkUtilities->receiveDataThread();
-	std::cout << "Buffer: " << networkUtilities->getBuffer() << std::endl;
+	gm->networkUtilities->receiveData();
 	// gameState = new GameStateDTO();
-	gameState->deserialize(networkUtilities->getBuffer());
+	gm->gameState->deserialize(gm->networkUtilities->getBuffer());
 
 	bool unitUpdated;
 	// update gamestate by updating all attributes in both players
-	for (int i=0; i < gameState->unitLength; i++) { // calc length of array
-		BaseUnitDTO tmp = gameState->getUnits()[i];
+	for (int i=0; i < gm->gameState->unitLength; i++) { // calc length of array
+		BaseUnitDTO tmp = gm->gameState->getUnits()[i];
 		unitUpdated = false;
 
 		// find referring unit
-		for(std::vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
+		for(std::vector<BaseUnit*>::iterator it = gm->localPlayer->getUnits()->begin(); it != gm->localPlayer->getUnits()->end(); ++it) {
 			if (unitUpdated) break;
 			if (tmp.getId() == (*it)->id) {
-				if((*it)->player1 != localPlayer->getPlayer1())
+				if((*it)->player1 != gm->localPlayer->getPlayer1())
 					throw new IllegalStateException("Unit is not assigned correctly!");
 
 				// update position attributes of unit
@@ -276,10 +258,10 @@ void game::updateGameState(){
 		}
 
 		// find referring unit
-		for(std::vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
+		for(std::vector<BaseUnit*>::iterator it = gm->opposingPlayer->getUnits()->begin(); it != gm->opposingPlayer->getUnits()->end(); ++it) {
 			if (unitUpdated) break;
 			if (tmp.getId() == (*it)->id) {
-				if((*it)->player1 != opposingPlayer->getPlayer1())
+				if((*it)->player1 != gm->opposingPlayer->getPlayer1())
 					throw new IllegalStateException("Unit is not assigned correctly!");
 
 				// update position attributes of unit
@@ -303,27 +285,112 @@ void game::updateGameState(){
 	}
 
 	// show message if player lost
-	if (gameState->getVictory()) {
-		std::cout << "YOU LOSE: " << gameState->getVictory() << std::endl;	
-		device->getGUIEnvironment()->addMessageBox(L"YOU LOSE!", L"Your opponent won the game. You lose.", true, EMBF_OK);
-		endOfGame = true;
+	if (gm->gameState->getVictory()) {		
+		gm->device->getGUIEnvironment()->addMessageBox(L"YOU LOSE!", L"Your opponent won the game. You lose.", true, EMBF_OK);
+		gm->endOfGame = true;
 	}
-	if(gameState->getGiveUp()) {
-		std::cout << "YOU WIN: " << gameState->getVictory() << std::endl;	
-		device->getGUIEnvironment()->addMessageBox(L"YOU WIN!", L"Your opponent surrendered.", true, EMBF_OK);
-		endOfGame = true;
+	if(gm->gameState->getGiveUp()) {
+		gm->device->getGUIEnvironment()->addMessageBox(L"YOU WIN!", L"Your opponent surrendered.", true, EMBF_OK);
+		gm->endOfGame = true;
 	}
 
 	// update which player is active (just invert)
-	gameState->setPlayer1Turn(!gameState->getPlayer1Turn());
+	gm->gameState->setPlayer1Turn(!gm->gameState->getPlayer1Turn());
 
-	if(localPlayer->getPlayer1() && gameState->getPlayer1Turn()){
-		localPlayer->resetActionsLeft();
-	} else if(!localPlayer->getPlayer1() && !gameState->getPlayer1Turn()){
-		localPlayer->resetActionsLeft();
+	if(gm->localPlayer->getPlayer1() && gm->gameState->getPlayer1Turn()){
+		gm->localPlayer->resetActionsLeft();
+	} else if(!gm->localPlayer->getPlayer1() && !gm->gameState->getPlayer1Turn()){
+		gm->localPlayer->resetActionsLeft();
 	}
 }
 
+/*
+void game::updateGameState(){
+ // create a GameStateDTO object and fill in data we received by deserializing it
+ networkUtilities->receiveData();
+ // networkUtilities->receiveDataThread();
+ std::cout << "Buffer: " << networkUtilities->getBuffer() << std::endl;
+ // gameState = new GameStateDTO();
+ gameState->deserialize(networkUtilities->getBuffer());
+
+ bool unitUpdated;
+ // update gamestate by updating all attributes in both players
+ for (int i=0; i < gameState->unitLength; i++) { // calc length of array
+  BaseUnitDTO tmp = gameState->getUnits()[i];
+  unitUpdated = false;
+
+  // find referring unit
+  for(std::vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
+   if (unitUpdated) break;
+   if (tmp.getId() == (*it)->id) {
+    if((*it)->player1 != localPlayer->getPlayer1())
+     throw new IllegalStateException("Unit is not assigned correctly!");
+
+    // update position attributes of unit
+    (*it)->position.X = tmp.getX();
+    (*it)->position.Y = tmp.getY();
+    (*it)->position.Z = tmp.getZ();
+    (*it)->health = tmp.getHealth();
+
+    // later on -> update other attributes of the unit
+    (*it)->node->setPosition((*it)->position);
+    (*it)->updateHealthBar();
+    (*it)->setHasMoved(false);
+    (*it)->setHasShot(false);
+
+    unitUpdated = true;
+   }
+  }
+
+  // find referring unit
+  for(std::vector<BaseUnit*>::iterator it = opposingPlayer->getUnits()->begin(); it != opposingPlayer->getUnits()->end(); ++it) {
+   if (unitUpdated) break;
+   if (tmp.getId() == (*it)->id) {
+    if((*it)->player1 != opposingPlayer->getPlayer1())
+     throw new IllegalStateException("Unit is not assigned correctly!");
+
+    // update position attributes of unit
+    (*it)->position.X = tmp.getX();
+    (*it)->position.Y = tmp.getY();
+    (*it)->position.Z = tmp.getZ();
+    (*it)->health = tmp.getHealth();
+
+    // updates the unit's position visually on the map (hopefully)
+    (*it)->node->setPosition((*it)->position);
+    (*it)->updateHealthBar();
+    (*it)->setHasMoved(false);
+    (*it)->setHasShot(false);
+
+    unitUpdated = true;
+   }
+  }
+
+  if (! unitUpdated) 
+   throw new IllegalStateException("Unit is not assigned to a player.");  
+ }
+
+ // show message if player lost
+ if (gameState->getVictory()) {
+  std::cout << "YOU LOSE: " << gameState->getVictory() << std::endl; 
+  device->getGUIEnvironment()->addMessageBox(L"YOU LOSE!", L"Your opponent won the game. You lose.", true, EMBF_OK);
+  endOfGame = true;
+ }
+ if(gameState->getGiveUp()) {
+  std::cout << "YOU WIN: " << gameState->getVictory() << std::endl; 
+  device->getGUIEnvironment()->addMessageBox(L"YOU WIN!", L"Your opponent surrendered.", true, EMBF_OK);
+  endOfGame = true;
+ }
+
+ // update which player is active (just invert)
+ gameState->setPlayer1Turn(!gameState->getPlayer1Turn());
+
+ if(localPlayer->getPlayer1() && gameState->getPlayer1Turn()){
+  localPlayer->resetActionsLeft();
+ } else if(!localPlayer->getPlayer1() && !gameState->getPlayer1Turn()){
+  localPlayer->resetActionsLeft();
+ }
+}
+*/
 void game::init_map(IrrlichtDevice* device_map, std::vector<Obstacle*>* obstacles)
 {
 	//make a new terrain	

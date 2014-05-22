@@ -10,6 +10,7 @@
 #include "GameStateDTO.h"
 #include "menu.h"
 #include <stdlib.h>
+#include <pthread.h>
 
 using namespace irr;
 
@@ -39,11 +40,13 @@ private:
 	std::wstring* unitModeLabelText;
 	bool endOfGame;
 	bool firstTime;
+	pthread_t thread;
 
 	// private methods
 	BaseUnit* initializeUnits();
 
-	void updateGameState();
+	static void * updateGameState(void * g);
+	//void updateGameState();
 
 public:
 	// constructor/desctructor
