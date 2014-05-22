@@ -67,6 +67,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BalancedUnit.cpp" />
     <ClCompile Include="BaseUnit.cpp" />
     <ClCompile Include="BaseUnitDTO.cpp" />
     <ClCompile Include="game.cpp" />
@@ -76,13 +77,16 @@
     <ClCompile Include="mapterrain.cpp" />
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="MenuEventReceiver.cpp" />
+    <ClCompile Include="Mover.cpp" />
     <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerCamera.cpp" />
     <ClCompile Include="Serializable.cpp" />
     <ClCompile Include="Serializer.cpp" />
+    <ClCompile Include="Shooter.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BalancedUnit.h" />
     <ClInclude Include="BaseUnit.h" />
     <ClInclude Include="BaseUnitDTO.h" />
     <ClInclude Include="game.h" />

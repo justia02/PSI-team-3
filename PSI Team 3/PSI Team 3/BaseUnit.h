@@ -13,8 +13,13 @@ using namespace scene;
 using namespace video;
 using namespace std;
 
-class BaseUnit
-{
+#define BALANCED_UNIT 0
+#define MOVER 1
+#define SHOOTER 2
+#define BASE 3
+
+class BaseUnit {
+
 private:	
 	bool hasShot;
 	bool hasMoved;
@@ -59,7 +64,7 @@ public:
 	void Move(direction moveDirection, float distance, std::vector<BaseUnit*>* units, std::vector<Obstacle*>* obstacles, bool player1);
 	void SelectUnit();
 	
-	bool createMesh();
+	virtual bool createMesh() = 0;
 	bool getHasMoved() { return hasMoved;}
 	bool getHasShot() { return hasShot;}
 	void setHasMoved(bool moved) {hasMoved = moved;}

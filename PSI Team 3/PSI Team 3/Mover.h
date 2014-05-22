@@ -2,13 +2,10 @@
 
 class Mover : public BaseUnit {
 
-	Mover() : BaseUnit() {
+public:
+	Mover(vector3d<float> position, bool player1, IrrlichtDevice* dev, int id);
 
-		health = 100;
-		damage = 20;
-		maxDistance = 3;
-		shootingRange = 1;
-
-	};
+private:
+	bool createMesh();
 
 };

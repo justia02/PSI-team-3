@@ -2,7 +2,9 @@
 #define PLAYER_H
 
 #include <vector>
-#include "BaseUnit.h"
+#include "Mover.h"
+#include "Shooter.h"
+#include "BalancedUnit.h"
 #include <fstream>
 
 class Player
