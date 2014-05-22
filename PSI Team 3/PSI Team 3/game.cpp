@@ -41,9 +41,6 @@ game::game(void)
 
 	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
 
-	// unitModeLabel = guienv->getBuiltInFont();
-	unitModeLabel = guienv->getFont("../media/fonts/candara14.bmp");
-	unitModeLabelText = new std::wstring(L"");
 
 }
 
@@ -65,7 +62,6 @@ int game::run(void)
 		MenuEventReceiver receiver(context);
 		receiver.init(guienv, horizontal, vertical);
 		receiver.setIsUnitSelected(false);
-		receiver.setUnitModeLabelText(unitModeLabelText);
 		receiver.menuDone = false;
 
 		// Create obstacles
@@ -86,9 +82,6 @@ int game::run(void)
 			driver->beginScene(true, true, SColor(0,200,200,200));
 			smgr->drawAll();
 			guienv->drawAll();
-			if (receiver.menuDone) {
-				unitModeLabel->draw((*unitModeLabelText).c_str(), core::rect<s32>(20,20,0,0), video::SColor(255,100,100,100));
-			}
 			driver->endScene();
 		}
 		device->drop();
@@ -317,8 +310,10 @@ void game::updateGameState(){
 	gameState->setPlayer1Turn(!gameState->getPlayer1Turn());
 
 	if(localPlayer->getPlayer1() && gameState->getPlayer1Turn()){
+		m->setTurnText("It is your turn");
 		localPlayer->resetActionsLeft();
 	} else if(!localPlayer->getPlayer1() && !gameState->getPlayer1Turn()){
+		m->setTurnText("It is your turn");
 		localPlayer->resetActionsLeft();
 	}
 }
@@ -382,8 +377,7 @@ void game::resetGame() {
 	endOfGame = false;
 	gameState = new GameStateDTO(5);
 
-	// re-run menu + game
-	m->init();
+	// re-run game
 	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
 	this->run();
 }
