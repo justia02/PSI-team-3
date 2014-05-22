@@ -112,7 +112,7 @@ void game::startGame() {
   * starts the game from the perspective of player1/player2
   */
 void game::startGame(bool asPlayer1, char* ipAddress) {
-
+	gameState->setPlayer1Turn(true);
 	if (asPlayer1) {
 		networkUtilities->hostGame(portNumber);
 
@@ -157,7 +157,8 @@ void game::passTurn(bool giveUp) {
 	
 	bool pl1turn = gameState->getPlayer1Turn();
 	gameState = new GameStateDTO(localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size());
-	gameState->setPlayer1Turn(!pl1turn);
+	if (localPlayer->getPlayer1()) gameState->setPlayer1Turn(false);
+	if (localPlayer->getPlayer1()) gameState->setPlayer1Turn(true);
 	gameState->setVictory(checkVictory());
 	gameState->setGiveUp(giveUp);
 
@@ -227,7 +228,6 @@ void * game::updateGameState(void * g){
 
 	// create a GameStateDTO object and fill in data we received by deserializing it
 	gm->networkUtilities->receiveData();
-	// gameState = new GameStateDTO();
 	gm->gameState->deserialize(gm->networkUtilities->getBuffer());
 
 	bool unitUpdated;
@@ -295,6 +295,7 @@ void * game::updateGameState(void * g){
 		gm->device->getGUIEnvironment()->addMessageBox(L"YOU WIN!", L"Your opponent surrendered.", true, EMBF_OK);
 		gm->endOfGame = true;
 	}
+
 
 	if(gm->localPlayer->getPlayer1() && gm->gameState->getPlayer1Turn()){
 		gm->localPlayer->resetActionsLeft();
