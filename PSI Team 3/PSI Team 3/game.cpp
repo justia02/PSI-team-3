@@ -158,7 +158,7 @@ void game::passTurn(bool giveUp) {
 	bool pl1turn = gameState->getPlayer1Turn();
 	gameState = new GameStateDTO(localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size());
 	if (localPlayer->getPlayer1()) gameState->setPlayer1Turn(false);
-	if (localPlayer->getPlayer1()) gameState->setPlayer1Turn(true);
+	if (!localPlayer->getPlayer1()) gameState->setPlayer1Turn(true);
 	gameState->setVictory(checkVictory());
 	gameState->setGiveUp(giveUp);
 
@@ -209,6 +209,12 @@ void game::passTurn(bool giveUp) {
 		endOfGame = true;
 	}
 
+	std::cout<<"FLAGS IN GAMESTATE";
+	std::cout<<gameState->getGiveUp();
+	std::cout<<"\n";
+	std::cout<<gameState->getPlayer1Turn();
+	std::cout<<"\n";
+
 	try {
 		networkUtilities->setBuffer(buffer);
 		networkUtilities->sendData();
@@ -229,6 +235,13 @@ void * game::updateGameState(void * g){
 	// create a GameStateDTO object and fill in data we received by deserializing it
 	gm->networkUtilities->receiveData();
 	gm->gameState->deserialize(gm->networkUtilities->getBuffer());
+
+	// Output flags in GameState
+	std::cout<<"FLAGS IN GAMESTATE";
+	std::cout<<gm->gameState->getGiveUp();
+	std::cout<<"\n";
+	std::cout<<gm->gameState->getPlayer1Turn();
+	std::cout<<"\n";
 
 	bool unitUpdated;
 	// update gamestate by updating all attributes in both players
