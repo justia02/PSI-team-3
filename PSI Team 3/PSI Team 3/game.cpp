@@ -210,16 +210,20 @@ void game::passTurn(bool giveUp) {
 		endOfGame = true;
 	}
 
-	std::cout<<"FLAGS IN GAMESTATE";
+	std::cout<<"FLAGS IN GAMESTATE \n";
+	std::cout<<"Give up: ";
 	std::cout<<gameState->getGiveUp();
 	std::cout<<"\n";
+	std::cout<<"Player 1 Turn: ";
 	std::cout<<gameState->getPlayer1Turn();
+	std::cout<<"\n";
+	std::cout<<"Victory: ";
+	std::cout<<gameState->getVictory();
 	std::cout<<"\n";
 
 	try {
 		networkUtilities->setBuffer(buffer);
 		networkUtilities->sendData();
-		//updateGameState();
 		pthread_create(&thread, NULL, updateGameState, this);
 	}
 	catch(NonRealtimeNetworkingException e) {
@@ -238,10 +242,15 @@ void * game::updateGameState(void * g){
 	gm->gameState->deserialize(gm->networkUtilities->getBuffer());
 
 	// Output flags in GameState
-	std::cout<<"FLAGS IN GAMESTATE";
+	std::cout<<"FLAGS IN GAMESTATE \n";
+	std::cout<<"Give up: ";
 	std::cout<<gm->gameState->getGiveUp();
 	std::cout<<"\n";
+	std::cout<<"Player 1 Turn: ";
 	std::cout<<gm->gameState->getPlayer1Turn();
+	std::cout<<"\n";
+	std::cout<<"Victory: ";
+	std::cout<<gm->gameState->getVictory();
 	std::cout<<"\n";
 
 	bool unitUpdated;

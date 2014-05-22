@@ -34,8 +34,8 @@ private:
 			ar & units[i];
 		}
         ar & giveUp;
-		ar & victory;
 		ar & player1Turn;
+		ar & victory;
     }
 
 public:
