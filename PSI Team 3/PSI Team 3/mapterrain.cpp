@@ -24,11 +24,16 @@ mapterrain::mapterrain(IrrlichtDevice *device, ISceneManager *smgr, std::vector<
 	irr::core::vector3df extent = node->getTransformedBoundingBox().getExtent();
 	std::cout << "map mesh bounding box X: " << extent.X << " Y: " << extent.Y << " Z: " << extent.Z << endl;
 
-	// Obstacles:	
+	// Add obstacles:
+	// Pyramid
 	obstacles->at(0)->createMesh();
-	obstacles->at(0)->setPosition(vector3d<float>(-1.75, 0.75, -1.75));
+	obstacles->at(0)->setPosition(vector3d<float>(1.25, 0.45, -0.75));
+	// Spider
 	obstacles->at(1)->createMesh();
-	obstacles->at(1)->setPosition(vector3d<float>(0.25, 0.75, 1.25));
+	obstacles->at(1)->setPosition(vector3d<float>(-2.75, 0.45, -0.75));
+	// Cat
+	obstacles->at(2)->createMesh();
+	obstacles->at(2)->setPosition(vector3d<float>(2.25, 0.7, 1.25));
 
 }
 mapterrain::~mapterrain(void)
