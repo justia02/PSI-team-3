@@ -4,7 +4,6 @@
 #include "mapterrain.h"
 #include <iostream>
 #include <non-realtime-networking/NonRealtimeNetworkingUtilities.h>
-//#include <non-realtime-networking/NonRealtimeNetworkingexception.h>
 #include "game.h"
 
 using namespace irr;
