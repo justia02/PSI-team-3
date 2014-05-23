@@ -7,5 +7,10 @@ public:
 
 private:
 	bool createMesh();
+	virtual void SelectUnit();
+	virtual void highLightUnit(bool highLight);
+	IAnimatedMesh* normalMesh;
+	IAnimatedMesh* selectedMesh;
+	IAnimatedMesh* highlightedMesh;
 
 };

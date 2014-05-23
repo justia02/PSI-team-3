@@ -36,17 +36,6 @@ BaseUnit::BaseUnit(irr::core::vector3d<float> pos, bool player1, IrrlichtDevice*
 
 	this->player1 = player1;
 
-	if(player1) {
-		texturePath = "../media/Unit_P1.jpg";
-		texturePathHighlight = "../media/Unit_P1_Highlight.jpg";
-		texturePathSelected = "../media/Unit_P1_Selected.jpg";
-	}
-	else {
-		texturePath = "../media/Unit_P2.jpg";
-		texturePathHighlight = "../media/Unit_P2_Highlight.jpg";
-		texturePathSelected = "../media/Unit_P2_Selected.jpg";
-	}
-
 }
 
 void BaseUnit::updateHealthBar() {
@@ -320,6 +309,11 @@ void BaseUnit::remove() {
 
 }
 
+void BaseUnit::addPositionVector(vector3df position) {
+	(*this).position += position;
+	node->setPosition(node->getPosition() + position);
+}
+
 void BaseUnit::Move(direction moveDirection, float distance, std::vector<BaseUnit*>* units, std::vector<Obstacle*>* obstacles, bool player1) {
 
 	if(distance > maxDistance)
@@ -341,35 +335,34 @@ void BaseUnit::Move(direction moveDirection, float distance, std::vector<BaseUni
 	
 	switch(moveDirection){
 		case LEFT:{
-			position.X -= distance;
+			addPositionVector(vector3df(-distance, 0, 0));
 			break;
 			}
 		case RIGHT:{
-			position.X += distance;
+			addPositionVector(vector3df(distance, 0, 0));
 			break;
 			}
 		case BACK:{
-			position.Z -= distance;
+			addPositionVector(vector3df(0, 0, -distance));
 			break;
 			}
 		case FORWARD:{
-			position.Z += distance;
+			addPositionVector(vector3df(0, 0, +distance));
 			break;
 			}
 	}
 	
 	setHasMoved(true);
-	node->setPosition(position);
 	cout << "the unit: " << "ID: " << id << "Position: " << position.X << ", " << position.Y << ", " << position.Z;
 
 }
 
 void BaseUnit::SelectUnit(){
 	selected = !selected;
-	/*if(selected)
+	if(selected)
 		node->setMaterialTexture(0, driver->getTexture(texturePathSelected));
-	else if(!selected)
-		node->setMaterialTexture(0, driver->getTexture(texturePath));*/
+	else
+		node->setMaterialTexture(0, driver->getTexture(texturePath));
 }
 
 void BaseUnit::setShininess(float value){
@@ -378,27 +371,14 @@ void BaseUnit::setShininess(float value){
 
 void BaseUnit::highLightUnit(bool highLight)
 {
-	//selectIndication = NULL;
 	if(highLight)
-	{
-		//Move(FORWARD, 2);
-		if(player1)
-			node->setMaterialTexture(0, driver->getTexture(texturePathHighlight));
-		else
-			node->setMaterialTexture(0, driver->getTexture(texturePathHighlight));
-		//selectIndication->setVisible(true);
-		//indicationBoard->setVisible(true);
-	}
+		node->setMaterialTexture(0, driver->getTexture(texturePathHighlight));
 	else
 	{
 		if(selected)
 			node->setMaterialTexture(0, driver->getTexture(texturePathSelected));
-		else if(!selected)
-		{
+		else
 			node->setMaterialTexture(0, driver->getTexture(texturePath));
-			//selectIndication->setVisible(false);
-			//indicationBoard->setVisible(false);
-		}
 	}
 }
 

@@ -219,7 +219,7 @@ void MenuEventReceiver::MouseOverUnit()
 		(*it)->highLightUnit(false);
 		// if the positions of the node and the unit are the same
 		// set this unit as the selected unit and highlight it
-		if((*it)->position == selectedPosition)
+		if((*it)->node->getPosition() == selectedPosition)
 		{
 			this->isHoveringUnit = true;
 			(*it)->highLightUnit(true);

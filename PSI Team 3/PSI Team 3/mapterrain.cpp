@@ -27,13 +27,13 @@ mapterrain::mapterrain(IrrlichtDevice *device, ISceneManager *smgr, std::vector<
 	// Add obstacles:
 	// Pyramid
 	obstacles->at(0)->createMesh();
-	obstacles->at(0)->setPosition(vector3d<float>(1.25, 0.45, -0.75));
+	obstacles->at(0)->setPosition(vector3d<float>(1, 0.45, -1));
 	// Spider
 	obstacles->at(1)->createMesh();
-	obstacles->at(1)->setPosition(vector3d<float>(-2.75, 0.45, -0.75));
+	obstacles->at(1)->setPosition(vector3d<float>(-3, 0.45, -1));
 	// Cat
 	obstacles->at(2)->createMesh();
-	obstacles->at(2)->setPosition(vector3d<float>(2.25, 0.7, 1.25));
+	obstacles->at(2)->setPosition(vector3d<float>(2, 0.7, 1));
 
 }
 mapterrain::~mapterrain(void)

@@ -6,13 +6,17 @@ BalancedUnit::BalancedUnit(vector3d<float> position, bool player1, IrrlichtDevic
 	maxDistance = 2;
 	shootingRange = 2;
 
+	texturePath = "../media/ant.jpg";
+	texturePathHighlight = "../media/ant_highlighted.jpg";
+	texturePathSelected = "../media/ant_selected.jpg";
+
 	createMesh();
 
 }
 
 bool BalancedUnit::createMesh() {
 
-	meshPath = "../media/girl.irrmesh";
+	meshPath = "../media/ant.irrmesh";
 
 	IAnimatedMesh* mesh = sceneManager->getMesh(meshPath);
     
@@ -25,17 +29,23 @@ bool BalancedUnit::createMesh() {
     
     if (node)
     {
-        float scale = 0.02;
-		node->setRotation(vector3df(0, 0, 0));
-		vector3d<float> temp = vector3d<float>((0.5)/2, 0 , (0.5)/2);
-		position += temp;
+        float scale = 9;
+		vector3d<float> temp;
+		if (player1) {
+			temp = vector3df(0.5, 0, 0.5);					
+		}
+		else {
+			temp = vector3df(0.5, 0.2, 0);
+			node->setRotation(vector3df(0, 180, 0));
+		}
         node->setMaterialFlag(EMF_LIGHTING, false);
         node->setMD2Animation(scene::EMAT_STAND);
-        node->setMaterialTexture(0, driver->getTexture(texturePath));
-        node->setPosition(position);
-        node->setScale(core::vector3df(scale,scale,scale));
+        node->setPosition(position + temp);
+        node->setScale(core::vector3df(scale, scale, scale));
+		node->setMaterialTexture(0, driver->getTexture(texturePath));
+
 		// Add health bar
-		healthBar = sceneManager->addBillboardTextSceneNode(device->getGUIEnvironment()->getBuiltInFont(), L"100%", node, core::dimension2d<f32>(0.5f, 0.5f), core::vector3df(0.5f, 2.5f, 0));
+		healthBar = sceneManager->addBillboardTextSceneNode(device->getGUIEnvironment()->getBuiltInFont(), L"100%", node, core::dimension2d<f32>(0.5f, 0.5f), core::vector3df(0.5f, 3.0f, 0));
 		healthBar->setColor(irr::video::SColor(0, 255, 0, 0));
     }
 

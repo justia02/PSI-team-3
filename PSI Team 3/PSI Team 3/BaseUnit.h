@@ -62,7 +62,8 @@ public:
 	~BaseUnit(void);
 
 	void Move(direction moveDirection, float distance, std::vector<BaseUnit*>* units, std::vector<Obstacle*>* obstacles, bool player1);
-	void SelectUnit();
+	virtual void SelectUnit();
+	void addPositionVector(vector3df position);
 	
 	virtual bool createMesh() = 0;
 	bool getHasMoved() { return hasMoved;}
@@ -71,7 +72,7 @@ public:
 	void setHasShot(bool shot) {hasShot = shot;}
 	void setShininess(float value);
 
-	void highLightUnit(bool highLight);
+	virtual void highLightUnit(bool highLight);
 	// there needs to be some sort of target class to be made idk how yet
 	//void ShootTarget(target);
 
