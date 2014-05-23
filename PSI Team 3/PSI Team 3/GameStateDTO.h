@@ -23,6 +23,7 @@ private:
 	bool giveUp; // part of the victory/defeat condition
 	bool player1Turn; // true - its player1's turn, false - it's player2's turn
 	bool victory; // true if player who passes the turn wins	
+	bool dummy; 
 
 	// serialization
 	// Serializer serializer_;	
@@ -33,9 +34,9 @@ private:
         for(int i = 0; i < unitLength; i++) {
 			ar & units[i];
 		}
-        ar & giveUp;
 		ar & player1Turn;
 		ar & victory;
+		ar & giveUp;
     }
 
 public:
@@ -43,6 +44,7 @@ public:
 		giveUp = false;
 		player1Turn = true;
 		victory = false;
+		dummy = false;
 	};
 	GameStateDTO(int length); // amount of units, needed to allocate memory
 	~GameStateDTO();
