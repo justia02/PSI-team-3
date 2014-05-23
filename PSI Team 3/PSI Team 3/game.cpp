@@ -376,6 +376,7 @@ void game::resetGame() {
 	// reset all the relevant properties
 	localPlayer = new Player(device);
 	opposingPlayer = new Player(device);
+	networkUtilities->closeConnection();
 	networkUtilities = new NonRealtimeNetworkingUtilities();
 	endOfGame = false;
 	gameState = new GameStateDTO(5);
