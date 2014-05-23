@@ -45,7 +45,7 @@ bool BalancedUnit::createMesh() {
 		node->setMaterialTexture(0, driver->getTexture(texturePath));
 
 		// Add health bar
-		healthBar = sceneManager->addBillboardTextSceneNode(device->getGUIEnvironment()->getBuiltInFont(), L"100%", node, core::dimension2d<f32>(0.5f, 0.5f), core::vector3df(0.5f, 3.0f, 0));
+		healthBar = sceneManager->addBillboardTextSceneNode(device->getGUIEnvironment()->getBuiltInFont(), L"100%", node, core::dimension2d<f32>(0.5f, 0.5f), core::vector3df(0, 0.1, 0));
 		healthBar->setColor(irr::video::SColor(0, 255, 0, 0));
     }
 

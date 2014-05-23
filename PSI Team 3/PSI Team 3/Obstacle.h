@@ -26,7 +26,7 @@ class Obstacle {
 	public:
 		vector3d<float> position;
 		Obstacle(type obstacleType, IrrlichtDevice* device);
-		void setPosition(vector3d<float> position);
+		void setPosition(vector3d<float> position, bool player1);
 		void createMesh();
 
 };

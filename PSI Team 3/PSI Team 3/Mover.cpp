@@ -70,7 +70,7 @@ bool Mover::createMesh() {
         node->setPosition(position + temp);
         node->setScale(core::vector3df(scale, scale, scale));
 		// Add health bar
-		healthBar = sceneManager->addBillboardTextSceneNode(device->getGUIEnvironment()->getBuiltInFont(), L"100%", node, core::dimension2d<f32>(0.5f, 0.5f), core::vector3df(0.5f, 3.0f, 0.0f));
+		healthBar = sceneManager->addBillboardTextSceneNode(device->getGUIEnvironment()->getBuiltInFont(), L"100%", node, core::dimension2d<f32>(0.5f, 0.5f), core::vector3df(0, 200, 0));
 		healthBar->setColor(irr::video::SColor(0, 255, 0, 0));
     }
 

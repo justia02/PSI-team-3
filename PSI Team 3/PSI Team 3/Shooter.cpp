@@ -45,7 +45,7 @@ bool Shooter::createMesh() {
 		node->setMaterialTexture(0, driver->getTexture(texturePath));
 
 		// Add health bar
-		healthBar = sceneManager->addBillboardTextSceneNode(device->getGUIEnvironment()->getBuiltInFont(), L"100%", node, core::dimension2d<f32>(0.5f, 0.5f), core::vector3df(0.3f, 2.5f, 0));
+		healthBar = sceneManager->addBillboardTextSceneNode(device->getGUIEnvironment()->getBuiltInFont(), L"100%", node, core::dimension2d<f32>(0.5f, 0.5f), core::vector3df(0, 2.5f, 0));
 		healthBar->setColor(irr::video::SColor(0, 255, 0, 0));
     }
 

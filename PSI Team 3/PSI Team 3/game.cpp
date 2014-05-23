@@ -327,7 +327,7 @@ void game::updateGameState(){
 void game::init_map(IrrlichtDevice* device_map, std::vector<Obstacle*>* obstacles)
 {
 	//make a new terrain	
-	mapterrain map = mapterrain(device_map, smgr, obstacles);
+	mapterrain map = mapterrain(device_map, smgr, obstacles, localPlayer->getPlayer1());
 	
 }
 

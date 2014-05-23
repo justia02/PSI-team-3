@@ -44,8 +44,6 @@ void Obstacle::createMesh() {
 				break;
 			}
 			case type::SPIDER: {
-				// node->setScale(vector3df(0.004, 0.004, 0.004));
-				// node->setMaterialTexture(0, device->getVideoDriver()->getTexture("../media/black.jpg"));
 				node->setScale(vector3df(9, 9, 9));
 				node->setRotation(vector3df(0, 135, 0));				
 				break;
@@ -58,26 +56,32 @@ void Obstacle::createMesh() {
 		}
     }
 
-	irr::core::vector3df extent = node->getTransformedBoundingBox().getExtent();
-	std::cout << "Obstacle mesh bounding box X: " << extent.X << " Y: " << extent.Y << " Z: " << extent.Z << endl;
-
 }
 
-void Obstacle::setPosition(vector3df position) {
+void Obstacle::setPosition(vector3df position, bool player1) {
 
 	this->position = position;
 
 	switch(obstacleType) {
 		case type::PYRAMID: {
-			node->setPosition(vector3df(position.X + 0.20, position.Y, position.Z));
+			if (player1)
+				node->setPosition(vector3df(position.X + 0.45, position.Y, position.Z + 0.25));
+			else
+				node->setPosition(vector3df(position.X - 0.45, position.Y, position.Z - 0.25));
 			break;
 		}
 		case type::SPIDER: {
-			node->setPosition(vector3df(position.X + 0.2, position.Y, position.Z));
+			if (player1)
+				node->setPosition(vector3df(position.X + 0.5, position.Y, position.Z + 0.3));
+			else
+				node->setPosition(vector3df(position.X - 0.5, position.Y, position.Z - 0.3));
 			break;
 		}
 		case type::CAT: {
-			node->setPosition(vector3df(position.X, position.Y, position.Z - 0.6));
+			if (player1)
+				node->setPosition(vector3df(position.X + 0.25, position.Y, position.Z - 0.3));
+			else
+				node->setPosition(vector3df(position.X - 0.25, position.Y, position.Z + 0.3));
 			break;
 		}
 	}
