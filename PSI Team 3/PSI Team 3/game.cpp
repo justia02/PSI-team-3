@@ -32,7 +32,7 @@ game::game(void)
 	networkUtilities = new NonRealtimeNetworkingUtilities();
 
 	// initialize gameStateDTO
-	gameState = new GameStateDTO(5);
+	gameState = new GameStateDTO(16);
 
 	// initialize players
 	localPlayer = new Player(device);
@@ -399,7 +399,7 @@ void game::resetGame() {
 	networkUtilities->closeConnection();
 	networkUtilities = new NonRealtimeNetworkingUtilities();
 	endOfGame = false;
-	gameState = new GameStateDTO(5);
+	gameState = new GameStateDTO(16);
 
 	// re-run game
 	smgr->addCameraSceneNode(0, vector3df(0,8,-8), vector3df(0,0,0));
