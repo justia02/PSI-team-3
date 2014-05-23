@@ -64,6 +64,11 @@ void menu::setTurnText(std::string turntext)
 	turnText->setText(std::wstring(turntext.begin(), turntext.end()).c_str());
 }
 
+void menu::setTurnTextColor(SColor color)
+{
+	turnText->setOverrideColor(color);
+}
+
 void menu::setUnitText(std::string unittext)
 {
 	unitText->setText(std::wstring(unittext.begin(), unittext.end()).c_str());

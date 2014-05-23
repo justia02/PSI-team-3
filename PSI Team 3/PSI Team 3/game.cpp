@@ -159,6 +159,7 @@ void game::passTurn(bool giveUp) {
 
 
 	m->setTurnText("It is your opponents turn");
+	m->setTurnTextColor(SColor(0, 255, 0, 0));
 	
 	// read units of this player
 
@@ -243,6 +244,7 @@ void * game::updateGameState(void * g){
 	if (gm->gameState->getPlayer1Turn() && gm->localPlayer->getPlayer1())
 			{
 				gm->m->setTurnText("It is your turn");
+				gm->m->setTurnTextColor(SColor(0, 0, 0, 0));
 			}
 
 
