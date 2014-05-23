@@ -44,7 +44,7 @@ public:
 		giveUp = false;
 		player1Turn = true;
 		victory = false;
-		dummy = false;
+		dummy = false; // this is a no questions asked.
 	};
 	GameStateDTO(int length); // amount of units, needed to allocate memory
 	~GameStateDTO();
@@ -62,6 +62,4 @@ public:
 	char* serializeGameState();
 	void deserialize(std::string serializationString);
 	int unitLength;
-
-
 };

@@ -52,9 +52,6 @@ class MenuEventReceiver : public irr::menuReceiver
 		void setIsUnitSelected(bool value) {
 			isUnitSelected = value;
 		};
-		void setUnitModeLabelText(std::wstring* text) {
-			unitModeLabelText = text;
-		};
 		void setObstacles(std::vector<Obstacle*>* obstacles) {
 			this->obstacles = obstacles;
 		};
@@ -67,12 +64,15 @@ class MenuEventReceiver : public irr::menuReceiver
 		void JOIN_WSDL();
 		void START_GAME();
 
+		std::string getSelectedUnitData(BaseUnit *unit);
+
 		int portNo;
 		// members for the unit controll
 	private:
 		
 		void MouseOverUnit();
 		void setDirection(irr::EKEY_CODE keyCode);
+		
 
 		BaseUnit::direction moveDirection;
 		bool isUnitSelected;

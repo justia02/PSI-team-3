@@ -52,10 +52,11 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 					this->selectedUnit->shoot(moveDirection, Context.game_->opposingPlayer->getUnits(), obstacles);
 					Context.game_->localPlayer->setActionsLeft();
 				}
-				else if (Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasMoved()) { // Moving
+				else if (shootingMode == false && Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasMoved()) { // Moving
 					this->selectedUnit->Move(moveDirection, this->selectedUnit->maxDistance, allUnits, obstacles, Context.game_->localPlayer->getPlayer1());
 					Context.game_->localPlayer->setActionsLeft();
 				}
+
 				this->selectedUnit->SelectUnit();
 				this->selectedUnit = NULL;
 				this->isUnitSelected = false;
@@ -103,6 +104,7 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 						isUnitSelected = false;
 						selectedUnit->SelectUnit();
 						selectedUnit = NULL;
+						Context.game_->m->setUnitText("Click on a unit to see his stats");
 						return true;
 					}
 					else { // Deselect the unit which was selected and select another one
@@ -110,6 +112,9 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 						selectedUnit = NULL;
 						selectedUnit = hoveredUnit;
 						selectedUnit->SelectUnit();
+						Context.game_->m->setUnitText(getSelectedUnitData(selectedUnit));
+						Context.game_->m->setActionText("Actions left = " + std::string(std::to_string(static_cast<long double>(Context.game_->localPlayer->getActionsLeft()))));
+						cout << "Select the direction you want to " << ((shootingMode == true) ? "shoot" : "move") << " (w,s,a,d)" << endl;
 						return true;
 					}						
 				}
@@ -117,6 +122,9 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 					selectedUnit = hoveredUnit;
 					isUnitSelected = true;
 					selectedUnit->SelectUnit();
+					Context.game_->m->setUnitText(getSelectedUnitData(selectedUnit));
+					Context.game_->m->setActionText("Actions left = " + std::string(std::to_string(static_cast<long double>(Context.game_->localPlayer->getActionsLeft()))));
+					cout << "Select the direction you want to " << ((shootingMode == true) ? "shoot" : "move") << " (w,s,a,d)" << endl;
 				}
 			}
             break;
@@ -130,6 +138,58 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
     return false;
 }
 
+//get the information about the selected unit
+std::string MenuEventReceiver::getSelectedUnitData(BaseUnit *unit)
+{
+	std::string data;
+	std::string unittype;
+	int distance = unit->maxDistance;
+	int shooting = unit->shootingRange;
+
+	std::string action;
+	bool shot = unit->getHasShot();
+	bool moved = unit->getHasMoved();
+
+	//check for the unittype
+	if (distance == 2)
+	{
+		unittype = "Balanced\n";
+	}
+	else if(distance == 3)
+	{
+		unittype = "Mover\n";
+	}
+	else{
+		unittype = "Shooter\n";
+	}
+
+	//check for the action performed line
+	if(!shot && !moved)
+	{
+		action = "This Unit has perfomed 0 actions\n";
+	}
+	else if(shot && moved)
+	{
+		action = "This Unit has moved and shot already!\n";
+	}
+	else if(!shot && moved)
+	{
+		action = "This Unit has moved already!\n";
+	}
+	else if(shot && !moved)
+	{
+		action = "This Unit has shot already!\n";
+	}
+
+
+	data =	"Unit Type = " + unittype +
+			"Movement Range = " + std::string(std::to_string(static_cast<long double>(distance))) + "\n" +
+			"Shooting Range = " + std::string(std::to_string(static_cast<long double>(shooting))) + "\n" +
+		 action;
+
+	return data;
+}
+
 /**
  * implementation of the 5 empty function in the menuReceiver in the engine
  */
@@ -138,16 +198,16 @@ void MenuEventReceiver::JOIN_GAME()
 	// display interface to enter ip address
 	text = L"Enter ip here";
 	IGUIEnvironment* guienv = Context.device->getGUIEnvironment();					
-    box = guienv->addEditBox(text, rect<s32>(240,25,350,50), true);
-	guienv->addButton(rect<s32>(240,100,350,150 + 10), 0, GUI_ID_JOIN_GAME_SECOND, L"connect", L"connect to a game");
+	box = guienv->addEditBox(text, rect<s32>((Context.game_->horizontal / 3), (Context.game_->vertical/ 30) * 16, (Context.game_->horizontal / 3) * 2, (Context.game_->vertical/ 30) * 19), true);
+	guienv->addButton(rect<s32>((Context.game_->horizontal / 3), (Context.game_->vertical/ 30) * 20, (Context.game_->horizontal / 3) * 2, (Context.game_->vertical/ 30) * 23), 0, GUI_ID_JOIN_GAME_SECOND, L"connect", L"connect to a game");
 }
 
 void MenuEventReceiver::HOST_GAME()
 {
 	Context.game_->init_map(Context.device, obstacles);
+	Context.game_->init_ingame_menu();
 	Context.game_->startGame(true, ""); // call without ip, since we want to host 
 	menuDone = true;
-	*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
 }
 
 void MenuEventReceiver::JOIN_GAME_SECOND()
@@ -163,16 +223,16 @@ void MenuEventReceiver::JOIN_GAME_SECOND()
 
 	Context.game_->startGame(false, ch);
 	Context.game_->init_map(Context.device, obstacles);
+	Context.game_->init_ingame_menu();
 	menuDone = true;
-	*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
 }
 
 void MenuEventReceiver::JOIN_WSDL()
 {
 	Context.game_->init_map(Context.device, obstacles);
+	Context.game_->init_ingame_menu();
 	Context.game_->startGame();
 	menuDone = true;
-	*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
 }
 
 void MenuEventReceiver::START_GAME()
@@ -186,7 +246,6 @@ void MenuEventReceiver::START_GAME()
 	Context.game_->localPlayer->setActionsLeft();
 
 	menuDone = true;
-	*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
 }
 
 /**
@@ -261,4 +320,6 @@ void MenuEventReceiver::setDirection(EKEY_CODE keyCode)
 	}
 	// deselect the unit
 	this->isUnitSelected = false;
+	Context.game_->m->setUnitText("Click on a unit to see his stats");
+	Context.game_->m->setActionText("Actions left = " + std::string(std::to_string(static_cast<long double>(Context.game_->localPlayer->getActionsLeft()))));
 }
