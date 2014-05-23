@@ -217,7 +217,11 @@ void game::passTurn(bool giveUp) {
 	try {
 		networkUtilities->setBuffer(buffer);
 		networkUtilities->sendData();
-		pthread_create(&thread, NULL, updateGameState, this);
+		if (! gameState->getGiveUp()) {
+			pthread_create(&thread, NULL, updateGameState, this);
+		} else {
+			endOfGame = true;
+		}
 	}
 	catch(NonRealtimeNetworkingException e) {
 		device->getGUIEnvironment()->addMessageBox(L"Oops an Error", L"Something went wrong, probably connection lost", true, EMBF_OK);
