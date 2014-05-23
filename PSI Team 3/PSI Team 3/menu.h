@@ -13,6 +13,7 @@ using namespace video;
 using namespace io;
 using namespace gui;
 
+
 /** class for the ingame menu
 *   this menu will be visible for every player so that they can see important information about the game
 */
@@ -25,7 +26,12 @@ public:
 	IGUIEnvironment* guienv;
 	wchar_t *text;
 
-	IGUIStaticText *text1;
+	IGUIFont *Font;
+	IGUIStaticText *playerText;
+	IGUIStaticText *turnText;
+	IGUIStaticText *actionText;
+	IGUIStaticText *unitText;
+	IGUIStaticText *modeText;
 
 	int height;
 	int width;
@@ -34,6 +40,10 @@ public:
 	~menu(void);
 
 	void init();
-	void setMainText(char t);
+	void setMainText(std::string maintext);
+	void setActionText(std::string actiontext);
+	void setTurnText(std::string turntext);
+	void setUnitText(std::string unittext);
+	void setModeText(std::string modetext);
 };
 
