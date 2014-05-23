@@ -11,6 +11,7 @@ menu::menu(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, IG
 	this->smgr = smgr;
 	this->guienv = guienv;
 
+
 	width = horizontal;
 	height = vertical;
 
