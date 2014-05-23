@@ -240,11 +240,11 @@ void * game::updateGameState(void * g){
 
 	if (gm->gameState->getPlayer1Turn() && gm->localPlayer->getPlayer1() == true)
 	{
-		gm->m->setPlayerText("It is your turn");
+		gm->m->setTurnText("It is your turn");
 	}
 	else
 	{
-		gm->m->setPlayerText("It is your opponents turn");
+		gm->m->setTurnText("It is your opponents turn");
 	}
 
 	// Output flags in GameState
