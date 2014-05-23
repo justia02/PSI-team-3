@@ -78,8 +78,7 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 				}
 				if (event.KeyInput.PressedDown == true && event.KeyInput.Key == irr::KEY_SPACE) {
 					shootingMode = !shootingMode;
-					std::cout << ((shootingMode == true) ? "Shooting mode!" : "Moving mode!") << std::endl;
-					*unitModeLabelText = ((shootingMode == true) ? L"Shooting mode" : L"Moving Mode");
+					Context.game_->m->setModeText(((shootingMode == true) ? "Shooting mode" : "Moving Mode"));
 					return true;
 				}
 			}
