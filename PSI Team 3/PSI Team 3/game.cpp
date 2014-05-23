@@ -234,6 +234,15 @@ void * game::updateGameState(void * g){
 	gm->networkUtilities->receiveData();
 	gm->gameState->deserialize(gm->networkUtilities->getBuffer());
 
+	if (gm->gameState->getPlayer1Turn() && gm->localPlayer->getPlayer1() == true)
+	{
+		gm->m->setPlayerText("It is your turn");
+	}
+	else
+	{
+		gm->m->setPlayerText("It is your opponents turn");
+	}
+
 	// Output flags in GameState
 	std::cout<<"FLAGS IN GAMESTATE \n";
 	std::cout<<"Give up: ";
@@ -331,6 +340,11 @@ void game::init_map(IrrlichtDevice* device_map, std::vector<Obstacle*>* obstacle
 void game::init_ingame_menu()
 {
 	m = new menu(device, driver, smgr, guienv, horizontal, vertical);
+
+	if (localPlayer->getPlayer1() == false)
+	{
+		m->setPlayerText("You are Player 2");
+	}
 }
 
 bool game::checkVictory() {

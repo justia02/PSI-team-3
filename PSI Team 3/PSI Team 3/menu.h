@@ -40,7 +40,7 @@ public:
 	~menu(void);
 
 	void init();
-	void setMainText(std::string maintext);
+	void setPlayerText(std::string playertext);
 	void setActionText(std::string actiontext);
 	void setTurnText(std::string turntext);
 	void setUnitText(std::string unittext);

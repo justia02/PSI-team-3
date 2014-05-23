@@ -49,9 +49,9 @@ void menu::init(void)
 	modeText->setOverrideFont(Font);
 }
 
-void menu::setMainText(std::string maintext)
+void menu::setPlayerText(std::string playertext)
 {
-	playerText->setText(std::wstring(maintext.begin(), maintext.end()).c_str());
+	playerText->setText(std::wstring(playertext.begin(), playertext.end()).c_str());
 }
 
 void menu::setActionText(std::string actiontext)
