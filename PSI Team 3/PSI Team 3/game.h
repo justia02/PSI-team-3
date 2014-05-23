@@ -10,6 +10,7 @@
 #include "GameStateDTO.h"
 #include "menu.h"
 #include <stdlib.h>
+#include <pthread.h>
 
 using namespace irr;
 
@@ -34,22 +35,26 @@ private:
 	ISceneManager* smgr;
 	IGUIEnvironment* guienv;
 	PlayerCamera* playerCamera;
-	GameStateDTO* gameState;
+	
 	IGUIFont* unitModeLabel;
 	std::wstring* unitModeLabelText;
 	bool endOfGame;
 	bool firstTime;
+	pthread_t thread;
 
 	// private methods
 	BaseUnit* initializeUnits();
 
-	void updateGameState();
+	static void * updateGameState(void * g);
+	//void updateGameState();
 
 public:
 	// constructor/desctructor
 	game(void);
 	game(IrrlichtDevice* device, ISceneManager* smgr, IGUIEnvironment* guienv);
 	~game(void);
+
+	GameStateDTO* gameState;
 
 	// public methods
 	int run(void);

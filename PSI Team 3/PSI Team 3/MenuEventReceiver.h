@@ -4,8 +4,8 @@
 #include "mapterrain.h"
 #include <iostream>
 #include <non-realtime-networking/NonRealtimeNetworkingUtilities.h>
-//#include <non-realtime-networking/NonRealtimeNetworkingexception.h>
 #include "game.h"
+#include <time.h>
 
 using namespace irr;
 
@@ -30,6 +30,7 @@ struct SAppContext
 class MenuEventReceiver : public irr::menuReceiver
 {
 	public:
+		time_t timeSincePassTurn;
 		IGUIEditBox *box;
 		bool menuDone;
 		wchar_t *text;
@@ -51,9 +52,6 @@ class MenuEventReceiver : public irr::menuReceiver
 		void setIsUnitSelected(bool value) {
 			isUnitSelected = value;
 		};
-		void setUnitModeLabelText(std::wstring* text) {
-			unitModeLabelText = text;
-		};
 		void setObstacles(std::vector<Obstacle*>* obstacles) {
 			this->obstacles = obstacles;
 		};
@@ -66,12 +64,15 @@ class MenuEventReceiver : public irr::menuReceiver
 		void JOIN_WSDL();
 		void START_GAME();
 
+		std::string getSelectedUnitData(BaseUnit *unit);
+
 		int portNo;
 		// members for the unit controll
 	private:
 		
 		void MouseOverUnit();
 		void setDirection(irr::EKEY_CODE keyCode);
+		
 
 		BaseUnit::direction moveDirection;
 		bool isUnitSelected;

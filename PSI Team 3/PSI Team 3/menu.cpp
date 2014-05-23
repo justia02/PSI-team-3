@@ -11,6 +11,7 @@ menu::menu(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, IG
 	this->smgr = smgr;
 	this->guienv = guienv;
 
+
 	width = horizontal;
 	height = vertical;
 
@@ -28,21 +29,52 @@ menu::~menu(void)
  */
 void menu::init(void)
 {
-	//guienv->addImage(
-	
-	// TODO: add text?!
-	text1 = guienv->addStaticText(L"You are Player 1", rect<s32>(0, (height/ 30) * 1, (width / 5), (height/ 30) * 2), true);
-	
-	// add gui elements
-	//guienv->addButton(rect<s32>((640 / 3), (480/ 30) * 8, (640 / 3) * 2, (480/ 30) * 11), 0, GUI_ID_JOIN_GAME, L"Join Game", L"Joins a game");
-	//guienv->addButton(rect<s32>((640 / 3), (480/ 30) * 12, (640 / 3) * 2, (480/ 30) * 15), 0, GUI_ID_HOST_GAME, L"Host Game", L"Hosts a game");
-	//guienv->addButton(rect<s32>((640 / 3), (480/ 30) * 16, (640 / 3) * 2, (480/ 30) * 19), 0, GUI_ID_JOIN_WSDL, L"Quick Match", L"Starts a quick match, opponent will be automatically assigned.");
-	//guienv->addButton(rect<s32>((640 / 3), (480/ 30) * 20, (640 / 3) * 2, (480/ 30) * 23), 0, GUI_ID_START_GAME, L"Start Game", L"Start game without network for test");
+	//put font for the texts
+	Font = guienv->getFont("../media/fonts/candara14.bmp");
+
+	// Make the texts that will always be available
+	playerText = guienv->addStaticText(L"You are Player 1", rect<s32>((width / 7), (height/ 30) * 1, (width / 7) * 3, (height/ 30) * 2), false);
+	playerText->setOverrideFont(Font);
+
+	turnText = guienv->addStaticText(L"It is your turn", rect<s32>((width / 7), (height/ 30) * 2, (width / 7) * 3, (height/ 30) * 3), false);
+	turnText->setOverrideFont(Font);
+
+	actionText = guienv->addStaticText(L"Actions left = ", rect<s32>((width / 7), (height/ 30) * 3, (width / 7) * 3, (height/ 30) * 4), false);
+	actionText->setOverrideFont(Font);
+
+	unitText = guienv->addStaticText(L"Click on a unit to see his stats", rect<s32>((width / 3) , (height/ 30) * 1, (width/ 3) * 2, (height/ 30) * 4), false);
+	unitText->setOverrideFont(Font);
+
+	modeText = guienv->addStaticText(L"Moving Mode ", rect<s32>((width / 7) * 5, (height/ 30) * 1, (width) , (height/ 30) * 2), false);
+	modeText->setOverrideFont(Font);
 }
 
-void menu::setMainText(char t)
+void menu::setPlayerText(std::string playertext)
 {
-	text1->setText(L"You are Player 2");
-	//text1->setOverrideFont();
-	//text1->setText(t);
+	playerText->setText(std::wstring(playertext.begin(), playertext.end()).c_str());
+}
+
+void menu::setActionText(std::string actiontext)
+{
+	actionText->setText(std::wstring(actiontext.begin(), actiontext.end()).c_str());
+}
+
+void menu::setTurnText(std::string turntext)
+{
+	turnText->setText(std::wstring(turntext.begin(), turntext.end()).c_str());
+}
+
+void menu::setTurnTextColor(SColor color)
+{
+	turnText->setOverrideColor(color);
+}
+
+void menu::setUnitText(std::string unittext)
+{
+	unitText->setText(std::wstring(unittext.begin(), unittext.end()).c_str());
+}
+
+void menu::setModeText(std::string modetext)
+{
+	modeText->setText(std::wstring(modetext.begin(), modetext.end()).c_str());
 }

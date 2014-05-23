@@ -199,10 +199,12 @@ void BaseUnit::shoot(direction shootDirection, std::vector<BaseUnit*>* units, st
 
 	if (distanceFromTheOpponent == 0) { // No enemy in the range
 		std::cout << "No opponent is in your range!" << std::endl;
+		setHasShot(true);
 		return;
 	}
 	if (minAttackDirectionCoordinate == 10) { // No enemy units in the way
 		std::cout << "Nothing to shoot!" << std::endl;
+		setHasShot(true);
 		return;
 	}	
 
@@ -272,6 +274,8 @@ void BaseUnit::shoot(direction shootDirection, std::vector<BaseUnit*>* units, st
 			break;
 		}
 	}
+
+	setHasShot(true);
 
 }
 
