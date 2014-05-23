@@ -78,7 +78,6 @@ int game::run(void)
 		while (device->run() && driver)
 		if (device->isWindowActive())
 		{
-			
 			//device->run();
 			driver->beginScene(true, true, SColor(0,200,200,200));
 			smgr->drawAll();
@@ -158,6 +157,9 @@ void game::passTurn(bool giveUp) {
 	BaseUnitDTO* units = new BaseUnitDTO[localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size()];
 	int i = 0;
 
+
+	m->setTurnText("It is your opponents turn");
+	
 	// read units of this player
 
 	for(std::vector<BaseUnit*>::iterator it = localPlayer->getUnits()->begin(); it != localPlayer->getUnits()->end(); ++it) {
@@ -238,14 +240,11 @@ void * game::updateGameState(void * g){
 	gm->networkUtilities->receiveData();
 	gm->gameState->deserialize(gm->networkUtilities->getBuffer());
 
-	if (gm->gameState->getPlayer1Turn() && gm->localPlayer->getPlayer1() == true)
-	{
-		gm->m->setTurnText("It is your turn");
-	}
-	else
-	{
-		gm->m->setTurnText("It is your opponents turn");
-	}
+	if (gm->gameState->getPlayer1Turn() && gm->localPlayer->getPlayer1())
+			{
+				gm->m->setTurnText("It is your turn");
+			}
+
 
 	// Output flags in GameState
 	std::cout<<"FLAGS IN GAMESTATE \n";
@@ -348,6 +347,7 @@ void game::init_ingame_menu()
 	if (localPlayer->getPlayer1() == false)
 	{
 		m->setPlayerText("You are Player 2");
+		m->setTurnText("It is your opponents turn");
 	}
 }
 
