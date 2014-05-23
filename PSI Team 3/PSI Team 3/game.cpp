@@ -157,10 +157,10 @@ void game::passTurn(bool giveUp) {
 	
 	bool pl1turn = gameState->getPlayer1Turn();
 	gameState = new GameStateDTO(localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size());
+	gameState->setGiveUp(giveUp);
 	if (localPlayer->getPlayer1()) gameState->setPlayer1Turn(false);
 	if (!localPlayer->getPlayer1()) gameState->setPlayer1Turn(true);
 	gameState->setVictory(checkVictory());
-	gameState->setGiveUp(giveUp);
 
 	BaseUnitDTO* units = new BaseUnitDTO[localPlayer->getUnits()->size() + opposingPlayer->getUnits()->size()];
 	int i = 0;
