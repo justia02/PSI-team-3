@@ -62,7 +62,7 @@ public:
 
 	void Move(direction moveDirection, float distance, std::vector<BaseUnit*>* units, std::vector<Obstacle*>* obstacles, bool player1);
 	virtual void SelectUnit();
-	void addPositionVector(vector3df position);
+	virtual void setPosition(vector3df position) = 0;
 	
 	virtual bool createMesh() = 0;
 	bool getHasMoved() { return hasMoved;}

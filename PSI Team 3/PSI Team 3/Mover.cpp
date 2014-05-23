@@ -57,17 +57,12 @@ bool Mover::createMesh() {
     if (node)
     {
 		float scale = 0.004;
-		vector3d<float> temp;
-		if (player1) {
-			temp = vector3df(0.5, 0, 0.5);
+		if (player1)
 			node->setRotation(vector3df(0, 180, 0));
-		}
-		else {
-			temp = vector3df(0.5, 0, 0.5);
-		}
+
         node->setMaterialFlag(EMF_LIGHTING, false);
         node->setMD2Animation(scene::EMAT_STAND);
-        node->setPosition(position + temp);
+        setPosition(position);
         node->setScale(core::vector3df(scale, scale, scale));
 		// Add health bar
 		healthBar = sceneManager->addBillboardTextSceneNode(device->getGUIEnvironment()->getBuiltInFont(), L"100%", node, core::dimension2d<f32>(0.5f, 0.5f), core::vector3df(0, 200, 0));
@@ -75,5 +70,15 @@ bool Mover::createMesh() {
     }
 
     return true;
+
+}
+
+void Mover::setPosition(vector3df position) {
+
+	(*this).position = position;
+
+	vector3df temp = vector3df(0.5, 0, 0.5);
+
+	node->setPosition(position + temp);
 
 }

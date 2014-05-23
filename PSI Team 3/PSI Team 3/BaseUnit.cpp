@@ -313,11 +313,6 @@ void BaseUnit::remove() {
 
 }
 
-void BaseUnit::addPositionVector(vector3df position) {
-	(*this).position += position;
-	node->setPosition(node->getPosition() + position);
-}
-
 void BaseUnit::Move(direction moveDirection, float distance, std::vector<BaseUnit*>* units, std::vector<Obstacle*>* obstacles, bool player1) {
 
 	if(distance > maxDistance)
@@ -339,19 +334,23 @@ void BaseUnit::Move(direction moveDirection, float distance, std::vector<BaseUni
 	
 	switch(moveDirection){
 		case LEFT:{
-			addPositionVector(vector3df(-distance, 0, 0));
+			position.X -= distance;
+			setPosition(position);
 			break;
 			}
 		case RIGHT:{
-			addPositionVector(vector3df(distance, 0, 0));
+			position.X += distance;
+			setPosition(position);
 			break;
 			}
 		case BACK:{
-			addPositionVector(vector3df(0, 0, -distance));
+			position.Z -= distance;
+			setPosition(position);
 			break;
 			}
 		case FORWARD:{
-			addPositionVector(vector3df(0, 0, +distance));
+			position.Z += distance;
+			setPosition(position);
 			break;
 			}
 	}

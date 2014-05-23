@@ -30,17 +30,12 @@ bool BalancedUnit::createMesh() {
     if (node)
     {
         float scale = 9;
-		vector3d<float> temp;
-		if (player1) {
-			temp = vector3df(0.5, 0, 0.5);					
-		}
-		else {
-			temp = vector3df(0.5, 0.2, 0);
+		if (!player1)
 			node->setRotation(vector3df(0, 180, 0));
-		}
+
         node->setMaterialFlag(EMF_LIGHTING, false);
         node->setMD2Animation(scene::EMAT_STAND);
-        node->setPosition(position + temp);
+        setPosition(position);
         node->setScale(core::vector3df(scale, scale, scale));
 		node->setMaterialTexture(0, driver->getTexture(texturePath));
 
@@ -50,5 +45,20 @@ bool BalancedUnit::createMesh() {
     }
 
     return true;
+
+}
+
+void BalancedUnit::setPosition(vector3df position) {
+
+	(*this).position = position;
+
+	vector3df temp;
+
+	if (player1)
+		temp = vector3df(0.5, 0, 0.5);					
+	else
+		temp = vector3df(0.5, 0.2, 0);
+
+	node->setPosition(position + temp);
 
 }

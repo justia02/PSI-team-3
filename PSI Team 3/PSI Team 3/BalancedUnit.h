@@ -7,5 +7,6 @@ private:
 
 public:
 	BalancedUnit(vector3d<float> position, bool player1, IrrlichtDevice* dev, int id);
+	virtual void setPosition(vector3df position);
 
 };

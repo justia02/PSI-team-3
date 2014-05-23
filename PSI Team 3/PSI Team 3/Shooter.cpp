@@ -30,17 +30,13 @@ bool Shooter::createMesh() {
     if (node)
     {
 		float scale = 1;
-		vector3df temp;
 		
-		if (player1 == true)
-			temp = vector3df(0.4, 0, 0.3);
-		else {			
-			temp = vector3df(0.6, 0, 0.5);
+		if (player1 == false)
 			node->setRotation(vector3df(0, 180, 0));
-		}
+
         node->setMaterialFlag(EMF_LIGHTING, false);
         node->setMD2Animation(scene::EMAT_STAND);
-        node->setPosition(position + temp);
+        setPosition(position);
         node->setScale(core::vector3df(scale, scale/2, scale));
 		node->setMaterialTexture(0, driver->getTexture(texturePath));
 
@@ -50,5 +46,20 @@ bool Shooter::createMesh() {
     }
 
     return true;
+
+}
+
+void Shooter::setPosition(vector3df position) {
+
+	(*this).position = position;
+
+	vector3df temp;
+		
+	if (player1 == true)
+		temp = vector3df(0.4, 0, 0.3);
+	else		
+		temp = vector3df(0.6, 0, 0.5);
+
+	node->setPosition(position + temp);
 
 }
