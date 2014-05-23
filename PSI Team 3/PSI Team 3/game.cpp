@@ -39,7 +39,7 @@ game::game(void)
 	opposingPlayer = new Player(device);
 
 
-	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
+	smgr->addCameraSceneNode(0, vector3df(0,8,-8), vector3df(0,0,0));
 
 
 }
@@ -400,6 +400,6 @@ void game::resetGame() {
 	gameState = new GameStateDTO(5);
 
 	// re-run game
-	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
+	smgr->addCameraSceneNode(0, vector3df(0,8,-8), vector3df(0,0,0));
 	this->run();
 }
