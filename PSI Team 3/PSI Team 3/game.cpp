@@ -99,71 +99,66 @@ void game::startGame() {
 	networkUtilities->setGameName("PSI Team 3");
 	networkUtilities->registerOnTheServer();
 	if ((networkUtilities->getSessionId() % 2) == 1)
-		connect(true);
+		startGame(true);
 	else
-		connect(false, networkUtilities->getOpponentsIpAddress());
+		startGame(false, networkUtilities->getOpponentsIpAddress());
 
 }
 
-void game::connect(bool asPlayer1, char* ipAddress){
-	int *ret;
-	this->asPlayer1 = asPlayer1;
-	this->ipAddress = ipAddress;
-	guienv->clear();
-	smgr->clear();
-	pthread_create(&connectThread, NULL, startGame, this);
-	pthread_join(connectThread, (void**)&ret);
-	init_map(device, obstacles);
-	init_ingame_menu();
-	pthread_create(&thread, NULL, updateGameState, this);
-}
+//void game::connect(bool asPlayer1, char* ipAddress){
+//	int *ret;
+//	this->asPlayer1 = asPlayer1;
+//	this->ipAddress = ipAddress;
+//	guienv->clear();
+//	smgr->clear();
+//	pthread_create(&connectThread, NULL, startGame, this);
+//	pthread_join(connectThread, (void**)&ret);
+//	init_map(device, obstacles);
+//	init_ingame_menu();
+//	pthread_create(&thread, NULL, updateGameState, this);
+//}
 /**	
   * starts the game from the perspective of player1/player2
   */
-void * game::startGame(void * g) {
-	int ret;
-	game* gm = (game*) g;
-	gm->gameState->setPlayer1Turn(true);
-	if (gm->asPlayer1) {
-		gm->networkUtilities->hostGame(portNumber);
+void game::startGame(bool asPlayer1, char* ipAddress) {
+	gameState->setPlayer1Turn(true);
+	if (asPlayer1) {
+		networkUtilities->hostGame(portNumber);
 
 		// hosting player is always player 1
-		gm->localPlayer->setPlayer1(true);
-		gm->opposingPlayer->setPlayer1(false);
+		localPlayer->setPlayer1(true);
+		opposingPlayer->setPlayer1(false);
 
-		gm->localPlayer->initUnits();
-		gm->opposingPlayer->initUnits();
-		gm->localPlayer->setActionsLeft();
+		localPlayer->initUnits();
+		opposingPlayer->initUnits();
+		localPlayer->setActionsLeft();
 	} else {
-		gm->networkUtilities->joinGame(gm->ipAddress, portNumber); 
+		networkUtilities->joinGame(ipAddress, portNumber); 
 
 		// joining player is always player 2
-		gm->localPlayer->setPlayer1(false);
-		gm->opposingPlayer->setPlayer1(true);
+		localPlayer->setPlayer1(false);
+		opposingPlayer->setPlayer1(true);
 
-		gm->localPlayer->initUnits();
-		gm->opposingPlayer->initUnits();
+		localPlayer->initUnits();
+		opposingPlayer->initUnits();
 
-		vector3d<float> temp = gm->smgr->getActiveCamera()->getPosition();
+		vector3d<float> temp = smgr->getActiveCamera()->getPosition();
 		temp.Z = !temp.Z;
 		temp.Y = 0;
-		gm->playerCamera->setCameraPos(temp, gm->localPlayer->getPlayer1());
+		playerCamera->setCameraPos(temp, localPlayer->getPlayer1());
 
-		ret = 1;
-
-		pthread_exit(&ret);
 		try {
-			//pthread_t thread = gm->thread;
-			//pthread_create(&thread, NULL, updateGameState, gm);
+
+			pthread_create(&thread, NULL, updateGameState, this);
 			//updateGameState();
 		}
 		// We should have a nice error box!
 		catch(NonRealtimeNetworkingException e) {
-	
+
 		}
 
 	}
-	return NULL;
+
 }
 
 void game::passTurn(bool giveUp) {

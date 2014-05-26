@@ -209,9 +209,9 @@ void MenuEventReceiver::JOIN_GAME()
 
 void MenuEventReceiver::HOST_GAME()
 {
-	//Context.game_->init_map(Context.device, obstacles);
-	//Context.game_->init_ingame_menu();
-	Context.game_->connect(true, ""); // call without ip, since we want to host 
+	Context.game_->init_map(Context.device, obstacles);
+	Context.game_->init_ingame_menu();
+	Context.game_->startGame(true, ""); // call without ip, since we want to host 
 	menuDone = true;
 }
 
@@ -226,9 +226,9 @@ void MenuEventReceiver::JOIN_GAME_SECOND()
 	IGUIEnvironment* guienv = Context.device->getGUIEnvironment();
 	guienv->clear();
 
-	Context.game_->connect(false, ch);
-	//Context.game_->init_map(Context.device, obstacles);
-	//Context.game_->init_ingame_menu();
+	Context.game_->startGame(false, ch);
+	Context.game_->init_map(Context.device, obstacles);
+	Context.game_->init_ingame_menu();
 	menuDone = true;
 }
 

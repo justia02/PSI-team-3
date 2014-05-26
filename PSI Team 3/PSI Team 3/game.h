@@ -67,9 +67,9 @@ public:
 
 	// public methods
 	int run(void);
-	//void startGame(bool asPlayer1, char* ipAddress = NULL); 
-	static void * startGame(void * g); 
-	void connect(bool asPlayer1, char* ipAddress = NULL);
+	void startGame(bool asPlayer1, char* ipAddress = NULL); 
+	//static void * startGame(void * g); 
+	//void connect(bool asPlayer1, char* ipAddress = NULL);
 
 	void init_ingame_menu();
 	void init_map(IrrlichtDevice *device_map, std::vector<Obstacle*>* obstacles);
