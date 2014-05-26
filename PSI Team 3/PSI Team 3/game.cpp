@@ -119,6 +119,10 @@ void game::startGame() {
   * starts the game from the perspective of player1/player2
   */
 void game::startGame(bool asPlayer1, char* ipAddress) {
+	//smgr->clear();
+	guienv->clear();
+	smgr->addCameraSceneNode(0, vector3df(0,8,-8), vector3df(0,0,0));
+
 	gameState->setPlayer1Turn(true);
 	if (asPlayer1) {
 		networkUtilities->hostGame(portNumber);
