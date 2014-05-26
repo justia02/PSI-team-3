@@ -58,12 +58,12 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 					Context.game_->localPlayer->setActionsLeft();
 					Context.game_->m->setActionText("Actions left = " + std::string(std::to_string(static_cast<long double>(Context.game_->localPlayer->getActionsLeft()))));
 				}
-				/*if (shootingMode == true) {
-				this->selectedUnit->shoot(moveDirection, Context.game_->opposingPlayer->getUnits(), obstacles);
-				}
-				else { // Moving
-					this->selectedUnit->Move(moveDirection, this->selectedUnit->maxDistance, allUnits, obstacles, Context.game_->localPlayer->getPlayer1());
-				}*/
+				//if (shootingMode == true) {
+				//this->selectedUnit->shoot(moveDirection, Context.game_->opposingPlayer->getUnits(), obstacles);
+				//}
+				//else { // Moving
+				//	this->selectedUnit->Move(moveDirection, this->selectedUnit->maxDistance, allUnits, obstacles, Context.game_->localPlayer->getPlayer1());
+				//}
 
 				this->selectedUnit->SelectUnit();
 				this->selectedUnit = NULL;
