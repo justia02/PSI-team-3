@@ -178,6 +178,7 @@ void game::passTurn(bool giveUp) {
 
 
 	m->setTurnText("It is your opponents turn");
+	m->setWaitText(true);
 	//m->setTurnTextColor(SColor(0, 255, 0, 0));
 	
 	// read units of this player
