@@ -104,14 +104,22 @@ void game::startGame() {
 }
 
 void game::connect(bool asPlayer1, char* ipAddress){
+	int *ret;
 	this->asPlayer1 = asPlayer1;
 	this->ipAddress = ipAddress;
+	guienv->clear();
+	smgr->clear();
 	pthread_create(&connectThread, NULL, startGame, this);
+	pthread_join(connectThread, (void**)&ret);
+	init_map(device, obstacles);
+	init_ingame_menu();
+	pthread_create(&thread, NULL, updateGameState, this);
 }
 /**	
   * starts the game from the perspective of player1/player2
   */
 void * game::startGame(void * g) {
+	int ret;
 	game* gm = (game*) g;
 	gm->gameState->setPlayer1Turn(true);
 	if (gm->asPlayer1) {
@@ -139,12 +147,12 @@ void * game::startGame(void * g) {
 		temp.Y = 0;
 		gm->playerCamera->setCameraPos(temp, gm->localPlayer->getPlayer1());
 
-		gm->init_map(gm->device, gm->obstacles);
-		gm->init_ingame_menu();
+		ret = 1;
 
+		pthread_exit(&ret);
 		try {
-			pthread_t thread = gm->thread;
-			pthread_create(&thread, NULL, updateGameState, gm);
+			//pthread_t thread = gm->thread;
+			//pthread_create(&thread, NULL, updateGameState, gm);
 			//updateGameState();
 		}
 		// We should have a nice error box!
@@ -153,7 +161,7 @@ void * game::startGame(void * g) {
 		}
 
 	}
-	return 0;
+	return NULL;
 }
 
 void game::passTurn(bool giveUp) {
