@@ -6,9 +6,16 @@ BalancedUnit::BalancedUnit(vector3d<float> position, bool player1, IrrlichtDevic
 	maxDistance = 2;
 	shootingRange = 2;
 
-	texturePath = "../media/ant.jpg";
-	texturePathHighlight = "../media/ant_highlighted.jpg";
-	texturePathSelected = "../media/ant_selected.jpg";
+	if (player1) {
+		texturePath = "../media/ant_blue.jpg";
+		texturePathHighlight = "../media/ant_highlighted_blue.jpg";
+		texturePathSelected = "../media/ant_selected_blue.jpg";
+	}
+	else {
+		texturePath = "../media/ant_red.jpg";
+		texturePathHighlight = "../media/ant_highlighted_red.jpg";
+		texturePathSelected = "../media/ant_selected_red.jpg";
+	}
 
 	createMesh();
 
