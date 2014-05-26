@@ -28,6 +28,11 @@ game::game(void)
 	guienv = device->getGUIEnvironment();
 	playerCamera = new PlayerCamera(device);
 
+	IGUISkin* skin = guienv->getSkin();
+    IGUIFont* font = guienv->getFont("../media/fonts/candara14.bmp");
+    skin->setFont(font);
+
+
 	// initialize networkUtilities (all networking stuff is handled in in this class)
 	networkUtilities = new NonRealtimeNetworkingUtilities();
 
@@ -40,7 +45,6 @@ game::game(void)
 
 
 	smgr->addCameraSceneNode(0, vector3df(0,6,-8), vector3df(0,0,0));
-
 
 }
 
@@ -159,7 +163,7 @@ void game::passTurn(bool giveUp) {
 
 
 	m->setTurnText("It is your opponents turn");
-	m->setTurnTextColor(SColor(0, 255, 0, 0));
+	m->setWaitText(true);
 	
 	// read units of this player
 
@@ -244,7 +248,7 @@ void * game::updateGameState(void * g){
 	if (gm->gameState->getPlayer1Turn() && gm->localPlayer->getPlayer1())
 			{
 				gm->m->setTurnText("It is your turn");
-				gm->m->setTurnTextColor(SColor(0, 0, 0, 0));
+				gm->m->setWaitText(false);
 			}
 
 

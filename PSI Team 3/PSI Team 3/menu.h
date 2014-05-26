@@ -32,6 +32,7 @@ public:
 	IGUIStaticText *actionText;
 	IGUIStaticText *unitText;
 	IGUIStaticText *modeText;
+	IGUIStaticText *waitText;
 
 	int height;
 	int width;
@@ -43,8 +44,8 @@ public:
 	void setPlayerText(std::string playertext);
 	void setActionText(std::string actiontext);
 	void setTurnText(std::string turntext);
-	void menu::setTurnTextColor(SColor color);
 	void setUnitText(std::string unittext);
 	void setModeText(std::string modetext);
+	void setWaitText(bool wait);
 };
 
