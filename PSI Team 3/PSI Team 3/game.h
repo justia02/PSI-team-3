@@ -55,6 +55,7 @@ private:
 	
 	bool asPlayer1;
 	char* ipAddress;
+	std::vector<Obstacle*>* obstacles;
 
 public:
 	// constructor/desctructor

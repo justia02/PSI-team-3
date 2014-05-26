@@ -65,7 +65,7 @@ int game::run(void)
 		receiver.menuDone = false;
 
 		// Create obstacles
-		std::vector<Obstacle*>* obstacles = new std::vector<Obstacle*>();
+		obstacles = new std::vector<Obstacle*>();
 		obstacles->push_back(new Obstacle(type::PYRAMID, context.device));
 		obstacles->push_back(new Obstacle(type::SPIDER, context.device));
 		obstacles->push_back(new Obstacle(type::CAT, context.device));
@@ -136,6 +136,9 @@ void * game::startGame(void * g) {
 		temp.Z = !temp.Z;
 		temp.Y = 0;
 		gm->playerCamera->setCameraPos(temp, gm->localPlayer->getPlayer1());
+
+		gm->init_map(gm->device, gm->obstacles);
+		gm->init_ingame_menu();
 
 		try {
 			pthread_t thread = gm->thread;
