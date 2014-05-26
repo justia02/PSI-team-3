@@ -28,6 +28,10 @@ game::game(void)
 	guienv = device->getGUIEnvironment();
 	playerCamera = new PlayerCamera(device);
 
+	IGUISkin* skin = guienv->getSkin();
+	IGUIFont* font = guienv->getFont("../media/fonts/candara14.bmp");
+	skin->setFont(font);
+
 	// initialize networkUtilities (all networking stuff is handled in in this class)
 	networkUtilities = new NonRealtimeNetworkingUtilities();
 
@@ -74,11 +78,9 @@ int game::run(void)
 		// specify our custom event receiver in the device	
 		device->setEventReceiver(&receiver);
 		
-
 		while (device->run() && driver)
 		if (device->isWindowActive())
 		{
-			//device->run();
 			driver->beginScene(true, true, SColor(0,200,200,200));
 			smgr->drawAll();
 			guienv->drawAll();
