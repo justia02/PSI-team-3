@@ -258,11 +258,10 @@ void * game::updateGameState(void * g){
 
 	gm->gameState->deserialize(gm->networkUtilities->getBuffer());
 
-	if (gm->gameState->getPlayer1Turn() && gm->localPlayer->getPlayer1())
-			{
-				gm->m->setTurnText("It is your turn");
-				gm->m->setWaitText(false);
-			}
+	if ((gm->gameState->getPlayer1Turn() && gm->localPlayer->getPlayer1()) || (!gm->gameState->getPlayer1Turn() && !gm->localPlayer->getPlayer1())) {
+		gm->m->setTurnText("It is your turn");
+		gm->m->setWaitText(false);
+	}
 
 	if (gm->gameState->getVictory()) gm->networkUtilities->closeConnection();
 
