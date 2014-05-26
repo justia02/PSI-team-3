@@ -54,7 +54,7 @@ game::~game(void)
 
 int game::run(void)
 {
-
+		endOfGame = false;
 		// setup context
 		SAppContext context;
 		context.device = device;
@@ -237,12 +237,19 @@ void game::passTurn(bool giveUp) {
 }
 
 void * game::updateGameState(void * g){
-
+	
 	// cast parameter to game
 	game* gm = (game*) g;
 
 	// create a GameStateDTO object and fill in data we received by deserializing it
-	gm->networkUtilities->receiveData();
+	try {
+		gm->networkUtilities->receiveData();
+	} catch (NonRealtimeNetworkingException e ) {
+		// hooope this works
+	}
+
+	if (gm->endOfGame) return false;
+
 	gm->gameState->deserialize(gm->networkUtilities->getBuffer());
 
 	if (gm->gameState->getPlayer1Turn() && gm->localPlayer->getPlayer1())
@@ -274,7 +281,7 @@ void * game::updateGameState(void * g){
 		for(std::vector<BaseUnit*>::iterator it = gm->localPlayer->getUnits()->begin(); it != gm->localPlayer->getUnits()->end(); ++it) {
 			if (unitUpdated) break;
 			if (tmp.getId() == (*it)->id) {
-				if((*it)->player1 != gm->localPlayer->getPlayer1())
+				if((*it)->player1 != gm->localPlayer->getPlayer1() && ! gm->endOfGame)
 					throw new IllegalStateException("Unit is not assigned correctly!");
 
 				// Update position
@@ -295,7 +302,7 @@ void * game::updateGameState(void * g){
 		for(std::vector<BaseUnit*>::iterator it = gm->opposingPlayer->getUnits()->begin(); it != gm->opposingPlayer->getUnits()->end(); ++it) {
 			if (unitUpdated) break;
 			if (tmp.getId() == (*it)->id) {
-				if((*it)->player1 != gm->opposingPlayer->getPlayer1())
+				if((*it)->player1 != gm->opposingPlayer->getPlayer1() && ! gm->endOfGame)
 					throw new IllegalStateException("Unit is not assigned correctly!");				
 
 				// Update position
@@ -312,8 +319,8 @@ void * game::updateGameState(void * g){
 			}
 		}
 
-		if (! unitUpdated) 
-			throw new IllegalStateException("Unit is not assigned to a player.");		
+		/*if (! unitUpdated) 
+			throw new IllegalStateException("Unit is not assigned to a player.");	*/	
 	}
 
 	// show message if player lost
@@ -333,6 +340,7 @@ if(gm->localPlayer->getPlayer1() && gm->gameState->getPlayer1Turn()){
 		gm->localPlayer->resetActionsLeft();
 		gm->m->setTurnText("It is your turn");
 	}
+	pthread_exit(NULL);
 }
 
 void game::init_map(IrrlichtDevice* device_map, std::vector<Obstacle*>* obstacles)
@@ -388,17 +396,22 @@ bool game::checkVictory() {
 
 void game::resetGame() {
 	// release some memory...	
-	delete localPlayer;
-	delete opposingPlayer;
+	//delete localPlayer;
+	//delete opposingPlayer;
 	guienv->clear();
 	smgr->clear();
 
 	// reset all the relevant properties
 	localPlayer = new Player(device);
 	opposingPlayer = new Player(device);
-	networkUtilities->closeConnection();
-	networkUtilities = new NonRealtimeNetworkingUtilities();
-	endOfGame = false;
+	try{
+		networkUtilities->closeConnection();
+		networkUtilities = new NonRealtimeNetworkingUtilities();
+	} catch (NonRealtimeNetworkingException e) {
+		// lalaal
+	}
+	
+	//endOfGame = false;
 	gameState = new GameStateDTO(16);
 
 	// re-run game
