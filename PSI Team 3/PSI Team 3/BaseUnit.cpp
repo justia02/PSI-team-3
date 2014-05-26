@@ -114,7 +114,7 @@ bool BaseUnit::canMove(direction moveDirection, float distance, std::vector<Base
 		}
 		case FORWARD: {
 			// Check if that would not violate board boundaries
-			if (position.Z > (HALF_SIZE - distance))
+			if (position.Z >= (HALF_SIZE - distance))
 				return false;
 			// Check if another unit isn't already there
 			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it)
