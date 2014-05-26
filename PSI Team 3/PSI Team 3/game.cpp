@@ -105,6 +105,7 @@ void game::connect(bool asPlayer1, char* ipAddress){
 	int *ret;
 	this->asPlayer1 = asPlayer1;
 	this->ipAddress = ipAddress;
+	guienv->clear();
 	smgr->clear();
 	pthread_create(&connectThread, NULL, startGame, this);
 	pthread_join(connectThread, (void**)&ret);
