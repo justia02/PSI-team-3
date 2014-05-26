@@ -51,12 +51,10 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 				if (shootingMode == true && Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasShot()) {
 					this->selectedUnit->shoot(moveDirection, Context.game_->opposingPlayer->getUnits(), obstacles);
 					Context.game_->localPlayer->setActionsLeft();
-					Context.game_->m->setActionText("Actions left = " + std::string(std::to_string(static_cast<long double>(Context.game_->localPlayer->getActionsLeft()))));
 				}
 				else if (shootingMode == false && Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasMoved()) { // Moving
 					this->selectedUnit->Move(moveDirection, this->selectedUnit->maxDistance, allUnits, obstacles, Context.game_->localPlayer->getPlayer1());
 					Context.game_->localPlayer->setActionsLeft();
-					Context.game_->m->setActionText("Actions left = " + std::string(std::to_string(static_cast<long double>(Context.game_->localPlayer->getActionsLeft()))));
 				}
 				//if (shootingMode == true) {
 				//this->selectedUnit->shoot(moveDirection, Context.game_->opposingPlayer->getUnits(), obstacles);
@@ -213,7 +211,7 @@ void MenuEventReceiver::HOST_GAME()
 {
 	Context.game_->init_map(Context.device, obstacles);
 	Context.game_->init_ingame_menu();
-	Context.game_->startGame(true, ""); // call without ip, since we want to host 
+	Context.game_->connect(true, ""); // call without ip, since we want to host 
 	menuDone = true;
 }
 
@@ -228,7 +226,7 @@ void MenuEventReceiver::JOIN_GAME_SECOND()
 	IGUIEnvironment* guienv = Context.device->getGUIEnvironment();
 	guienv->clear();
 
-	Context.game_->startGame(false, ch);
+	Context.game_->connect(false, ch);
 	Context.game_->init_map(Context.device, obstacles);
 	Context.game_->init_ingame_menu();
 	menuDone = true;
@@ -309,19 +307,19 @@ void MenuEventReceiver::setDirection(EKEY_CODE keyCode)
 	if(!this->isUnitSelected)
 		return;
 	// detect the keycode: if its a move direction key set the move direction
-	if(keyCode == irr::KEY_KEY_W || keyCode == irr::KEY_UP)
+	if(keyCode == irr::KEY_KEY_W)
 	{
 		moveDirection = BaseUnit::FORWARD;
 	}
-	else if(keyCode == irr::KEY_KEY_S || keyCode == irr::KEY_DOWN)
+	else if(keyCode == irr::KEY_KEY_S)
 	{
 		moveDirection = BaseUnit::BACK;
 	}
-	else if(keyCode == irr::KEY_KEY_A || keyCode == irr::KEY_LEFT)
+	else if(keyCode == irr::KEY_KEY_A)
 	{
 		moveDirection = BaseUnit::LEFT;
 	}
-	else if(keyCode == irr::KEY_KEY_D || keyCode == irr::KEY_RIGHT)
+	else if(keyCode == irr::KEY_KEY_D)
 	{
 		moveDirection = BaseUnit::RIGHT;
 	}

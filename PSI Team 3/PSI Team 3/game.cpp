@@ -28,11 +28,6 @@ game::game(void)
 	guienv = device->getGUIEnvironment();
 	playerCamera = new PlayerCamera(device);
 
-	IGUISkin* skin = guienv->getSkin();
-    IGUIFont* font = guienv->getFont("../media/fonts/candara14.bmp");
-    skin->setFont(font);
-
-
 	// initialize networkUtilities (all networking stuff is handled in in this class)
 	networkUtilities = new NonRealtimeNetworkingUtilities();
 
@@ -45,6 +40,7 @@ game::game(void)
 
 
 	smgr->addCameraSceneNode(0, vector3df(0,8,-8), vector3df(0,0,0));
+
 
 }
 
@@ -99,44 +95,51 @@ void game::startGame() {
 	networkUtilities->setGameName("PSI Team 3");
 	networkUtilities->registerOnTheServer();
 	if ((networkUtilities->getSessionId() % 2) == 1)
-		startGame(true);
+		connect(true);
 	else
-		startGame(false, networkUtilities->getOpponentsIpAddress());
+		connect(false, networkUtilities->getOpponentsIpAddress());
 
+}
+
+void game::connect(bool asPlayer1, char* ipAddress){
+	this->asPlayer1 = asPlayer1;
+	this->ipAddress = ipAddress;
+	pthread_create(&connectThread, NULL, startGame, this);
 }
 /**	
   * starts the game from the perspective of player1/player2
   */
-void game::startGame(bool asPlayer1, char* ipAddress) {
-	gameState->setPlayer1Turn(true);
-	if (asPlayer1) {
-		networkUtilities->hostGame(portNumber);
+void * game::startGame(void * g) {
+	game* gm = (game*) g;
+	gm->gameState->setPlayer1Turn(true);
+	if (gm->asPlayer1) {
+		gm->networkUtilities->hostGame(portNumber);
 
 		// hosting player is always player 1
-		localPlayer->setPlayer1(true);
-		opposingPlayer->setPlayer1(false);
+		gm->localPlayer->setPlayer1(true);
+		gm->opposingPlayer->setPlayer1(false);
 
-		localPlayer->initUnits();
-		opposingPlayer->initUnits();
-		localPlayer->setActionsLeft();
+		gm->localPlayer->initUnits();
+		gm->opposingPlayer->initUnits();
+		gm->localPlayer->setActionsLeft();
 	} else {
-		networkUtilities->joinGame(ipAddress, portNumber); 
+		gm->networkUtilities->joinGame(gm->ipAddress, portNumber); 
 
 		// joining player is always player 2
-		localPlayer->setPlayer1(false);
-		opposingPlayer->setPlayer1(true);
+		gm->localPlayer->setPlayer1(false);
+		gm->opposingPlayer->setPlayer1(true);
 
-		localPlayer->initUnits();
-		opposingPlayer->initUnits();
+		gm->localPlayer->initUnits();
+		gm->opposingPlayer->initUnits();
 
-		vector3d<float> temp = smgr->getActiveCamera()->getPosition();
+		vector3d<float> temp = gm->smgr->getActiveCamera()->getPosition();
 		temp.Z = !temp.Z;
 		temp.Y = 0;
-		playerCamera->setCameraPos(temp, localPlayer->getPlayer1());
+		gm->playerCamera->setCameraPos(temp, gm->localPlayer->getPlayer1());
 
 		try {
-			
-			pthread_create(&thread, NULL, updateGameState, this);
+			pthread_t thread = gm->thread;
+			pthread_create(&thread, NULL, updateGameState, gm);
 			//updateGameState();
 		}
 		// We should have a nice error box!
@@ -145,7 +148,7 @@ void game::startGame(bool asPlayer1, char* ipAddress) {
 		}
 
 	}
-
+	return 0;
 }
 
 void game::passTurn(bool giveUp) {
@@ -163,7 +166,7 @@ void game::passTurn(bool giveUp) {
 
 
 	m->setTurnText("It is your opponents turn");
-	m->setWaitText(true);
+	//m->setTurnTextColor(SColor(0, 255, 0, 0));
 	
 	// read units of this player
 
