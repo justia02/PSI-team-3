@@ -264,11 +264,10 @@ void * game::updateGameState(void * g){
 
 	gm->gameState->deserialize(gm->networkUtilities->getBuffer());
 
-	if (gm->gameState->getPlayer1Turn() && gm->localPlayer->getPlayer1())
-			{
-				gm->m->setTurnText("It is your turn");
-//				gm->m->setTurnTextColor(SColor(0, 0, 0, 0));
-			}
+	if ((gm->gameState->getPlayer1Turn() && gm->localPlayer->getPlayer1()) || (!gm->gameState->getPlayer1Turn() && !gm->localPlayer->getPlayer1())) {
+		gm->m->setTurnText("It is your turn");
+		gm->m->setWaitText(false);
+	}
 
 	if (gm->gameState->getVictory()) gm->networkUtilities->closeConnection();
 
@@ -285,14 +284,12 @@ void * game::updateGameState(void * g){
 				if((*it)->player1 != gm->localPlayer->getPlayer1() && ! gm->endOfGame)
 					throw new IllegalStateException("Unit is not assigned correctly!");
 
-				// update position attributes of unit
-				(*it)->position.X = tmp.getX();
-				(*it)->position.Y = tmp.getY();
-				(*it)->position.Z = tmp.getZ();
-				(*it)->health = tmp.getHealth();
+				// Update position
+				vector3df newPosition = vector3df(tmp.getX(), tmp.getY(), tmp.getZ());
+				(*it)->setPosition(newPosition);
 
-				// later on -> update other attributes of the unit
-				(*it)->node->setPosition((*it)->position);
+				// Update other attributes
+				(*it)->health = tmp.getHealth();
 				(*it)->updateHealthBar();
 				(*it)->setHasMoved(false);
 				(*it)->setHasShot(false);
@@ -312,14 +309,8 @@ void * game::updateGameState(void * g){
 				vector3df newPosition = vector3df(tmp.getX(), tmp.getY(), tmp.getZ());
 				(*it)->setPosition(newPosition);
 
-				// update position attributes of unit
-				(*it)->position.X = tmp.getX();
-				(*it)->position.Y = tmp.getY();
-				(*it)->position.Z = tmp.getZ();
+				// Update other attributes
 				(*it)->health = tmp.getHealth();
-
-				// updates the unit's position visually on the map (hopefully)
-				(*it)->node->setPosition((*it)->position);
 				(*it)->updateHealthBar();
 				(*it)->setHasMoved(false);
 				(*it)->setHasShot(false);
