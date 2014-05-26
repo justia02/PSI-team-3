@@ -234,6 +234,12 @@ void game::passTurn(bool giveUp) {
 		device->getGUIEnvironment()->addMessageBox(L"Oops an Error", L"Something went wrong, probably connection lost", true, EMBF_OK);
 		endOfGame = true;
 	}
+
+	try {
+		networkUtilities->closeConnection();
+	} catch (NonRealtimeNetworkingException e) {
+		// just catch that shit already
+	}
 }
 
 void * game::updateGameState(void * g){
@@ -258,18 +264,7 @@ void * game::updateGameState(void * g){
 				gm->m->setWaitText(false);
 			}
 
-
-	// Output flags in GameState
-	std::cout<<"FLAGS IN GAMESTATE \n";
-	std::cout<<"Give up: ";
-	std::cout<<gm->gameState->getGiveUp();
-	std::cout<<"\n";
-	std::cout<<"Player 1 Turn: ";
-	std::cout<<gm->gameState->getPlayer1Turn();
-	std::cout<<"\n";
-	std::cout<<"Victory: ";
-	std::cout<<gm->gameState->getVictory();
-	std::cout<<"\n";
+	if (gm->gameState->getVictory()) gm->networkUtilities->closeConnection();
 
 	bool unitUpdated;
 	// update gamestate by updating all attributes in both players
@@ -405,7 +400,7 @@ void game::resetGame() {
 	localPlayer = new Player(device);
 	opposingPlayer = new Player(device);
 	try{
-		networkUtilities->closeConnection();
+		//networkUtilities->closeConnection();
 		networkUtilities = new NonRealtimeNetworkingUtilities();
 	} catch (NonRealtimeNetworkingException e) {
 		// lalaal
