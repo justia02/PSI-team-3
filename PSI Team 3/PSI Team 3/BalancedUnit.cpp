@@ -55,9 +55,9 @@ void BalancedUnit::setPosition(vector3df position) {
 	vector3df temp;
 
 	if (player1)
-		temp = vector3df(0.5, 0, 0.5);					
+		temp = vector3df(0.5, 0, 0.6);					
 	else
-		temp = vector3df(0.5, 0.2, 0);
+		temp = vector3df(0.5, 0, 0.5);
 
 	node->setPosition(position + temp);
 

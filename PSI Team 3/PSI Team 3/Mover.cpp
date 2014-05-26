@@ -46,6 +46,8 @@ void Mover::highLightUnit(bool highLight) {
 bool Mover::createMesh() {
 
 	normalMesh = sceneManager->getMesh("../media/van.irrmesh");
+	selectedMesh = sceneManager->getMesh("../media/van_selected.irrmesh");
+	highlightedMesh = sceneManager->getMesh("../media/van_highlighted.irrmesh");
     
     if (!normalMesh) {
         cout << "The mesh could not be created in MashViewer->createMesh";

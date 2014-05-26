@@ -273,14 +273,12 @@ void * game::updateGameState(void * g){
 				if((*it)->player1 != gm->localPlayer->getPlayer1())
 					throw new IllegalStateException("Unit is not assigned correctly!");
 
-				// update position attributes of unit
-				(*it)->position.X = tmp.getX();
-				(*it)->position.Y = tmp.getY();
-				(*it)->position.Z = tmp.getZ();
-				(*it)->health = tmp.getHealth();
+				// Update position
+				vector3df newPosition = vector3df(tmp.getX(), tmp.getY(), tmp.getZ());
+				(*it)->setPosition(newPosition);
 
-				// later on -> update other attributes of the unit
-				(*it)->node->setPosition((*it)->position);
+				// Update other attributes
+				(*it)->health = tmp.getHealth();
 				(*it)->updateHealthBar();
 				(*it)->setHasMoved(false);
 				(*it)->setHasShot(false);
@@ -294,16 +292,14 @@ void * game::updateGameState(void * g){
 			if (unitUpdated) break;
 			if (tmp.getId() == (*it)->id) {
 				if((*it)->player1 != gm->opposingPlayer->getPlayer1())
-					throw new IllegalStateException("Unit is not assigned correctly!");
+					throw new IllegalStateException("Unit is not assigned correctly!");				
 
-				// update position attributes of unit
-				(*it)->position.X = tmp.getX();
-				(*it)->position.Y = tmp.getY();
-				(*it)->position.Z = tmp.getZ();
+				// Update position
+				vector3df newPosition = vector3df(tmp.getX(), tmp.getY(), tmp.getZ());
+				(*it)->setPosition(newPosition);
+
+				// Update other attributes
 				(*it)->health = tmp.getHealth();
-
-				// updates the unit's position visually on the map (hopefully)
-				(*it)->node->setPosition((*it)->position);
 				(*it)->updateHealthBar();
 				(*it)->setHasMoved(false);
 				(*it)->setHasShot(false);
