@@ -236,7 +236,7 @@ void game::passTurn(bool giveUp) {
 	}
 
 	try {
-		networkUtilities->closeConnection();
+		if (gameState->getVictory()) networkUtilities->closeConnection();
 	} catch (NonRealtimeNetworkingException e) {
 		// just catch that shit already
 	}
