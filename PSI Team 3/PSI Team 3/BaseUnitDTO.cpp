@@ -12,7 +12,6 @@ char* BaseUnitDTO::serialize() {
         // write class instance to archive
         oa << *this;
     	// archive and stream closed when destructors are called
-
 		ofs.close();
     }
 

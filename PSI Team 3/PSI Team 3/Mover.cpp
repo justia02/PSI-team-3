@@ -2,7 +2,7 @@
 
 Mover::Mover(vector3d<float> position, bool player1, IrrlichtDevice* dev, int id) : BaseUnit(position, player1, dev, id) {
 
-	damage = 30;
+	damage = 20;
 	maxDistance = 3;
 	shootingRange = 1;
 
