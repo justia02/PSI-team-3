@@ -10,7 +10,7 @@ class mapterrain
 public:
 	mapterrain(void);
 
-	mapterrain(IrrlichtDevice *device, ISceneManager* smgr, std::vector<Obstacle*>* obstacles);
+	mapterrain(IrrlichtDevice *device, ISceneManager* smgr, std::vector<Obstacle*>* obstacles, bool player1);
 
 	~mapterrain(void);
 

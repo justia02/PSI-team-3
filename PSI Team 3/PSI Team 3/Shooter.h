@@ -2,13 +2,11 @@
 
 class Shooter : public BaseUnit {
 
-	Shooter() : BaseUnit() {
+public:
+	Shooter(vector3d<float> position, bool player1, IrrlichtDevice* dev, int id);
+	virtual void setPosition(vector3df position);
 
-		health = 100;
-		damage = 30;
-		maxDistance = 1;
-		shootingRange = 3;
-
-	};
+private:
+	bool createMesh();
 
 };

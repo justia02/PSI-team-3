@@ -22,16 +22,34 @@ void Player::initUnits() {
 	int temp = 0;
 	
 	while(infile >> x >> y >> z >> pl >> type){
-		if(type == 0){
+		if(type == BALANCED_UNIT){
 			if(pl == 1 && player1){
-				units->push_back(new BaseUnit(vector3d<float>(x, y, z), getPlayer1(), device, id));
+				units->push_back(new BalancedUnit(vector3d<float>(x, y, z), getPlayer1(), device, id));
 			}
 			else if(pl == 2 && !player1){
-				units->push_back(new BaseUnit(vector3d<float>(x, y, z), getPlayer1(), device, id));
+				units->push_back(new BalancedUnit(vector3d<float>(x, y, z), getPlayer1(), device, id));
 			}
 			id++;
 		}
-		else if(type == 4){
+		else if(type == MOVER) {
+			if(pl == 1 && player1){
+				units->push_back(new Mover(vector3d<float>(x, y, z), getPlayer1(), device, id));
+			}
+			else if(pl == 2 && !player1){
+				units->push_back(new Mover(vector3d<float>(x, y, z), getPlayer1(), device, id));
+			}
+			id++;
+		}
+		else if (type == SHOOTER) {
+			if(pl == 1 && player1){
+				units->push_back(new Shooter(vector3d<float>(x, y, z), getPlayer1(), device, id));
+			}
+			else if(pl == 2 && !player1){
+				units->push_back(new Shooter(vector3d<float>(x, y, z), getPlayer1(), device, id));
+			}
+			id++;
+		}
+		else if (type == BASE){
 			if(pl == 1 && player1){
 				basePositions[temp] = vector3d<float>(x, y, z);
 				temp++;

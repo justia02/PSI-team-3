@@ -8,7 +8,7 @@ mapterrain::mapterrain(void)
 {
 }
 
-mapterrain::mapterrain(IrrlichtDevice *device, ISceneManager *smgr, std::vector<Obstacle*>* obstacles)
+mapterrain::mapterrain(IrrlichtDevice *device, ISceneManager *smgr, std::vector<Obstacle*>* obstacles, bool player1)
 {
 	loadBases(smgr);
 
@@ -21,19 +21,16 @@ mapterrain::mapterrain(IrrlichtDevice *device, ISceneManager *smgr, std::vector<
 	}
 	IAnimatedMeshSceneNode* node = smgr->addAnimatedMeshSceneNode( mesh );
 
-	irr::core::vector3df extent = node->getTransformedBoundingBox().getExtent();
-	std::cout << "map mesh bounding box X: " << extent.X << " Y: " << extent.Y << " Z: " << extent.Z << endl;
-
 	// Add obstacles:
 	// Pyramid
 	obstacles->at(0)->createMesh();
-	obstacles->at(0)->setPosition(vector3d<float>(1.25, 0.45, -0.75));
+	obstacles->at(0)->setPosition(vector3d<float>(1, 0.45, -1), player1);
 	// Spider
 	obstacles->at(1)->createMesh();
-	obstacles->at(1)->setPosition(vector3d<float>(-2.75, 0.45, -0.75));
+	obstacles->at(1)->setPosition(vector3d<float>(-3, 0.45, -1), player1);
 	// Cat
 	obstacles->at(2)->createMesh();
-	obstacles->at(2)->setPosition(vector3d<float>(2.25, 0.7, 1.25));
+	obstacles->at(2)->setPosition(vector3d<float>(2, 0.7, 1), player1);
 
 }
 mapterrain::~mapterrain(void)
