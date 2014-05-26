@@ -67,21 +67,21 @@ void Obstacle::setPosition(vector3df position, bool player1) {
 			if (player1)
 				node->setPosition(vector3df(position.X + 0.45, position.Y, position.Z + 0.3));
 			else
-				node->setPosition(vector3df(position.X - 1.45, position.Y, position.Z - 0.3));
+				node->setPosition(vector3df(position.X + 0.45, position.Y, position.Z + 0.7));
 			break;
 		}
 		case type::SPIDER: {
 			if (player1)
 				node->setPosition(vector3df(position.X + 0.5, position.Y, position.Z + 0.35));
 			else
-				node->setPosition(vector3df(position.X - 1.5, position.Y, position.Z - 0.35));
+				node->setPosition(vector3df(position.X + 0.5, position.Y, position.Z + 0.75));
 			break;
 		}
 		case type::CAT: {
 			if (player1)
 				node->setPosition(vector3df(position.X + 0.25, position.Y, position.Z - 0.2));
 			else
-				node->setPosition(vector3df(position.X + 0.25, position.Y, position.Z - 0.2));
+				node->setPosition(vector3df(position.X + 0.25, position.Y, position.Z + 1.0));
 			break;
 		}
 	}
