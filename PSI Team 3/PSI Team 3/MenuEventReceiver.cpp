@@ -7,9 +7,11 @@
 */
 bool MenuEventReceiver::OnEvent(const SEvent& event)
 {
-
 	//this is a call to the function in the base class where the program will check which button you press.
-	menuSwitchCases(event, Context.device->getGUIEnvironment());
+	menuSwitchCases(event, Context.device->getGUIEnvironment(), (menuReceiver::JOIN_GAME)(&MenuEventReceiver::JOIN_GAME), 
+																(menuReceiver::HOST_GAME)(&MenuEventReceiver::HOST_GAME), 
+																(menuReceiver::JOIN_GAME_SECOND)(&MenuEventReceiver::JOIN_GAME_SECOND), 
+																(menuReceiver::END_GAME)(&MenuEventReceiver::END_GAME));
 
 	// from here on all logic is about the game, not the menu
 	// this will only be checked if the menu is done.
@@ -200,24 +202,28 @@ std::string MenuEventReceiver::getSelectedUnitData(BaseUnit *unit)
 /**
  * implementation of the 5 empty function in the menuReceiver in the engine
  */
-void MenuEventReceiver::JOIN_GAME()
+bool MenuEventReceiver::JOIN_GAME()
 {
 	// display interface to enter ip address
 	text = L"Enter ip here";
 	IGUIEnvironment* guienv = Context.device->getGUIEnvironment();					
 	box = guienv->addEditBox(text, rect<s32>((Context.game_->horizontal / 3), (Context.game_->vertical/ 30) * 16, (Context.game_->horizontal / 3) * 2, (Context.game_->vertical/ 30) * 19), true);
 	guienv->addButton(rect<s32>((Context.game_->horizontal / 3), (Context.game_->vertical/ 30) * 20, (Context.game_->horizontal / 3) * 2, (Context.game_->vertical/ 30) * 23), 0, GUI_ID_JOIN_GAME_SECOND, L"connect", L"connect to a game");
+	
+	return true;
 }
 
-void MenuEventReceiver::HOST_GAME()
+bool MenuEventReceiver::HOST_GAME()
 {
 	Context.game_->init_map(Context.device, obstacles);
 	Context.game_->init_ingame_menu();
 	Context.game_->startGame(true, ""); // call without ip, since we want to host 
 	menuDone = true;
+
+	return true;
 }
 
-void MenuEventReceiver::JOIN_GAME_SECOND()
+bool MenuEventReceiver::JOIN_GAME_SECOND()
 {
 	const wchar_t* t;
 	t = box->getText();
@@ -232,28 +238,17 @@ void MenuEventReceiver::JOIN_GAME_SECOND()
 	Context.game_->init_map(Context.device, obstacles);
 	Context.game_->init_ingame_menu();
 	menuDone = true;
+
+	return true;
 }
 
-void MenuEventReceiver::JOIN_WSDL()
+bool MenuEventReceiver::END_GAME()
 {
-	Context.game_->init_map(Context.device, obstacles);
-	Context.game_->init_ingame_menu();
-	Context.game_->startGame();
-	menuDone = true;
+	Context.device->drop();
+	cout << "this happened too";
+	return true;
 }
 
-void MenuEventReceiver::START_GAME()
-{
-	Context.game_->init_map(Context.device, obstacles);
-	Context.game_->localPlayer->setPlayer1(true);
-	Context.game_->opposingPlayer->setPlayer1(false);
-	Context.game_->localPlayer->initUnits();
-	Context.game_->opposingPlayer->initUnits();
-	Context.game_->init_ingame_menu();
-	Context.game_->localPlayer->setActionsLeft();
-
-	menuDone = true;
-}
 
 /**
  * highlight friendly units on mouse over

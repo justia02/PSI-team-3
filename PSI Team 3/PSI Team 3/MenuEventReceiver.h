@@ -58,11 +58,10 @@ class MenuEventReceiver : public irr::menuReceiver
 	    SAppContext & Context;
 
 		//implementation of the functions from the engine.
-		void JOIN_GAME();
-		void HOST_GAME();
-		void JOIN_GAME_SECOND();
-		void JOIN_WSDL();
-		void START_GAME();
+		bool JOIN_GAME();
+		bool HOST_GAME();
+		bool JOIN_GAME_SECOND();
+		bool END_GAME();
 
 		std::string getSelectedUnitData(BaseUnit *unit);
 
