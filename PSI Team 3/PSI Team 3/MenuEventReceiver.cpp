@@ -22,7 +22,8 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 			// message boxes only appear when game has been ended in one way or another - end it in that case
 			case EGET_MESSAGEBOX_OK: 
 				if (Context.game_->getEndOfGame()) {
-					Context.game_->resetGame();
+					// Context.game_->resetGame();
+					resetGame();
 				}
 				break;
 			default: 
@@ -80,7 +81,8 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 				}
 				if(event.KeyInput.Key == irr::KEY_KEY_G) {
 					// block the turn if it is NOT your turn!
-						Context.game_->passTurn(true);
+					Context.game_->passTurn(true);
+					return true;
 				}
 				if (event.KeyInput.PressedDown == true && event.KeyInput.Key == irr::KEY_SPACE) {
 					shootingMode = !shootingMode;
@@ -327,4 +329,46 @@ void MenuEventReceiver::setDirection(EKEY_CODE keyCode)
 	this->isUnitSelected = false;
 	Context.game_->m->setUnitText("Click on a unit to see his stats");
 	Context.game_->m->setActionText("Actions left = " + std::string(std::to_string(static_cast<long double>(Context.game_->localPlayer->getActionsLeft()))));
+}
+
+void MenuEventReceiver::resetGame() {
+
+	/*delete Context.game_->localPlayer;
+	delete Context.game_->opposingPlayer;*/
+
+	Context.game_->guienv->clear();
+	Context.game_->smgr->clear();
+
+	// reset all the relevant properties
+	Context.game_->localPlayer = new Player(Context.game_->device);
+	Context.game_->opposingPlayer = new Player(Context.game_->device);
+
+	try{
+		//networkUtilities->closeConnection();
+		Context.game_->networkUtilities = new NonRealtimeNetworkingUtilities();
+	} catch (NonRealtimeNetworkingException e) {
+		// lalaal
+	}
+	
+	//endOfGame = false;
+	Context.game_->gameState = new GameStateDTO(16);
+
+	// re-run game
+	smgr->addCameraSceneNode(0, vector3df(0,8,-8), vector3df(0,0,0));
+	
+	Context.game_->endOfGame = false;
+	// setup context
+	Context.networkUtilities = Context.game_->networkUtilities;
+
+	init(Context.game_->guienv, Context.game_->horizontal, Context.game_->vertical);
+	setIsUnitSelected(false);
+	menuDone = false;
+
+	// Create obstacles
+	obstacles = new std::vector<Obstacle*>();
+	obstacles->push_back(new Obstacle(type::PYRAMID, Context.game_->device));
+	obstacles->push_back(new Obstacle(type::SPIDER, Context.game_->device));
+	obstacles->push_back(new Obstacle(type::CAT, Context.game_->device));
+	setObstacles(obstacles);
+
 }

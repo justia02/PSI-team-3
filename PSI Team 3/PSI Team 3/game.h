@@ -32,16 +32,11 @@ private:
 		NonRealtimeNetworkingUtilities* networkUtils;
 	};
 	// members
-	NonRealtimeNetworkingUtilities* networkUtilities;
-	IrrlichtDevice *device;
 	IVideoDriver* driver;
-	ISceneManager* smgr;
-	IGUIEnvironment* guienv;
 	PlayerCamera* playerCamera;
 	
 	IGUIFont* unitModeLabel;
 	std::wstring* unitModeLabelText;
-	bool endOfGame;
 	bool firstTime;
 	static bool connecting;
 	pthread_t thread;
@@ -84,6 +79,12 @@ public:
 
 	int horizontal;
 	int vertical;
+
+	NonRealtimeNetworkingUtilities* networkUtilities;
+	IrrlichtDevice *device;
+	ISceneManager* smgr;
+	IGUIEnvironment* guienv;
+	bool endOfGame;
 
 	// players
 	Player* localPlayer;
