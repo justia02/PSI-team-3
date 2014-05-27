@@ -121,7 +121,7 @@ void game::startGame() {
 void game::startGame(bool asPlayer1, char* ipAddress) {
 	//smgr->clear();
 	guienv->clear();
-	smgr->addCameraSceneNode(0, vector3df(0,8,-8), vector3df(0,0,0));
+	//smgr->addCameraSceneNode(0, vector3df(0,8,-8), vector3df(0,0,0));
 
 	gameState->setPlayer1Turn(true);
 	if (asPlayer1) {
