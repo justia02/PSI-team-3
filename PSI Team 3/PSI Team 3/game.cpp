@@ -1,10 +1,10 @@
 #include "game.h"
+#include "MenuEventReceiver.h" 
 #include "Player.h"
 //#include "menu.h"
 #include "IllegalStateException.h"
 #include <non-realtime-networking/NonRealtimeNetworkingException.h>
 #include "wtypes.h"
-#include "MenuEventReceiver.h"
 
 game::game(void)
 {
@@ -54,32 +54,31 @@ game::~game(void)
 
 int game::run(void)
 {
+		endOfGame = false;
+		// setup context
+		SAppContext context;
+		context.device = device;
+		context.counter = 0;
+		context.networkUtilities = networkUtilities;
+		context.game_ = this;
+		
+		// setup event receiver to handle user input on menu            
+		MenuEventReceiver receiver(context);
+		receiver.init(guienv, horizontal, vertical);
+		receiver.setIsUnitSelected(false);
+		receiver.menuDone = false;
 
-	endOfGame = false;
-	// setup context
-	SAppContext context;
-	context.device = device;
-	context.counter = 0;
-	context.networkUtilities = networkUtilities;
-	context.game_ = this;
+		// Create obstacles
+		obstacles = new std::vector<Obstacle*>();
+		obstacles->push_back(new Obstacle(type::PYRAMID, context.device));
+		obstacles->push_back(new Obstacle(type::SPIDER, context.device));
+		obstacles->push_back(new Obstacle(type::CAT, context.device));
+		receiver.setObstacles(obstacles);
 
-	// setup event receiver to handle user input on menu            
-	MenuEventReceiver* receiver = new MenuEventReceiver(context);
-	receiver->init(guienv, horizontal, vertical);
-	receiver->setIsUnitSelected(false);
-	receiver->menuDone = false;
-
-	// Create obstacles
-	obstacles = new std::vector<Obstacle*>();
-	obstacles->push_back(new Obstacle(type::PYRAMID, context.device));
-	obstacles->push_back(new Obstacle(type::SPIDER, context.device));
-	obstacles->push_back(new Obstacle(type::CAT, context.device));
-	receiver->setObstacles(obstacles);
-
-	// specify our custom event receiver in the device
-	device->setEventReceiver(receiver);
-
-	while (device->run() && driver) {
+		// specify our custom event receiver in the device	
+		device->setEventReceiver(&receiver);
+		
+		while (device->run() && driver)
 		if (device->isWindowActive())
 		{
 			driver->beginScene(true, true, SColor(0,200,200,200));
@@ -87,12 +86,9 @@ int game::run(void)
 			guienv->drawAll();
 			driver->endScene();
 		}
-	}
-
-	device->drop();
-
+		device->drop();
+	
 	return 0;
-
 }
 
 void game::startGame() {
@@ -412,6 +408,23 @@ void game::resetGame() {
 	// release some memory...	
 	//delete localPlayer;
 	//delete opposingPlayer;
-	
+	guienv->clear();
+	smgr->clear();
 
+	// reset all the relevant properties
+	localPlayer = new Player(device);
+	opposingPlayer = new Player(device);
+	try{
+		//networkUtilities->closeConnection();
+		networkUtilities = new NonRealtimeNetworkingUtilities();
+	} catch (NonRealtimeNetworkingException e) {
+		// lalaal
+	}
+	
+	//endOfGame = false;
+	gameState = new GameStateDTO(16);
+
+	// re-run game
+	smgr->addCameraSceneNode(0, vector3df(0,8,-8), vector3df(0,0,0));
+	this->run();
 }

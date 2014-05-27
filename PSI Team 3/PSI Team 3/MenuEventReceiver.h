@@ -4,7 +4,6 @@
 #include "mapterrain.h"
 #include <iostream>
 #include <non-realtime-networking/NonRealtimeNetworkingUtilities.h>
-#include <non-realtime-networking/NonRealtimeNetworkingException.h>
 #include "game.h"
 #include <time.h>
 
@@ -87,7 +86,5 @@ class MenuEventReceiver : public irr::menuReceiver
 		ISceneManager* smgr;
 		bool shootingMode;
 		std::wstring* unitModeLabelText;
-
-		void resetGame();
 
 };
