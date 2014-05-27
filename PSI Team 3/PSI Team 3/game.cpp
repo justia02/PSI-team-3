@@ -29,9 +29,8 @@ game::game(void)
 	playerCamera = new PlayerCamera(device);
 
 	IGUISkin* skin = guienv->getSkin();
-    IGUIFont* font = guienv->getFont("../media/fonts/candara14.bmp");
-    skin->setFont(font);
-
+	IGUIFont* font = guienv->getFont("../media/fonts/candara14.bmp");
+	skin->setFont(font);
 
 	// initialize networkUtilities (all networking stuff is handled in in this class)
 	networkUtilities = new NonRealtimeNetworkingUtilities();
@@ -46,6 +45,7 @@ game::game(void)
 
 	smgr->addCameraSceneNode(0, vector3df(0,8,-8), vector3df(0,0,0));
 
+
 }
 
 game::~game(void)
@@ -54,7 +54,7 @@ game::~game(void)
 
 int game::run(void)
 {
-
+		endOfGame = false;
 		// setup context
 		SAppContext context;
 		context.device = device;
@@ -69,7 +69,7 @@ int game::run(void)
 		receiver.menuDone = false;
 
 		// Create obstacles
-		std::vector<Obstacle*>* obstacles = new std::vector<Obstacle*>();
+		obstacles = new std::vector<Obstacle*>();
 		obstacles->push_back(new Obstacle(type::PYRAMID, context.device));
 		obstacles->push_back(new Obstacle(type::SPIDER, context.device));
 		obstacles->push_back(new Obstacle(type::CAT, context.device));
@@ -78,11 +78,9 @@ int game::run(void)
 		// specify our custom event receiver in the device	
 		device->setEventReceiver(&receiver);
 		
-
 		while (device->run() && driver)
 		if (device->isWindowActive())
 		{
-			//device->run();
 			driver->beginScene(true, true, SColor(0,200,200,200));
 			smgr->drawAll();
 			guienv->drawAll();
@@ -104,10 +102,27 @@ void game::startGame() {
 		startGame(false, networkUtilities->getOpponentsIpAddress());
 
 }
+
+//void game::connect(bool asPlayer1, char* ipAddress){
+//	int *ret;
+//	this->asPlayer1 = asPlayer1;
+//	this->ipAddress = ipAddress;
+//	guienv->clear();
+//	smgr->clear();
+//	pthread_create(&connectThread, NULL, startGame, this);
+//	pthread_join(connectThread, (void**)&ret);
+//	init_map(device, obstacles);
+//	init_ingame_menu();
+//	pthread_create(&thread, NULL, updateGameState, this);
+//}
 /**	
   * starts the game from the perspective of player1/player2
   */
 void game::startGame(bool asPlayer1, char* ipAddress) {
+	//smgr->clear();
+	guienv->clear();
+	//smgr->addCameraSceneNode(0, vector3df(0,8,-8), vector3df(0,0,0));
+
 	gameState->setPlayer1Turn(true);
 	if (asPlayer1) {
 		networkUtilities->hostGame(portNumber);
@@ -135,13 +150,13 @@ void game::startGame(bool asPlayer1, char* ipAddress) {
 		playerCamera->setCameraPos(temp, localPlayer->getPlayer1());
 
 		try {
-			
+
 			pthread_create(&thread, NULL, updateGameState, this);
 			//updateGameState();
 		}
 		// We should have a nice error box!
 		catch(NonRealtimeNetworkingException e) {
-	
+
 		}
 
 	}
@@ -164,6 +179,7 @@ void game::passTurn(bool giveUp) {
 
 	m->setTurnText("It is your opponents turn");
 	m->setWaitText(true);
+	//m->setTurnTextColor(SColor(0, 255, 0, 0));
 	
 	// read units of this player
 
@@ -234,35 +250,36 @@ void game::passTurn(bool giveUp) {
 		device->getGUIEnvironment()->addMessageBox(L"Oops an Error", L"Something went wrong, probably connection lost", true, EMBF_OK);
 		endOfGame = true;
 	}
+
+	try {
+		if (gameState->getVictory()) networkUtilities->closeConnection();
+	} catch (NonRealtimeNetworkingException e) {
+		// just catch that shit already
+	}
 }
 
 void * game::updateGameState(void * g){
-
+	
 	// cast parameter to game
 	game* gm = (game*) g;
 
 	// create a GameStateDTO object and fill in data we received by deserializing it
-	gm->networkUtilities->receiveData();
+	try {
+		gm->networkUtilities->receiveData();
+	} catch (NonRealtimeNetworkingException e ) {
+		// hooope this works
+	}
+
+	if (gm->endOfGame) return false;
+
 	gm->gameState->deserialize(gm->networkUtilities->getBuffer());
 
-	if (gm->gameState->getPlayer1Turn() && gm->localPlayer->getPlayer1())
-			{
-				gm->m->setTurnText("It is your turn");
-				gm->m->setWaitText(false);
-			}
+	if ((gm->gameState->getPlayer1Turn() && gm->localPlayer->getPlayer1()) || (!gm->gameState->getPlayer1Turn() && !gm->localPlayer->getPlayer1())) {
+		gm->m->setTurnText("It is your turn");
+		gm->m->setWaitText(false);
+	}
 
-
-	// Output flags in GameState
-	std::cout<<"FLAGS IN GAMESTATE \n";
-	std::cout<<"Give up: ";
-	std::cout<<gm->gameState->getGiveUp();
-	std::cout<<"\n";
-	std::cout<<"Player 1 Turn: ";
-	std::cout<<gm->gameState->getPlayer1Turn();
-	std::cout<<"\n";
-	std::cout<<"Victory: ";
-	std::cout<<gm->gameState->getVictory();
-	std::cout<<"\n";
+	if (gm->gameState->getVictory()) gm->networkUtilities->closeConnection();
 
 	bool unitUpdated;
 	// update gamestate by updating all attributes in both players
@@ -274,7 +291,7 @@ void * game::updateGameState(void * g){
 		for(std::vector<BaseUnit*>::iterator it = gm->localPlayer->getUnits()->begin(); it != gm->localPlayer->getUnits()->end(); ++it) {
 			if (unitUpdated) break;
 			if (tmp.getId() == (*it)->id) {
-				if((*it)->player1 != gm->localPlayer->getPlayer1())
+				if((*it)->player1 != gm->localPlayer->getPlayer1() && ! gm->endOfGame)
 					throw new IllegalStateException("Unit is not assigned correctly!");
 
 				// Update position
@@ -295,7 +312,7 @@ void * game::updateGameState(void * g){
 		for(std::vector<BaseUnit*>::iterator it = gm->opposingPlayer->getUnits()->begin(); it != gm->opposingPlayer->getUnits()->end(); ++it) {
 			if (unitUpdated) break;
 			if (tmp.getId() == (*it)->id) {
-				if((*it)->player1 != gm->opposingPlayer->getPlayer1())
+				if((*it)->player1 != gm->opposingPlayer->getPlayer1() && ! gm->endOfGame)
 					throw new IllegalStateException("Unit is not assigned correctly!");				
 
 				// Update position
@@ -312,8 +329,8 @@ void * game::updateGameState(void * g){
 			}
 		}
 
-		if (! unitUpdated) 
-			throw new IllegalStateException("Unit is not assigned to a player.");		
+		/*if (! unitUpdated) 
+			throw new IllegalStateException("Unit is not assigned to a player.");	*/	
 	}
 
 	// show message if player lost
@@ -333,6 +350,7 @@ if(gm->localPlayer->getPlayer1() && gm->gameState->getPlayer1Turn()){
 		gm->localPlayer->resetActionsLeft();
 		gm->m->setTurnText("It is your turn");
 	}
+	pthread_exit(NULL);
 }
 
 void game::init_map(IrrlichtDevice* device_map, std::vector<Obstacle*>* obstacles)
@@ -388,17 +406,22 @@ bool game::checkVictory() {
 
 void game::resetGame() {
 	// release some memory...	
-	delete localPlayer;
-	delete opposingPlayer;
+	//delete localPlayer;
+	//delete opposingPlayer;
 	guienv->clear();
 	smgr->clear();
 
 	// reset all the relevant properties
 	localPlayer = new Player(device);
 	opposingPlayer = new Player(device);
-	networkUtilities->closeConnection();
-	networkUtilities = new NonRealtimeNetworkingUtilities();
-	endOfGame = false;
+	try{
+		//networkUtilities->closeConnection();
+		networkUtilities = new NonRealtimeNetworkingUtilities();
+	} catch (NonRealtimeNetworkingException e) {
+		// lalaal
+	}
+	
+	//endOfGame = false;
 	gameState = new GameStateDTO(16);
 
 	// re-run game

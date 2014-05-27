@@ -86,7 +86,7 @@ bool BaseUnit::canMove(direction moveDirection, float distance, std::vector<Base
 		}
 		case RIGHT: {
 			// Check if that would not violate board boundaries
-			if (position.X > (HALF_SIZE - distance))
+			if (position.X >= (HALF_SIZE - distance))
 				return false;
 			// Check if another unit isn't already there
 			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it)
@@ -114,7 +114,7 @@ bool BaseUnit::canMove(direction moveDirection, float distance, std::vector<Base
 		}
 		case FORWARD: {
 			// Check if that would not violate board boundaries
-			if (position.Z > (HALF_SIZE - distance))
+			if (position.Z >= (HALF_SIZE - distance))
 				return false;
 			// Check if another unit isn't already there
 			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it)
@@ -212,7 +212,6 @@ void BaseUnit::shoot(direction shootDirection, std::vector<BaseUnit*>* units, st
 		case LEFT: {
 			for(vector<Obstacle*>::iterator it = obstacles->begin(); it != obstacles->end(); ++it) {
 				if ((*it)->position.Z == position.Z && (*it)->position.X < position.X && (*it)->position.X > minAttackDirectionCoordinate) {
-					cout << "You shot an obstacle moron... :/" << endl;
 					return;
 				}
 			}
@@ -228,7 +227,6 @@ void BaseUnit::shoot(direction shootDirection, std::vector<BaseUnit*>* units, st
 		case RIGHT: {
 			for(vector<Obstacle*>::iterator it = obstacles->begin(); it != obstacles->end(); ++it) {
 				if ((*it)->position.Z == position.Z && (*it)->position.X > position.X && (*it)->position.X < minAttackDirectionCoordinate) {
-					cout << "You shot an obstacle moron... :/" << endl;
 					return;
 				}
 			}
@@ -244,7 +242,6 @@ void BaseUnit::shoot(direction shootDirection, std::vector<BaseUnit*>* units, st
 		case BACK: {
 			for(vector<Obstacle*>::iterator it = obstacles->begin(); it != obstacles->end(); ++it) {
 				if ((*it)->position.X == position.X && (*it)->position.Z < position.Z && (*it)->position.Z > minAttackDirectionCoordinate) {
-					cout << "You shot an obstacle moron... :/" << endl;
 					return;
 				}
 			}
@@ -260,7 +257,6 @@ void BaseUnit::shoot(direction shootDirection, std::vector<BaseUnit*>* units, st
 		case FORWARD: {
 			for(vector<Obstacle*>::iterator it = obstacles->begin(); it != obstacles->end(); ++it) {
 				if ((*it)->position.X == position.X && (*it)->position.Z > position.Z && (*it)->position.Z < minAttackDirectionCoordinate) {
-					cout << "You shot an obstacle moron... :/" << endl;
 					return;
 				}
 			}
