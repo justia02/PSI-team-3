@@ -86,7 +86,7 @@ int game::run(void)
 			guienv->drawAll();
 			driver->endScene();
 		}
-	
+
 	return 0;
 }
 

@@ -14,7 +14,7 @@ mapterrain::mapterrain(IrrlichtDevice *device, ISceneManager *smgr, std::vector<
 
 	loadBases(smgr);
 
-		//code to load a map  ../media/map.irrmesh
+	//code to load a map  ../media/map.irrmesh
 	IAnimatedMesh* mesh = smgr->getMesh("../media/map.irrmesh");
 	if (!mesh)
 	{
