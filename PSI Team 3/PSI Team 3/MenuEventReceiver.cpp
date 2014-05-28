@@ -303,19 +303,19 @@ void MenuEventReceiver::setDirection(EKEY_CODE keyCode)
 	if(!this->isUnitSelected)
 		return;
 	// detect the keycode: if its a move direction key set the move direction
-	if(keyCode == irr::KEY_KEY_W)
+	if(keyCode == irr::KEY_KEY_W || keyCode == irr::KEY_UP)
 	{
 		moveDirection = BaseUnit::FORWARD;
 	}
-	else if(keyCode == irr::KEY_KEY_S)
+	else if(keyCode == irr::KEY_KEY_S || keyCode == irr::KEY_DOWN)
 	{
 		moveDirection = BaseUnit::BACK;
 	}
-	else if(keyCode == irr::KEY_KEY_A)
+	else if(keyCode == irr::KEY_KEY_A || keyCode == irr::KEY_LEFT)
 	{
 		moveDirection = BaseUnit::LEFT;
 	}
-	else if(keyCode == irr::KEY_KEY_D)
+	else if(keyCode == irr::KEY_KEY_D || keyCode == irr::KEY_RIGHT)
 	{
 		moveDirection = BaseUnit::RIGHT;
 	}
