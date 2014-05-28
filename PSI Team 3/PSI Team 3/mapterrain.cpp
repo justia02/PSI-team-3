@@ -10,6 +10,8 @@ mapterrain::mapterrain(void)
 
 mapterrain::mapterrain(IrrlichtDevice *device, ISceneManager *smgr, std::vector<Obstacle*>* obstacles, bool player1)
 {
+	createSkybox(device, smgr);
+
 	loadBases(smgr);
 
 		//code to load a map  ../media/map.irrmesh
@@ -57,4 +59,18 @@ void mapterrain::loadBases(ISceneManager *smgr)
 	node1->setPosition(pos1);
 	node2->setPosition(pos2);
 
+}
+
+void mapterrain::createSkybox(IrrlichtDevice *device, ISceneManager *smgr)
+{
+	driver = device->getVideoDriver();
+
+	top = driver->getTexture("../media/skybox/top.jpg");
+	bottom = driver->getTexture("../media/skybox/bottom.jpg");;
+	front = driver->getTexture("../media/skybox/front.jpg");;
+	back = driver->getTexture("../media/skybox/back.jpg");;
+	left = driver->getTexture("../media/skybox/left.jpg");;
+	right = driver->getTexture("../media/skybox/right.jpg");;
+
+	ISceneNode* node2 = smgr->addSkyBoxSceneNode(top, bottom, left, right, front, back);
 }

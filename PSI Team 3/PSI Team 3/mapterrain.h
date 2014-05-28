@@ -16,6 +16,14 @@ public:
 
 	void loadBases(ISceneManager* smgr);
 
+	void createSkybox(IrrlichtDevice *device, ISceneManager *smgr);
+	IVideoDriver* driver;
 
+	ITexture* top;
+	ITexture* bottom;
+	ITexture* front;
+	ITexture* back;
+	ITexture* left;
+	ITexture* right;
 };
 
