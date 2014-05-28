@@ -48,7 +48,7 @@ void menu::init(void)
 	modeText = guienv->addStaticText(L"Moving Mode ", rect<s32>((width/ 3) * 2, (height/ 30) * 1, (width/ 7) * 6, (height/ 30) * 4), false, false, NULL, 5, true);
 	modeText->setOverrideFont(Font);
 
-	waitText = guienv->addStaticText(L" ", rect<s32>((width / 3) , (height/ 30) * 26, (width / 3) * 2, height), false, false, NULL, 6, true);
+	waitText = guienv->addStaticText(L" ", rect<s32>((width / 3) , (height/ 30) * 27, (width / 3) * 2, (height / 30) * 29), false, false, NULL, 6, true);
 	waitText->setOverrideFont(Font);
 }
 
