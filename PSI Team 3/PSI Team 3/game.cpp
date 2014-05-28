@@ -17,7 +17,7 @@ game::game(void)
 	horizontal = desktop.right;
 	vertical = desktop.bottom;
 
-	device = createDevice( video::EDT_OPENGL, dimension2d<u32>(horizontal, vertical), 16, false, false, false, 0);
+	device = createDevice(video::EDT_OPENGL, dimension2d<u32>(horizontal, vertical), 16, true, false, false, 0);
 
 	device->setWindowCaption(L"PSI TEAM 3");
 	device->setResizable(false);
@@ -86,7 +86,6 @@ int game::run(void)
 			guienv->drawAll();
 			driver->endScene();
 		}
-		device->drop();
 	
 	return 0;
 }
@@ -345,9 +344,11 @@ void * game::updateGameState(void * g){
 
 if(gm->localPlayer->getPlayer1() && gm->gameState->getPlayer1Turn()){
 		gm->localPlayer->resetActionsLeft();
+		gm->m->setActionText("Actions left: 4");
 		gm->m->setTurnText("It is your turn");
 	} else if(!gm->localPlayer->getPlayer1() && !gm->gameState->getPlayer1Turn()){
 		gm->localPlayer->resetActionsLeft();
+		gm->m->setActionText("Actions left: 4");
 		gm->m->setTurnText("It is your turn");
 	}
 	pthread_exit(NULL);

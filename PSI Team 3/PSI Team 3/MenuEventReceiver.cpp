@@ -58,6 +58,9 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 					this->selectedUnit->Move(moveDirection, this->selectedUnit->maxDistance, allUnits, obstacles, Context.game_->localPlayer->getPlayer1());
 					Context.game_->localPlayer->setActionsLeft();
 				}
+
+				Context.game_->m->setActionText("Actions left = " + std::string(std::to_string(static_cast<long double>(Context.game_->localPlayer->getActionsLeft()))));
+
 				//if (shootingMode == true) {
 				//this->selectedUnit->shoot(moveDirection, Context.game_->opposingPlayer->getUnits(), obstacles);
 				//}
@@ -119,8 +122,7 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 						selectedUnit = NULL;
 						selectedUnit = hoveredUnit;
 						selectedUnit->SelectUnit();
-						Context.game_->m->setUnitText(getSelectedUnitData(selectedUnit));
-						Context.game_->m->setActionText("Actions left = " + std::string(std::to_string(static_cast<long double>(Context.game_->localPlayer->getActionsLeft()))));
+						Context.game_->m->setUnitText(getSelectedUnitData(selectedUnit));						
 						cout << "Select the direction you want to " << ((shootingMode == true) ? "shoot" : "move") << " (w,s,a,d)" << endl;
 						return true;
 					}						
@@ -130,7 +132,6 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 					isUnitSelected = true;
 					selectedUnit->SelectUnit();
 					Context.game_->m->setUnitText(getSelectedUnitData(selectedUnit));
-					Context.game_->m->setActionText("Actions left = " + std::string(std::to_string(static_cast<long double>(Context.game_->localPlayer->getActionsLeft()))));
 					cout << "Select the direction you want to " << ((shootingMode == true) ? "shoot" : "move") << " (w,s,a,d)" << endl;
 				}
 			}
