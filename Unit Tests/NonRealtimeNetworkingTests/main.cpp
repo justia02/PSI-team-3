@@ -5,6 +5,7 @@
 #include <non-realtime-networking/NonRealtimeNetworkingUtilities.h>
 #include <non-realtime-networking/NonRealtimeNetworkingException.h>
 #include <string>
+#include <sstream>
 #include "Vector.h"
 #include "boost/archive/text_iarchive.hpp"
 #include "boost/archive/text_oarchive.hpp"
@@ -24,7 +25,7 @@ namespace boost {
 	}
 }
 
-char* webServiceIp = "145.109.198.191";
+char* webServiceIp = "127.0.0.1";
 
 TEST(UTILITIES, SET_BUFFER) // Check if our memory allocation works fine
 {
@@ -159,17 +160,111 @@ TEST(WINSOCK, SEND_RCV_COMPLEX) // serialize a complex object, send via sockets,
 		
 }
 
+// Register on the server without login - server should assign it automatically and raise no errors
+TEST(WEB_SERVICE, REGISTER_NO_LOGIN) {
+
+	// Create library instance to work with the server
+	NonRealtimeNetworkingUtilities* utilities = new NonRealtimeNetworkingUtilities(webServiceIp);
+	// Set name of the game
+	utilities->setGameName("Register no login test");
+	// Register without login
+	ASSERT_NO_THROW(utilities->registerOnTheServer());
+	// Obtained login should look like this:
+	std::string expectedLogin("Player");
+	std::ostringstream s;
+	s << "Player" << utilities->getSessionId();
+	// Compare logins
+	ASSERT_STREQ(s.str().c_str(), utilities->getLogin());
+	
+}
+
+// Register on the server with desired login
+TEST(WEB_SERVICE, REGISTER_LOGIN) {
+
+	// Create library instance to work with the server
+	NonRealtimeNetworkingUtilities* utilities = new NonRealtimeNetworkingUtilities(webServiceIp);
+	// Set name of the game
+	utilities->setGameName("Register with login test");
+	// Set login
+	char* login = new char[6];
+	strcpy(login, "Tomek");
+	utilities->setLogin(login);
+	// Register with a given login
+	ASSERT_NO_THROW(utilities->registerOnTheServer());
+	// Compare logins:
+	ASSERT_STREQ(login, utilities->getLogin());
+	
+}
+
+// Register on the server with a login which is already taken - should return error LOGIN_TAKEN
+TEST(WEB_SERVICE, REGISTER_LOGIN_TAKEN) {
+
+	// Create library instance to work with the server
+	NonRealtimeNetworkingUtilities* utilities1 = new NonRealtimeNetworkingUtilities(webServiceIp);
+	// Create library instance to work with the server
+	NonRealtimeNetworkingUtilities* utilities2 = new NonRealtimeNetworkingUtilities(webServiceIp);
+
+	// Set the name of the game
+	utilities1->setGameName("Login already taken register test");
+	// Set login of the first player
+	utilities1->setLogin("Tomek");
+	// Register on the server
+	utilities1->registerOnTheServer();
+
+	// Set the name of the game to be exactly the same as above
+	utilities2->setGameName("Login already taken register test");
+	// Set the same login as the player above
+	utilities2->setLogin("Tomek");
+	// Try registering on the server, should return LOGIN_TAKEN error code
+	ASSERT_EQ(NonRealtimeNetworkingUtilities::LOGIN_TAKEN, utilities2->registerOnTheServer());
+	
+}
+
+// Remove player from the server
+TEST(WEB_SERVICE, REMOVE_PLAYER) {
+
+	// Create library instance to work with the server
+	NonRealtimeNetworkingUtilities* utilities = new NonRealtimeNetworkingUtilities(webServiceIp);
+	// Set the name of the game to play
+	utilities->setGameName("Remove player test");
+	// Register player on the server
+	utilities->registerOnTheServer();
+	// Remove player from the server
+	ASSERT_NO_THROW(utilities->removePlayer());
+
+}
+
+// Obtain opponent's IP address from the server
+TEST(WEB_SERVICE, GET_OPPONENTS_IP_ADDRESS) {
+
+	// Initialize the library
+	NonRealtimeNetworkingUtilities* utilities1 = new NonRealtimeNetworkingUtilities(webServiceIp);	
+	// Set name of the game
+	utilities1->setGameName("Opponent's IP test");
+	// Register on the master server
+	ASSERT_NO_THROW(utilities1->registerOnTheServer());
+
+	NonRealtimeNetworkingUtilities* utilities2 = new NonRealtimeNetworkingUtilities(webServiceIp);	
+	utilities2->setGameName("Opponent's IP test");
+	ASSERT_NO_THROW(utilities2->registerOnTheServer());
+
+	// Opponent's IP should be localhost
+	ASSERT_STREQ("127.0.0.1", utilities2->getOpponentsIP());
+
+}
+
+// Create a socket connection between two players using the server
 TEST(WEB_SERVICE, CONNECT_TWO_PLAYERS) {
 
 	NonRealtimeNetworkingUtilities* utilities1 = new NonRealtimeNetworkingUtilities(webServiceIp);	
-	utilities1->setGameName("Test game");
+	utilities1->setGameName("Connect 2 players test");
 	ASSERT_NO_THROW(utilities1->registerOnTheServer());
 	utilities1->openServerSocket();
 
 	NonRealtimeNetworkingUtilities* utilities2 = new NonRealtimeNetworkingUtilities(webServiceIp);
-	utilities2->setGameName("Test game");
+	utilities2->setGameName("Connect 2 players test");
 	ASSERT_NO_THROW(utilities2->registerOnTheServer());
-	utilities2->openClientSocket(utilities2->getOpponentsIpAddress());
+	utilities2->openClientSocket(utilities2->getOpponentsIP());
 	utilities1->acceptClient();
 
 	// Connection should now be established, try sending a string:
@@ -184,24 +279,7 @@ TEST(WEB_SERVICE, CONNECT_TWO_PLAYERS) {
 
 }
 
-TEST(WEB_SERVICE, GET_OPPONENTS_IP_ADDRESS) {
-
-	// Initialize the library
-	NonRealtimeNetworkingUtilities* utilities1 = new NonRealtimeNetworkingUtilities(webServiceIp);	
-	// Set name of the game
-	utilities1->setGameName("Test game");
-	// Register on the master server
-	ASSERT_NO_THROW(utilities1->registerOnTheServer());
-
-	NonRealtimeNetworkingUtilities* utilities2 = new NonRealtimeNetworkingUtilities(webServiceIp);	
-	utilities2->setGameName("Test game");
-	ASSERT_NO_THROW(utilities2->registerOnTheServer());
-
-	// Opponent's IP should be localhost
-	ASSERT_STREQ("145.109.200.21", utilities2->getOpponentsIpAddress());
-
-}
-
+// Retrieve a list of games registered on the server
 TEST(WEB_SERVICE, GET_GAMES_LIST) {
 
 	// Initialize the library
@@ -219,6 +297,72 @@ TEST(WEB_SERVICE, GET_GAMES_LIST) {
 	utilities3->registerOnTheServer();
 	// Obtain a list of games played from the server
 	ASSERT_NO_THROW(utilities1->getGamesList());
+}
+
+// Check in on the server
+TEST(WEB_SERVICE, CHECK_IN) {
+
+	// Create library instance to work with the server
+	NonRealtimeNetworkingUtilities* utilities = new NonRealtimeNetworkingUtilities(webServiceIp);
+	// Set name of the game
+	utilities->setGameName("Check in test");
+	// Register
+	utilities->registerOnTheServer();
+	// Check in
+	ASSERT_NO_THROW(utilities->checkIn());
+
+}
+
+// Register player's score on the server
+TEST(WEB_SERVICE, ADD_HIGH_SCORE) {
+
+	// Create library instance to work with the server
+	NonRealtimeNetworkingUtilities* utilities = new NonRealtimeNetworkingUtilities(webServiceIp);
+	// Set name of the game
+	utilities->setGameName("Add high score test");
+	// Register on the server
+	utilities->registerOnTheServer();
+	// Add score
+	ASSERT_NO_THROW(utilities->addPlayerScore(100));
+
+}
+
+// Retrieve a list of best scores for a game
+TEST(WEB_SERVICE, GET_HIGH_SCORES) {
+
+	// Create library instance to work with the server
+	NonRealtimeNetworkingUtilities* utilities = new NonRealtimeNetworkingUtilities(webServiceIp);
+	// Set name of the game
+	utilities->setGameName("Get high scores test");
+	// Get a list of scores for a given game
+	ASSERT_NO_THROW(utilities->getHighScores());
+
+}
+
+// Retrieve a list of scores for a game which was not registered on the server
+TEST(WEB_SERVICE, GET_HIGH_SCORES_NO_SUCH_GAME) {
+
+	// Create library instance to work with the server
+	NonRealtimeNetworkingUtilities* utilities = new NonRealtimeNetworkingUtilities(webServiceIp);
+	// Set name of the game which does not exist on the server
+	utilities->setGameName("Game which does not exist");
+	// Obtain a list of scores for that game
+	ASSERT_NO_THROW(utilities->getHighScores());
+
+}
+
+// Play a given game again
+TEST(WEB_SERVICE, PLAY_AGAIN) {
+
+	// Create library instance to work with the server
+	NonRealtimeNetworkingUtilities* utilities = new NonRealtimeNetworkingUtilities(webServiceIp);
+	// Set name of the game which does not exist on the server
+	utilities->setGameName("Game which does not exist");
+	// Register
+	utilities->registerOnTheServer();
+	// Try to play again
+	ASSERT_NO_THROW(utilities->playAgain());
+
 }
 
 int main(int argc, char** argv) {
