@@ -218,9 +218,17 @@ bool MenuEventReceiver::HOST_GAME()
 	Context.game_->init_map(Context.device, obstacles);
 	Context.game_->init_ingame_menu();
 	menuDone = true;
-
 	return true;
 }
+
+//bool MenuEventReceiver::JOIN_WSDL() {
+//	
+//	Context.game_->init_map(Context.device, obstacles);
+//	Context.game_->init_ingame_menu();
+//	Context.game_->startGame();
+//	menuDone = true;
+//
+//}
 
 bool MenuEventReceiver::JOIN_GAME_SECOND()
 {

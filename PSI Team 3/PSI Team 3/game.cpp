@@ -92,13 +92,10 @@ int game::run(void)
 
 void game::startGame() {
 
-	networkUtilities->initializeWS("145.109.198.191");
+	networkUtilities->initializeWS("192.168.1.133");
 	networkUtilities->setGameName("PSI Team 3");
 	networkUtilities->registerOnTheServer();
-	if ((networkUtilities->getSessionId() % 2) == 1)
-		startGame(true);
-	else
-		startGame(false, networkUtilities->getOpponentsIpAddress());
+	networkUtilities->playGame();
 
 }
 
