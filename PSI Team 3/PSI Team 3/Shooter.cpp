@@ -9,7 +9,16 @@ Shooter::Shooter(vector3d<float> position, bool player1, IrrlichtDevice* dev, in
 	texturePath = "../media/ironMan.png";
 	texturePathHighlight = "../media/ironMan_highlighted.png";
 	texturePathSelected = "../media/ironMan_selected.png";
-
+	if (player1) {
+		texturePath = "../media/ironMan_p1.png";
+		texturePathHighlight = "../media/ironMan_highlighted_p1.png";
+		texturePathSelected = "../media/ironMan_selected_p1.png";
+	}
+	else {
+		texturePath = "../media/ironMan.png";
+		texturePathHighlight = "../media/ironMan_highlighted.png";
+		texturePathSelected = "../media/ironMan_selected.png";
+	}
 	createMesh();
 
 };

@@ -95,7 +95,7 @@ void game::startGame() {
 	networkUtilities->initializeWS("192.168.1.133");
 	networkUtilities->setGameName("PSI Team 3");
 	networkUtilities->registerOnTheServer();
-	networkUtilities->playGame();
+	//networkUtilities->playGame();
 
 }
 
