@@ -17,6 +17,10 @@ BalancedUnit::BalancedUnit(vector3d<float> position, bool player1, IrrlichtDevic
 		texturePathSelected = "../media/ant_selected_red.jpg";
 	}
 
+	texturePathToBeShot = "../media/ant.jpg";
+
+	highlightedToBeShot = false;
+
 	createMesh();
 
 }

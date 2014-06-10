@@ -72,6 +72,7 @@
     <ClCompile Include="BaseUnitDTO.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="GameStateDTO.cpp" />
+    <ClCompile Include="GridNode.cpp" />
     <ClCompile Include="IllegalStateException.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mapterrain.cpp" />
@@ -91,6 +92,7 @@
     <ClInclude Include="BaseUnitDTO.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="GameStateDTO.h" />
+    <ClInclude Include="GridNode.h" />
     <ClInclude Include="IllegalStateException.h" />
     <ClInclude Include="mapterrain.h" />
     <ClInclude Include="menu.h" />

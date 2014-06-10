@@ -45,8 +45,8 @@ void menu::init(void)
 	unitText = guienv->addStaticText(L"Click on a unit to see his stats", rect<s32>((width / 3) , (height/ 30) * 1, (width/ 3) * 2, (height/ 30) * 4), false, false, NULL, 4, true);
 	unitText->setOverrideFont(Font);
 
-	modeText = guienv->addStaticText(L"Moving Mode ", rect<s32>((width/ 3) * 2, (height/ 30) * 1, (width/ 7) * 6, (height/ 30) * 4), false, false, NULL, 5, true);
-	modeText->setOverrideFont(Font);
+	//modeText = guienv->addStaticText(L"Moving Mode ", rect<s32>((width/ 3) * 2, (height/ 30) * 1, (width/ 7) * 6, (height/ 30) * 4), false, false, NULL, 5, true);
+	//modeText->setOverrideFont(Font);
 
 	waitText = guienv->addStaticText(L" ", rect<s32>((width / 3) , (height/ 30) * 27, (width / 3) * 2, (height / 30) * 29), false, false, NULL, 6, true);
 	waitText->setOverrideFont(Font);
@@ -72,10 +72,10 @@ void menu::setUnitText(std::string unittext)
 	unitText->setText(std::wstring(unittext.begin(), unittext.end()).c_str());
 }
 
-void menu::setModeText(std::string modetext)
-{
-	modeText->setText(std::wstring(modetext.begin(), modetext.end()).c_str());
-}
+//void menu::setModeText(std::string modetext)
+//{
+//	modeText->setText(std::wstring(modetext.begin(), modetext.end()).c_str());
+//}
 
 void menu::setWaitText(bool wait)
 {
