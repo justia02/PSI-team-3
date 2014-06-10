@@ -133,7 +133,16 @@ bool BaseUnit::canMove(direction moveDirection, float distance, std::vector<Base
 
 }
 
-void BaseUnit::shoot(direction shootDirection, std::vector<BaseUnit*>* units, std::vector<Obstacle*>* obstacles) {
+bool BaseUnit::canShoot(vector3df enemyPosition) {
+
+	if (position.getDistanceFrom(enemyPosition) <= shootingRange)
+		return true;
+
+	return false;
+
+}
+
+BaseUnit* BaseUnit::canShoot(direction shootDirection, std::vector<BaseUnit*>* units, std::vector<Obstacle*>* obstacles) {
 
 	if (player1 == false)
 		shootDirection = revertDirection(shootDirection);
@@ -198,28 +207,22 @@ void BaseUnit::shoot(direction shootDirection, std::vector<BaseUnit*>* units, st
 	}
 
 	if (distanceFromTheOpponent == 0) { // No enemy in the range
-		std::cout << "No opponent is in your range!" << std::endl;
-		setHasShot(true);
-		return;
+		return NULL;
 	}
 	if (minAttackDirectionCoordinate == 10) { // No enemy units in the way
-		std::cout << "Nothing to shoot!" << std::endl;
-		setHasShot(true);
-		return;
+		return NULL;
 	}	
 
 	switch(shootDirection) {
 		case LEFT: {
 			for(vector<Obstacle*>::iterator it = obstacles->begin(); it != obstacles->end(); ++it) {
 				if ((*it)->position.Z == position.Z && (*it)->position.X < position.X && (*it)->position.X > minAttackDirectionCoordinate) {
-					return;
+					return NULL;
 				}
 			}
 			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it) {
 				if ((*it)->position.Z == position.Z && (*it)->position.X == minAttackDirectionCoordinate) {
-					attack((*it), distanceFromTheOpponent);
-					setHasShot(true);
-					return;
+					return (*it);
 				}
 			}
 			break;
@@ -227,14 +230,12 @@ void BaseUnit::shoot(direction shootDirection, std::vector<BaseUnit*>* units, st
 		case RIGHT: {
 			for(vector<Obstacle*>::iterator it = obstacles->begin(); it != obstacles->end(); ++it) {
 				if ((*it)->position.Z == position.Z && (*it)->position.X > position.X && (*it)->position.X < minAttackDirectionCoordinate) {
-					return;
+					return NULL;
 				}
 			}
 			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it) {
 				if ((*it)->position.Z == position.Z && (*it)->position.X == minAttackDirectionCoordinate) {
-					attack((*it), distanceFromTheOpponent);
-					setHasShot(true);
-					return;
+					return (*it);
 				}	
 			}
 			break;
@@ -242,14 +243,12 @@ void BaseUnit::shoot(direction shootDirection, std::vector<BaseUnit*>* units, st
 		case BACK: {
 			for(vector<Obstacle*>::iterator it = obstacles->begin(); it != obstacles->end(); ++it) {
 				if ((*it)->position.X == position.X && (*it)->position.Z < position.Z && (*it)->position.Z > minAttackDirectionCoordinate) {
-					return;
+					return NULL;
 				}
 			}
 			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it) {
 				if ((*it)->position.X == position.X && (*it)->position.Z == minAttackDirectionCoordinate) {
-					attack((*it), distanceFromTheOpponent);
-					setHasShot(true);
-					return;
+					return (*it);
 				}	
 			}
 			break;
@@ -257,30 +256,28 @@ void BaseUnit::shoot(direction shootDirection, std::vector<BaseUnit*>* units, st
 		case FORWARD: {
 			for(vector<Obstacle*>::iterator it = obstacles->begin(); it != obstacles->end(); ++it) {
 				if ((*it)->position.X == position.X && (*it)->position.Z > position.Z && (*it)->position.Z < minAttackDirectionCoordinate) {
-					return;
+					return NULL;
 				}
 			}
 			for(vector<BaseUnit*>::iterator it = units->begin(); it != units->end(); ++it) {
 				if ((*it)->position.X == position.X && (*it)->position.Z == minAttackDirectionCoordinate) {
-					attack((*it), distanceFromTheOpponent);
-					setHasShot(true);
-					return;
+					return (*it);
 				}	
 			}
 			break;
 		}
 	}
 
-	setHasShot(true);
-
 }
 
-void BaseUnit::attack(BaseUnit* opponent, float distance) {
+void BaseUnit::attack(BaseUnit* opponent) {
 
 	// Update health
 	opponent->setHealth(opponent->getHealth() - damage);
 	// Update health bar
 	opponent->updateHealthBar();
+
+	float distance = position.getDistanceFrom(opponent->position);
 	if (distance <= 1) { // Counter attack
 		// Update health
 		setHealth(getHealth() - (damage/2));
@@ -298,6 +295,8 @@ void BaseUnit::attack(BaseUnit* opponent, float distance) {
 		remove();
 	}
 
+	setHasShot(true);
+
 }
 
 void BaseUnit::remove() {
@@ -309,7 +308,7 @@ void BaseUnit::remove() {
 
 }
 
-void BaseUnit::Move(direction moveDirection, float distance, std::vector<BaseUnit*>* units, std::vector<Obstacle*>* obstacles, bool player1) {
+void BaseUnit::Move(direction moveDirection, float distance, std::vector<BaseUnit*>* units, std::vector<Obstacle*>* obstacles, bool player1, std::vector<vector3df>* fields) {
 
 	if(distance > maxDistance)
 		distance = maxDistance;
@@ -379,6 +378,17 @@ void BaseUnit::highLightUnit(bool highLight)
 		else
 			node->setMaterialTexture(0, driver->getTexture(texturePath));
 	}
+}
+
+void BaseUnit::highlightShoot(bool highlight) {
+
+	if (highlight)
+		node->setMaterialTexture(0, sceneManager->getVideoDriver()->getTexture("../media/ant_highlighted.jpg"));
+	else
+		node->setMaterialTexture(0, sceneManager->getVideoDriver()->getTexture("../media/ant_selected.jpg"));
+
+	highlightedToBeShot = highlight;
+
 }
 
 //void BaseUnit::initUnitHighLight()

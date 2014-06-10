@@ -309,21 +309,21 @@ TEST(WEB_SERVICE, CHECK_IN) {
 	// Register
 	utilities->registerOnTheServer();
 	// Check in
-	ASSERT_NO_THROW(utilities->checkIn());
+	ASSERT_EQ(0, utilities->checkIn());
 
 }
 
 // Register player's score on the server
 TEST(WEB_SERVICE, ADD_HIGH_SCORE) {
 
-	// Create library instance to work with the server
-	NonRealtimeNetworkingUtilities* utilities = new NonRealtimeNetworkingUtilities(webServiceIp);
-	// Set name of the game
-	utilities->setGameName("Add high score test");
-	// Register on the server
-	utilities->registerOnTheServer();
-	// Add score
-	ASSERT_NO_THROW(utilities->addPlayerScore(100));
+// Create library instance to work with the server
+NonRealtimeNetworkingUtilities* utilities = new NonRealtimeNetworkingUtilities(webServiceIp);
+// Set name of the game
+utilities->setGameName("Add high score test");
+// Register on the server
+utilities->registerOnTheServer();
+// Add score, should return 0 - no error
+ASSERT_EQ(0, utilities->addPlayerScore(100));
 
 }
 
@@ -361,7 +361,7 @@ TEST(WEB_SERVICE, PLAY_AGAIN) {
 	// Register
 	utilities->registerOnTheServer();
 	// Try to play again
-	ASSERT_NO_THROW(utilities->playAgain());
+	ASSERT_EQ(0, utilities->playAgain());
 
 }
 

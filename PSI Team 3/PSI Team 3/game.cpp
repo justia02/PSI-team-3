@@ -17,7 +17,7 @@ game::game(void)
 	horizontal = desktop.right;
 	vertical = desktop.bottom;
 
-	device = createDevice(video::EDT_OPENGL, dimension2d<u32>(horizontal, vertical), 16, true, false, false, 0);
+	device = createDevice(video::EDT_OPENGL, dimension2d<u32>(horizontal, vertical), 16, false, false, false, 0);
 
 	device->setWindowCaption(L"PSI TEAM 3");
 	device->setResizable(false);
@@ -42,6 +42,7 @@ game::game(void)
 	localPlayer = new Player(device);
 	opposingPlayer = new Player(device);
 
+	fields = new std::vector<vector3df>();
 
 	smgr->addCameraSceneNode(0, vector3df(0,8,-8), vector3df(0,0,0));
 
@@ -71,9 +72,15 @@ int game::run(void)
 		// Create obstacles
 		obstacles = new std::vector<Obstacle*>();
 		obstacles->push_back(new Obstacle(type::PYRAMID, context.device));
-		obstacles->push_back(new Obstacle(type::SPIDER, context.device));
-		obstacles->push_back(new Obstacle(type::CAT, context.device));
+		obstacles->push_back(new Obstacle(type::PYRAMID, context.device));
+		obstacles->push_back(new Obstacle(type::PYRAMID, context.device));
 		receiver.setObstacles(obstacles);
+
+		// Get fields
+		getFieldsList();
+
+		// Pass them to the receiver
+		receiver.setFields(fields);
 
 		// specify our custom event receiver in the device	
 		device->setEventReceiver(&receiver);
@@ -88,6 +95,17 @@ int game::run(void)
 		}
 
 	return 0;
+}
+
+void game::getFieldsList() {
+
+	ifstream infile("../assets/fields.txt");
+	float x, y, z;
+	
+	while(infile >> x >> y >> z) {
+		fields->push_back(vector3df(x, y, z));
+	}
+
 }
 
 void game::startGame() {

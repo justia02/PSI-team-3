@@ -19,6 +19,11 @@ Shooter::Shooter(vector3d<float> position, bool player1, IrrlichtDevice* dev, in
 		texturePathHighlight = "../media/ironMan_highlighted.png";
 		texturePathSelected = "../media/ironMan_selected.png";
 	}
+
+	texturePathToBeShot = "../media/ant.jpg";
+
+	highlightedToBeShot = false;
+
 	createMesh();
 
 };

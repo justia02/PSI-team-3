@@ -8,6 +8,10 @@ Mover::Mover(vector3d<float> position, bool player1, IrrlichtDevice* dev, int id
 
 	normalMesh = selectedMesh = highlightedMesh = NULL;
 
+	texturePathToBeShot = "../media/ant.jpg";
+
+	highlightedToBeShot = false;
+
 	createMesh();
 
 };
