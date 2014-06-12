@@ -416,7 +416,7 @@ void MenuEventReceiver::MouseOverUnit()
 	for(it; it != getAllUnits()->end() ; ++it)
 	{
 		// deselect the unit
-		if ((*it)->player1)
+		if (((*it)->player1 && Context.game_->localPlayer->getPlayer1()) || ((*it)->player1 == false && Context.game_->localPlayer->getPlayer1() == false))
 			(*it)->highLightUnit(false);
 		// if the positions of the node and the unit are the same
 		// set this unit as the hovered unit and highlight it
@@ -424,12 +424,12 @@ void MenuEventReceiver::MouseOverUnit()
 		{
 			this->isHoveringUnit = true;
 
-			if (this->isUnitSelected && (*it)->player1 == false && std::find(highlightedEnemies->begin(), highlightedEnemies->end(), (*it)) != highlightedEnemies->end()) {
+			if (this->isUnitSelected && (((*it)->player1 == false && Context.game_->localPlayer->getPlayer1()) || ((*it)->player1 == true && !Context.game_->localPlayer->getPlayer1())) && std::find(highlightedEnemies->begin(), highlightedEnemies->end(), (*it)) != highlightedEnemies->end()) {
 				// Set unit to be shot
 				unitToBeShot = (BaseUnit*)(*it);
 				(*it)->highlightShoot(false);
 			}
-			else if ((*it)->player1) {
+			else if (((*it)->player1 && Context.game_->localPlayer->getPlayer1()) || ((*it)->player1 == false && Context.game_->localPlayer->getPlayer1() == false)) {
 				(*it)->highLightUnit(true);
 				hoveredUnit = (BaseUnit*)(*it);
 			}
