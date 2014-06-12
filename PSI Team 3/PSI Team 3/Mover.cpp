@@ -20,25 +20,33 @@ void Mover::SelectUnit() {
 
 	selected = !selected;
 
-	if(selected)
-		node->setMesh(sceneManager->getMesh("../media/van_selected.irrmesh"));
-	else
-		node->setMesh(sceneManager->getMesh("../media/van.irrmesh"));
+	if(selected) {
+		if (player1)
+			node->setMesh(sceneManager->getMesh("../media/van1/van_selected.irrmesh"));
+		else
+			node->setMesh(sceneManager->getMesh("../media/van2/van_selected.irrmesh"));
+	}
+	else {
+		if (player1)
+			node->setMesh(sceneManager->getMesh("../media/van1/van.irrmesh"));
+		else
+			node->setMesh(sceneManager->getMesh("../media/van2/van_selected.irrmesh"));
+	}
 
 }
 
 void Mover::highLightUnit(bool highLight) {
 
 	if(highLight) {
-		if (highlightedMesh == NULL)
-			highlightedMesh = sceneManager->getMesh("../media/van_highlighted.irrmesh");
+		/*if (highlightedMesh == NULL)
+			highlightedMesh = sceneManager->getMesh("../media/van_highlighted.irrmesh");*/
 		node->setMesh(highlightedMesh);
 	}
 	else
 	{
 		if(selected) {
-			if (selectedMesh == NULL)
-				selectedMesh = sceneManager->getMesh("../media/van_selected.irrmesh");
+			/*if (selectedMesh == NULL)
+				selectedMesh = sceneManager->getMesh("../media/van_selected.irrmesh");*/
 			node->setMesh(selectedMesh);
 		}
 		else
@@ -49,9 +57,16 @@ void Mover::highLightUnit(bool highLight) {
 
 bool Mover::createMesh() {
 
-	normalMesh = sceneManager->getMesh("../media/van.irrmesh");
-	selectedMesh = sceneManager->getMesh("../media/van_selected.irrmesh");
-	highlightedMesh = sceneManager->getMesh("../media/van_highlighted.irrmesh");
+	if (player1) {
+		normalMesh = sceneManager->getMesh("../media/van1/van.irrmesh");
+		selectedMesh = sceneManager->getMesh("../media/van1/van_selected.irrmesh");
+		highlightedMesh = sceneManager->getMesh("../media/van1/van_highlighted.irrmesh");
+	}
+	else {
+		normalMesh = sceneManager->getMesh("../media/van2/van.irrmesh");
+		selectedMesh = sceneManager->getMesh("../media/van2/van_selected.irrmesh");
+		highlightedMesh = sceneManager->getMesh("../media/van2/van_highlighted.irrmesh");
+	}
     
     if (!normalMesh) {
         cout << "The mesh could not be created in MashViewer->createMesh";

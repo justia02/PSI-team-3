@@ -53,6 +53,32 @@ game::~game(void)
 {
 }
 
+void game::init_names()
+{
+
+	names[0] = L"test1";
+	names[1] = L"test2";
+	names[2] = L"test3";
+	names[3] = L"test4";
+	names[4] = L"test5";
+	names[5] = L"test6";
+
+	sub_names[0] = L"test";
+	sub_names[1] = L"test";
+	sub_names[2] = L"test";
+	sub_names[3] = L"test";
+	sub_names[4] = L"test";
+	sub_names[5] = L"test";
+}
+
+rect<s32> makeButton(int width, int height, int i)
+{
+
+	rect<s32> button = rect<s32>((width / 3), (height/ 35) * ((i * 5) + 1), (width / 3) * 2, (height/ 35) * ((i * 5) + 5));
+
+	return button;
+}
+
 int game::run(void)
 {
 		endOfGame = false;
@@ -66,14 +92,17 @@ int game::run(void)
 		// setup event receiver to handle user input on menu            
 		MenuEventReceiver receiver(context);
 		receiver.init(guienv, horizontal, vertical);
+
+		//init_names();
+		//receiver.init_custom(guienv, horizontal, vertical, 6, names, sub_names);//, (menuReceiver::makeButton)(&game::makeButton));
 		receiver.setIsUnitSelected(false);
 		receiver.menuDone = false;
 
 		// Create obstacles
 		obstacles = new std::vector<Obstacle*>();
 		obstacles->push_back(new Obstacle(type::PYRAMID, context.device));
-		obstacles->push_back(new Obstacle(type::PYRAMID, context.device));
-		obstacles->push_back(new Obstacle(type::PYRAMID, context.device));
+		obstacles->push_back(new Obstacle(type::CAT, context.device));
+		obstacles->push_back(new Obstacle(type::SPIDER, context.device));
 		receiver.setObstacles(obstacles);
 
 		// Get fields
@@ -110,6 +139,7 @@ void game::getFieldsList() {
 
 void game::startGame() {
 
+
 	networkUtilities->initializeWS("192.168.1.133");
 	networkUtilities->setGameName("PSI Team 3");
 	networkUtilities->registerOnTheServer();
@@ -134,7 +164,7 @@ void game::startGame() {
   */
 void game::startGame(bool asPlayer1, char* ipAddress) {
 	//smgr->clear();
-	guienv->clear();
+	//guienv->clear();
 	//smgr->addCameraSceneNode(0, vector3df(0,8,-8), vector3df(0,0,0));
 
 	gameState->setPlayer1Turn(true);

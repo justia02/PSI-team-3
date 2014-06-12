@@ -65,23 +65,23 @@ void Obstacle::setPosition(vector3df position, bool player1) {
 	switch(obstacleType) {
 		case type::PYRAMID: {
 			if (player1)
-				node->setPosition(vector3df(position.X + 0.45, position.Y, position.Z + 0.3));
+				node->setPosition(vector3df(position.X + 0.4, position.Y, position.Z + 0.3));
 			else
 				node->setPosition(vector3df(position.X + 0.45, position.Y, position.Z + 0.7));
 			break;
 		}
 		case type::SPIDER: {
 			if (player1)
-				node->setPosition(vector3df(position.X + 0.5, position.Y, position.Z + 0.35));
+				node->setPosition(vector3df(position.X + 0.4, position.Y, position.Z));
 			else
-				node->setPosition(vector3df(position.X + 0.5, position.Y, position.Z + 0.75));
+				node->setPosition(vector3df(position.X + 0.4, position.Y, position.Z + 0.9));
 			break;
 		}
 		case type::CAT: {
 			if (player1)
-				node->setPosition(vector3df(position.X + 0.25, position.Y, position.Z - 0.2));
+				node->setPosition(vector3df(position.X + 0.6, position.Y, position.Z + 0.3));
 			else
-				node->setPosition(vector3df(position.X + 0.25, position.Y, position.Z + 1.0));
+				node->setPosition(vector3df(position.X + 0.55, position.Y, position.Z + 0.7));
 			break;
 		}
 	}
