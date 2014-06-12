@@ -33,22 +33,23 @@ void menu::init(void)
 	Font = guienv->getFont("../media/fonts/candara14.bmp");
 
 	// Make the texts that will always be available
-	playerText = guienv->addStaticText(L"You are Player 1", rect<s32>((width / 7), (height/ 30) * 1, (width / 7) * 3, (height/ 30) * 2), false);
+	playerText = guienv->addStaticText(L"You are Player 1", rect<s32>((width / 7), (height/ 30) * 1, (width / 3) , (height/ 30) * 2), false, false, NULL, 1, true);
 	playerText->setOverrideFont(Font);
 
-	turnText = guienv->addStaticText(L"It is your turn", rect<s32>((width / 7), (height/ 30) * 2, (width / 7) * 3, (height/ 30) * 3), false);
+	turnText = guienv->addStaticText(L"It is your turn", rect<s32>((width / 7), (height/ 30) * 2, (width / 3) , (height/ 30) * 3), false, false, NULL, 2, true);
 	turnText->setOverrideFont(Font);
 
-	actionText = guienv->addStaticText(L"Actions left = 4", rect<s32>((width / 7), (height/ 30) * 3, (width / 7) * 3, (height/ 30) * 4), false);
+	actionText = guienv->addStaticText(L"Actions left = 4", rect<s32>((width / 7), (height/ 30) * 3, (width / 3), (height/ 30) * 4), false, false, NULL, 3, true);
 	actionText->setOverrideFont(Font);
 
-	unitText = guienv->addStaticText(L"Click on a unit to see his stats", rect<s32>((width / 3) , (height/ 30) * 1, (width/ 3) * 2, (height/ 30) * 4), false, false, NULL, 1, true);
+
+	unitText = guienv->addStaticText(L"Click on a unit to see his stats", rect<s32>((width / 3) , (height/ 30) * 1, (width/ 3) * 2, (height/ 30) * 4), false, false, NULL, 4, true);
 	unitText->setOverrideFont(Font);
 
-	modeText = guienv->addStaticText(L"Moving Mode ", rect<s32>((width / 7) * 5, (height/ 30) * 1, (width) , (height/ 30) * 2), false);
-	modeText->setOverrideFont(Font);
+	//modeText = guienv->addStaticText(L"Moving Mode ", rect<s32>((width/ 3) * 2, (height/ 30) * 1, (width/ 7) * 6, (height/ 30) * 4), false, false, NULL, 5, true);
+	//modeText->setOverrideFont(Font);
 
-	waitText = guienv->addStaticText(L" ", rect<s32>((width / 3) , (height/ 30) * 26, (width / 3) * 2, height), false);
+	waitText = guienv->addStaticText(L" ", rect<s32>((width / 3) , (height/ 30) * 27, (width / 3) * 2, (height / 30) * 29), false, false, NULL, 6, true);
 	waitText->setOverrideFont(Font);
 }
 
@@ -72,10 +73,10 @@ void menu::setUnitText(std::string unittext)
 	unitText->setText(std::wstring(unittext.begin(), unittext.end()).c_str());
 }
 
-void menu::setModeText(std::string modetext)
-{
-	modeText->setText(std::wstring(modetext.begin(), modetext.end()).c_str());
-}
+//void menu::setModeText(std::string modetext)
+//{
+//	modeText->setText(std::wstring(modetext.begin(), modetext.end()).c_str());
+//}
 
 void menu::setWaitText(bool wait)
 {

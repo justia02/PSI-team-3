@@ -13,11 +13,11 @@ void Obstacle::createMesh() {
 			break;
 		}
 		case type::SPIDER: {
-			mesh = device->getSceneManager()->getMesh("../media/spider.irrmesh");
+			mesh = device->getSceneManager()->getMesh("../media/pyramid.irrmesh");
 			break;
 		}
 		case type::CAT: {
-			mesh = device->getSceneManager()->getMesh("../media/cat.irrmesh");
+			mesh = device->getSceneManager()->getMesh("../media/pyramid.irrmesh");
 			break;
 		}
 		default: { // None of above
@@ -44,13 +44,13 @@ void Obstacle::createMesh() {
 				break;
 			}
 			case type::SPIDER: {
-				node->setScale(vector3df(9, 9, 9));
-				node->setRotation(vector3df(0, 135, 0));				
+				node->setScale(vector3df(0.33, 0.3, 0.33));
+				node->setRotation(vector3df(0, 45, 0));			
 				break;
 			}
 			case type::CAT: {
-				node->setScale(vector3df(1, 1, 1));
-				node->setRotation(vector3df(0, -135, 0));
+				node->setScale(vector3df(0.33, 0.3, 0.33));
+				node->setRotation(vector3df(0, 45, 0));
 				break;
 			}
 		}

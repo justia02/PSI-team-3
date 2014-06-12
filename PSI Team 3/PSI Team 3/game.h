@@ -46,6 +46,7 @@ private:
 	static bool connecting;
 	pthread_t thread;
 	pthread_t connectThread;
+	void getFieldsList();
 
 	// private methods
 	BaseUnit* initializeUnits();
@@ -56,6 +57,7 @@ private:
 	bool asPlayer1;
 	char* ipAddress;
 	std::vector<Obstacle*>* obstacles;
+	std::vector<vector3df>* fields;
 
 public:
 	// constructor/desctructor

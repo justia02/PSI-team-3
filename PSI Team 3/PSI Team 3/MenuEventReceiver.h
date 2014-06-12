@@ -5,6 +5,7 @@
 #include <iostream>
 #include <non-realtime-networking/NonRealtimeNetworkingUtilities.h>
 #include "game.h"
+#include "GridNode.h"
 #include <time.h>
 
 using namespace irr;
@@ -43,10 +44,15 @@ class MenuEventReceiver : public irr::menuReceiver
 			unitList = context.game_->localPlayer->getUnits();
 			smgr = context.device->getSceneManager();
 			camera = smgr->getActiveCamera();
-			selectedUnit = hoveredUnit = NULL;
+			selectedUnit = hoveredUnit = unitToBeShot = NULL;
+			hoveredGridNode = NULL;
 			allUnits = NULL;
 			shootingMode = false;
+			fieldAvailibleMesh = NULL;
+			highlightedNodes = new std::vector<GridNode*>();
+			highlightedEnemies = new std::vector<BaseUnit*>();
 		};
+
 		bool OnEvent(const SEvent& event);
 
 		void setIsUnitSelected(bool value) {
@@ -55,6 +61,15 @@ class MenuEventReceiver : public irr::menuReceiver
 		void setObstacles(std::vector<Obstacle*>* obstacles) {
 			this->obstacles = obstacles;
 		};
+		void setFields(std::vector<vector3df>* fields) {
+			this->fields = fields;
+		};
+
+		void checkPossibleMoves();
+		void clearPossibleMoves();
+		void checkOpponentsToShoot();
+		void clearHighlightedEnemies();
+
 	    SAppContext & Context;
 
 		//implementation of the functions from the engine.
@@ -86,12 +101,37 @@ class MenuEventReceiver : public irr::menuReceiver
 		bool isHoveringUnit;
 		BaseUnit *selectedUnit;
 		BaseUnit* hoveredUnit;
+		BaseUnit* unitToBeShot;
+		GridNode* hoveredGridNode;
 		vector<BaseUnit*>* unitList;
 		vector<BaseUnit*>* allUnits;
 		vector<Obstacle*>* obstacles;
+		vector<vector3df>* fields;
 		ICameraSceneNode* camera;
 		ISceneManager* smgr;
 		bool shootingMode;
 		std::wstring* unitModeLabelText;
 
+		irr::scene::IAnimatedMesh* fieldAvailibleMesh;
+		irr::scene::IAnimatedMesh* getMesh() {
+			if (fieldAvailibleMesh == NULL)
+				fieldAvailibleMesh = Context.device->getSceneManager()->getMesh("../media/gridBase.irrmesh");
+			return fieldAvailibleMesh;
+		};
+
+		std::vector<BaseUnit*>* getAllUnits() {
+
+			// Create a list of all units if such doesn't exist yet
+			if (allUnits == NULL) {
+				allUnits = new std::vector<BaseUnit*>();
+				allUnits->insert(allUnits->end(), unitList->begin(), unitList->end());
+				allUnits->insert(allUnits->end(), Context.game_->opposingPlayer->getUnits()->begin(), Context.game_->opposingPlayer->getUnits()->end());
+			}
+
+			return allUnits;
+
+		}
+
+		std::vector<GridNode*>* highlightedNodes;
+		std::vector<BaseUnit*>* highlightedEnemies;
 };

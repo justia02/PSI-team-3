@@ -31,7 +31,6 @@ public:
 	IGUIStaticText *turnText;
 	IGUIStaticText *actionText;
 	IGUIStaticText *unitText;
-	IGUIStaticText *modeText;
 	IGUIStaticText *waitText;
 
 	int height;
@@ -45,7 +44,6 @@ public:
 	void setActionText(std::string actiontext);
 	void setTurnText(std::string turntext);
 	void setUnitText(std::string unittext);
-	void setModeText(std::string modetext);
 	void setWaitText(bool wait);
 };
 

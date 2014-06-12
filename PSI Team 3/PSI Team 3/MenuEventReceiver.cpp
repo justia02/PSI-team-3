@@ -42,77 +42,28 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 	// if there is a key input and there is a unit selected
 	if(event.EventType == EET_KEY_INPUT_EVENT)
 	{	
-		if((Context.game_->gameState->getPlayer1Turn() && Context.game_->localPlayer->getPlayer1()) || (!Context.game_->gameState->getPlayer1Turn()
-			&& !Context.game_->localPlayer->getPlayer1())) {
-				cout<<"IT IS YOUR TURN \n";
-			if (this->isUnitSelected && event.KeyInput.Key != irr::KEY_KEY_P && event.KeyInput.Key != irr::KEY_SPACE) {
-				// Create a list of all units if such doesn't exist yet
-				if (allUnits == NULL) {
-					allUnits = new std::vector<BaseUnit*>();
-					allUnits->insert(allUnits->end(), unitList->begin(), unitList->end());
-					allUnits->insert(allUnits->end(), Context.game_->opposingPlayer->getUnits()->begin(), Context.game_->opposingPlayer->getUnits()->end());
-				}
-
-				// set the direction from the keycode
-				setDirection(event.KeyInput.Key);
-
-				// Space was pressed - we're shooting :D
-				if (shootingMode == true && Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasShot()) {
-					this->selectedUnit->shoot(moveDirection, Context.game_->opposingPlayer->getUnits(), obstacles);
-					Context.game_->localPlayer->setActionsLeft();
-				}
-				else if (shootingMode == false && Context.game_->localPlayer->actionAllowed() && !this->selectedUnit->getHasMoved()) { // Moving
-					this->selectedUnit->Move(moveDirection, this->selectedUnit->maxDistance, allUnits, obstacles, Context.game_->localPlayer->getPlayer1());
-					Context.game_->localPlayer->setActionsLeft();
-				}
-
-				Context.game_->m->setActionText("Actions left = " + std::string(std::to_string(static_cast<long double>(Context.game_->localPlayer->getActionsLeft()))));
-
-				//if (shootingMode == true) {
-				//this->selectedUnit->shoot(moveDirection, Context.game_->opposingPlayer->getUnits(), obstacles);
-				//}
-				//else { // Moving
-				//	this->selectedUnit->Move(moveDirection, this->selectedUnit->maxDistance, allUnits, obstacles, Context.game_->localPlayer->getPlayer1());
-				//}
-
-				this->selectedUnit->SelectUnit();
-				this->selectedUnit = NULL;
-				this->isUnitSelected = false;
-
-			}
-			else {
-
-				if(event.KeyInput.Key == irr::KEY_KEY_P) {
-					// block the turn if not your turn!
-						time_t tmp = time(0); 
-						if (tmp - timeSincePassTurn > 1) {
-							timeSincePassTurn = tmp;
-							Context.game_->passTurn(false);
-						}	
-				}
-				if(event.KeyInput.Key == irr::KEY_KEY_G) {
-					// block the turn if it is NOT your turn!
-						Context.game_->passTurn(true);
-				}
-				if (event.KeyInput.PressedDown == true && event.KeyInput.Key == irr::KEY_SPACE) {
-					shootingMode = !shootingMode;
-					Context.game_->m->setModeText(((shootingMode == true) ? "Shooting mode" : "Moving Mode"));
-					return true;
-				}
-			}
-		} else {
-			cout<<"NOT YOUR TURN";
-			cout<<"\n";
+		if(event.KeyInput.Key == irr::KEY_KEY_P) {
+			// block the turn if not your turn!
+				time_t tmp = time(0); 
+				if (tmp - timeSincePassTurn > 1) {
+					timeSincePassTurn = tmp;
+					Context.game_->passTurn(false);
+				}	
 		}
-
+		if(event.KeyInput.Key == irr::KEY_KEY_G) {
+			// block the turn if it is NOT your turn!
+				Context.game_->passTurn(true);
+		}
 	}
+    else if (event.EventType == EET_MOUSE_INPUT_EVENT) {
 
-	// Remember the mouse state
-    if (event.EventType == EET_MOUSE_INPUT_EVENT)
-    {
         switch(event.MouseInput.Event)
         {
         case EMIE_LMOUSE_PRESSED_DOWN:
+			// Not our turn
+			if(!(Context.game_->gameState->getPlayer1Turn() && Context.game_->localPlayer->getPlayer1()) && !(!Context.game_->gameState->getPlayer1Turn() && !Context.game_->localPlayer->getPlayer1()))
+				return false;
+
 			// if the player's mouse is over a unit to select it
 			if(this->isHoveringUnit)
 			{
@@ -121,25 +72,86 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 						isUnitSelected = false;
 						selectedUnit->SelectUnit();
 						selectedUnit = NULL;
-						Context.game_->m->setUnitText("Click on a unit to see his stats");
+						clearPossibleMoves();
+						clearHighlightedEnemies();
+						Context.game_->m->setUnitText("Click on a unit to see its stats");
 						return true;
 					}
-					else { // Deselect the unit which was selected and select another one
-						selectedUnit->SelectUnit();
-						selectedUnit = NULL;
-						selectedUnit = hoveredUnit;
-						selectedUnit->SelectUnit();
-						Context.game_->m->setUnitText(getSelectedUnitData(selectedUnit));						
-						cout << "Select the direction you want to " << ((shootingMode == true) ? "shoot" : "move") << " (w,s,a,d)" << endl;
-						return true;
+					else {
+						if (unitToBeShot == NULL && hoveredUnit != NULL) { // Our unit
+							// Deselect the unit which was selected and select another one
+							selectedUnit->SelectUnit();
+							selectedUnit = NULL;
+							selectedUnit = hoveredUnit;
+							selectedUnit->SelectUnit();
+							clearPossibleMoves();
+							clearHighlightedEnemies();
+							if (Context.game_->localPlayer->actionAllowed()) {
+								if (!selectedUnit->getHasMoved())
+									checkPossibleMoves();
+								if (!selectedUnit->getHasShot())
+									checkOpponentsToShoot();
+							}
+							Context.game_->m->setUnitText(getSelectedUnitData(selectedUnit));						
+							return true;
+						}
+						else if (unitToBeShot != NULL) { // Enemy unit hovered - let's shoot
+							if (selectedUnit->canShoot(unitToBeShot->position)) {
+								selectedUnit->attack(unitToBeShot);
+								Context.game_->localPlayer->setActionsLeft();
+								Context.game_->m->setActionText("Actions left = " + std::string(std::to_string(static_cast<long double>(Context.game_->localPlayer->getActionsLeft()))));
+								selectedUnit->SelectUnit();
+								selectedUnit = NULL;
+								clearPossibleMoves();
+								clearHighlightedEnemies();
+							}
+							else
+								std::cout << "Enemy not in your range!" << std::endl;
+
+							return true;
+
+						}
 					}						
 				}
-				else { // Select a unit
+				else if (hoveredUnit != NULL) { // Select a unit
 					selectedUnit = hoveredUnit;
 					isUnitSelected = true;
 					selectedUnit->SelectUnit();
+					clearPossibleMoves();
+					clearHighlightedEnemies();
+					if (Context.game_->localPlayer->actionAllowed()) {
+						if (!selectedUnit->getHasMoved())
+							checkPossibleMoves();
+						if (!selectedUnit->getHasShot())
+							checkOpponentsToShoot();
+					}
 					Context.game_->m->setUnitText(getSelectedUnitData(selectedUnit));
-					cout << "Select the direction you want to " << ((shootingMode == true) ? "shoot" : "move") << " (w,s,a,d)" << endl;
+					return true;
+				}
+			}
+			else {
+				if (isUnitSelected) {
+					// Moving
+					if (hoveredGridNode != NULL) {
+						selectedUnit->setPosition(hoveredGridNode->position);
+						selectedUnit->setHasMoved(true);
+						Context.game_->localPlayer->setActionsLeft();
+						Context.game_->m->setActionText("Actions left = " + std::string(std::to_string(static_cast<long double>(Context.game_->localPlayer->getActionsLeft()))));
+						clearPossibleMoves();
+						clearHighlightedEnemies();
+						hoveredGridNode = NULL;
+
+						// Deselect the unit
+						isUnitSelected = false;
+						selectedUnit->SelectUnit();
+						selectedUnit = NULL;
+					}
+					else {
+						std::cout << "YOU CANNOT MOVE THERE!!!" << std::endl;
+					}
+
+					return true;
+
 				}
 			}
             break;
@@ -148,9 +160,107 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 			MouseOverUnit();
 			break;
 		}
+
 	}
 
     return false;
+}
+
+void MenuEventReceiver::clearHighlightedEnemies() {
+
+	for(vector<BaseUnit*>::iterator it = this->highlightedEnemies->begin(); it != highlightedEnemies->end() ; ++it)
+		(*it)->highLightUnit(false);
+
+	// Clear the list
+	highlightedEnemies->clear();
+
+}
+
+void MenuEventReceiver::checkOpponentsToShoot() {
+
+	BaseUnit* enemyUnit = NULL;
+
+	enemyUnit = selectedUnit->canShoot(BaseUnit::direction::BACK, Context.game_->opposingPlayer->getUnits(), obstacles);
+	if (enemyUnit != NULL) {
+		enemyUnit->highlightShoot(true);
+		highlightedEnemies->push_back(enemyUnit);
+	}
+
+	enemyUnit = selectedUnit->canShoot(BaseUnit::direction::FORWARD, Context.game_->opposingPlayer->getUnits(), obstacles);
+	if (enemyUnit != NULL) {
+		enemyUnit->highlightShoot(true);
+		highlightedEnemies->push_back(enemyUnit);
+	}
+
+	enemyUnit = selectedUnit->canShoot(BaseUnit::direction::LEFT, Context.game_->opposingPlayer->getUnits(), obstacles);
+	if (enemyUnit != NULL) {
+		enemyUnit->highlightShoot(true);
+		highlightedEnemies->push_back(enemyUnit);
+	}
+
+	enemyUnit = selectedUnit->canShoot(BaseUnit::direction::RIGHT, Context.game_->opposingPlayer->getUnits(), obstacles);
+	if (enemyUnit != NULL) {
+		enemyUnit->highlightShoot(true);
+		highlightedEnemies->push_back(enemyUnit);
+	}
+
+}
+void MenuEventReceiver::clearPossibleMoves() {
+
+	// Remove each node separately
+	for(vector<GridNode*>::iterator it = this->highlightedNodes->begin(); it != highlightedNodes->end() ; ++it)
+		(*it)->node->remove();
+
+	// Clear the list
+	highlightedNodes->clear();
+
+}
+
+void MenuEventReceiver::checkPossibleMoves() {
+
+	vector3df unitPosition = selectedUnit->position;
+	int distance = selectedUnit->maxDistance;
+
+	std::vector<vector3df> possibleMoves;
+
+	int stepCounter = 1;
+	moveDirection = BaseUnit::direction::BACK;
+	while (selectedUnit->canMove(moveDirection, stepCounter, getAllUnits(), obstacles) == true && stepCounter <= distance) {
+		possibleMoves.push_back(vector3df(unitPosition.X, unitPosition.Y, unitPosition.Z - stepCounter));
+		stepCounter++;
+	}
+
+	stepCounter = 1;
+	moveDirection = BaseUnit::direction::FORWARD;
+	while (selectedUnit->canMove(moveDirection, stepCounter, getAllUnits(), obstacles) == true && stepCounter <= distance) {
+		possibleMoves.push_back(vector3df(unitPosition.X, unitPosition.Y, unitPosition.Z + stepCounter));
+		stepCounter++;
+	}
+
+	stepCounter = 1;
+	moveDirection = BaseUnit::direction::LEFT;
+	while (selectedUnit->canMove(moveDirection, stepCounter, getAllUnits(), obstacles) == true && stepCounter <= distance) {
+		possibleMoves.push_back(vector3df(unitPosition.X - stepCounter, unitPosition.Y, unitPosition.Z));
+		stepCounter++;
+	}
+
+	stepCounter = 1;
+	moveDirection = BaseUnit::direction::RIGHT;
+	while (selectedUnit->canMove(moveDirection, stepCounter, getAllUnits(), obstacles) == true && stepCounter <= distance) {
+		possibleMoves.push_back(vector3df(unitPosition.X + stepCounter, unitPosition.Y, unitPosition.Z));
+		stepCounter++;
+	}
+
+	if (stepCounter == 0) {
+		std::cout << "This unit cannot move anywhere!!!" << std::endl;
+		return;
+	}
+
+	// Mark availible fields on the map
+	for (int i=0; i<possibleMoves.size(); i++) {
+		highlightedNodes->push_back(new GridNode(Context.device->getSceneManager(), getMesh(), possibleMoves[i]));
+	}
+
 }
 
 //get the information about the selected unit
@@ -225,9 +335,17 @@ bool MenuEventReceiver::HOST_GAME()
 	Context.game_->init_map(Context.device, obstacles);
 	Context.game_->init_ingame_menu();
 	menuDone = true;
-
 	return true;
 }
+
+//bool MenuEventReceiver::JOIN_WSDL() {
+//	
+//	Context.game_->init_map(Context.device, obstacles);
+//	Context.game_->init_ingame_menu();
+//	Context.game_->startGame();
+//	menuDone = true;
+//
+//}
 
 bool MenuEventReceiver::JOIN_GAME_SECOND()
 {
@@ -250,9 +368,22 @@ bool MenuEventReceiver::JOIN_GAME_SECOND()
 
 bool MenuEventReceiver::END_GAME()
 {
-	Context.device->drop();
+	/*Context.device->drop();
 	cout << "this happened too";
+	return true;*/
+
+	Context.game_->init_map(Context.device, obstacles);
+	Context.game_->localPlayer->setPlayer1(true);
+	Context.game_->opposingPlayer->setPlayer1(false);
+	Context.game_->localPlayer->initUnits();
+	Context.game_->opposingPlayer->initUnits();
+	Context.game_->init_ingame_menu();
+	Context.game_->localPlayer->setActionsLeft();
+
+	menuDone = true;
+
 	return true;
+
 }
 
 
@@ -271,7 +402,7 @@ void MenuEventReceiver::MouseOverUnit()
 	ISceneNode *selectedNode;
 	vector3df selectedPosition;
 
-	vector<BaseUnit*>::iterator it = this->unitList->begin();
+	vector<BaseUnit*>::iterator it = getAllUnits()->begin();
 	// get the cursor position
 	cursorPos = this->Context.device->getCursorControl()->getPosition();
 	// create the collition manager
@@ -283,22 +414,57 @@ void MenuEventReceiver::MouseOverUnit()
 	// get the position of this "node"
 	selectedPosition = selectedNode->getAbsolutePosition();
 	// in the unitlist which unit was colliding the the mouse ray
-	for(it ; it != unitList->end() ; ++it)
+
+	hoveredUnit = unitToBeShot = NULL;
+
+	for (vector<BaseUnit*>::iterator it = highlightedEnemies->begin(); it != highlightedEnemies->end(); ++it)
+		(*it)->highlightShoot(true);
+
+	for(it; it != getAllUnits()->end() ; ++it)
 	{
 		// deselect the unit
-		(*it)->highLightUnit(false);
+		if ((*it)->player1)
+			(*it)->highLightUnit(false);
 		// if the positions of the node and the unit are the same
-		// set this unit as the selected unit and highlight it
+		// set this unit as the hovered unit and highlight it
 		if((*it)->node->getPosition() == selectedPosition)
 		{
 			this->isHoveringUnit = true;
-			(*it)->highLightUnit(true);
-			hoveredUnit = (BaseUnit*)(*it);
+
+			if (this->isUnitSelected && (*it)->player1 == false && std::find(highlightedEnemies->begin(), highlightedEnemies->end(), (*it)) != highlightedEnemies->end()) {
+				// Set unit to be shot
+				unitToBeShot = (BaseUnit*)(*it);
+				(*it)->highlightShoot(false);
+			}
+			else if ((*it)->player1) {
+				(*it)->highLightUnit(true);
+				hoveredUnit = (BaseUnit*)(*it);
+			}
 
 			return;
 		}
 	}
+
 	this->isHoveringUnit = false;
+
+	if (hoveredGridNode != NULL) {
+		hoveredGridNode->highlighted = false;
+		hoveredGridNode->changeTexture();
+	}
+
+	hoveredGridNode = NULL;
+
+	for (vector<GridNode*>::iterator it = highlightedNodes->begin(); it != highlightedNodes->end(); ++it) {
+
+		if((*it)->node->getPosition() == selectedPosition)
+		{
+			hoveredGridNode = (GridNode*)(*it);
+			hoveredGridNode->highlighted = true;
+			hoveredGridNode->changeTexture();
+			return;
+		}
+
+	}
 }
 
 /**
@@ -310,19 +476,19 @@ void MenuEventReceiver::setDirection(EKEY_CODE keyCode)
 	if(!this->isUnitSelected)
 		return;
 	// detect the keycode: if its a move direction key set the move direction
-	if(keyCode == irr::KEY_KEY_W)
+	if(keyCode == irr::KEY_KEY_W || keyCode == irr::KEY_UP)
 	{
 		moveDirection = BaseUnit::FORWARD;
 	}
-	else if(keyCode == irr::KEY_KEY_S)
+	else if(keyCode == irr::KEY_KEY_S || keyCode == irr::KEY_DOWN)
 	{
 		moveDirection = BaseUnit::BACK;
 	}
-	else if(keyCode == irr::KEY_KEY_A)
+	else if(keyCode == irr::KEY_KEY_A || keyCode == irr::KEY_LEFT)
 	{
 		moveDirection = BaseUnit::LEFT;
 	}
-	else if(keyCode == irr::KEY_KEY_D)
+	else if(keyCode == irr::KEY_KEY_D || keyCode == irr::KEY_RIGHT)
 	{
 		moveDirection = BaseUnit::RIGHT;
 	}

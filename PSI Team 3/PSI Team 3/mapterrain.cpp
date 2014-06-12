@@ -14,7 +14,7 @@ mapterrain::mapterrain(IrrlichtDevice *device, ISceneManager *smgr, std::vector<
 
 	loadBases(smgr);
 
-		//code to load a map  ../media/map.irrmesh
+	//code to load a map  ../media/map.irrmesh
 	IAnimatedMesh* mesh = smgr->getMesh("../media/map.irrmesh");
 	if (!mesh)
 	{
@@ -24,13 +24,10 @@ mapterrain::mapterrain(IrrlichtDevice *device, ISceneManager *smgr, std::vector<
 	IAnimatedMeshSceneNode* node = smgr->addAnimatedMeshSceneNode( mesh );
 
 	// Add obstacles:
-	// Pyramid
 	obstacles->at(0)->createMesh();
 	obstacles->at(0)->setPosition(vector3d<float>(1, 0.45, -1), player1);
-	// Spider
 	obstacles->at(1)->createMesh();
 	obstacles->at(1)->setPosition(vector3d<float>(-3, 0.45, -1), player1);
-	// Cat
 	obstacles->at(2)->createMesh();
 	obstacles->at(2)->setPosition(vector3d<float>(2, 0.7, 1), player1);
 
