@@ -107,7 +107,7 @@ class MenuEventReceiver : public irr::menuReceiver
 		irr::scene::IAnimatedMesh* fieldAvailibleMesh;
 		irr::scene::IAnimatedMesh* getMesh() {
 			if (fieldAvailibleMesh == NULL)
-				fieldAvailibleMesh = Context.device->getSceneManager()->getMesh("../media/gridBase.irrmesh");
+				fieldAvailibleMesh = Context.device->getSceneManager()->getMesh("../media/gridNode.irrmesh");
 			return fieldAvailibleMesh;
 		};
 
