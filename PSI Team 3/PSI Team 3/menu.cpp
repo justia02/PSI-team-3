@@ -42,6 +42,7 @@ void menu::init(void)
 	actionText = guienv->addStaticText(L"Actions left = 4", rect<s32>((width / 7), (height/ 30) * 3, (width / 3), (height/ 30) * 4), false, false, NULL, 3, true);
 	actionText->setOverrideFont(Font);
 
+
 	unitText = guienv->addStaticText(L"Click on a unit to see his stats", rect<s32>((width / 3) , (height/ 30) * 1, (width/ 3) * 2, (height/ 30) * 4), false, false, NULL, 4, true);
 	unitText->setOverrideFont(Font);
 
