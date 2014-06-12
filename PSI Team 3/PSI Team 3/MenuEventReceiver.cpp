@@ -341,6 +341,7 @@ bool MenuEventReceiver::HOST_GAME()
 	Context.game_->init_map(Context.device, obstacles);
 	Context.game_->init_ingame_menu();
 	menuDone = true;
+	init_ingame_buttons();
 	return true;
 }
 
@@ -368,7 +369,7 @@ bool MenuEventReceiver::JOIN_GAME_SECOND()
 	Context.game_->init_map(Context.device, obstacles);
 	Context.game_->init_ingame_menu();
 	menuDone = true;
-
+	init_ingame_buttons();
 	return true;
 }
 
