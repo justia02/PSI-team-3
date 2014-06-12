@@ -412,7 +412,7 @@ void game::init_ingame_menu()
 
 	if (localPlayer->getPlayer1() == false)
 	{
-		m->setPlayerText("You are Player 2");
+		//m->setPlayerText("You are Player 2");
 		m->setTurnText("It is your opponents turn");
 	}
 }

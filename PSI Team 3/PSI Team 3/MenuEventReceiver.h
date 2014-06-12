@@ -27,12 +27,17 @@ struct SAppContext
 	game* game_;
 };
 
+enum
+{
+	GUI_test
+};
 
 class MenuEventReceiver : public irr::menuReceiver
 {
 	public:
 		time_t timeSincePassTurn;
 		IGUIEditBox *box;
+		IGUIButton *button1;
 		bool menuDone;
 		wchar_t *text;
 		char *ch;
@@ -134,4 +139,7 @@ class MenuEventReceiver : public irr::menuReceiver
 
 		std::vector<GridNode*>* highlightedNodes;
 		std::vector<BaseUnit*>* highlightedEnemies;
+
+		void init_ingame_buttons();
+		ITexture* top;
 };

@@ -11,7 +11,10 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 	menuSwitchCases(event, Context.device->getGUIEnvironment(), (menuReceiver::JOIN_GAME)(&MenuEventReceiver::JOIN_GAME), 
 																(menuReceiver::HOST_GAME)(&MenuEventReceiver::HOST_GAME), 
 																(menuReceiver::JOIN_GAME_SECOND)(&MenuEventReceiver::JOIN_GAME_SECOND), 
-																(menuReceiver::END_GAME)(&MenuEventReceiver::END_GAME));
+																(menuReceiver::END_GAME)(&MenuEventReceiver::END_GAME),
+																(menuReceiver::END_GAME)(&MenuEventReceiver::menu1),
+																(menuReceiver::END_GAME)(&MenuEventReceiver::menu2)
+																);
 
 	/*menuCustomCases_6(event, Context.device->getGUIEnvironment(),	(menuReceiver::menu1)(&MenuEventReceiver::menu1),
 																	(menuReceiver::menu2)(&MenuEventReceiver::menu2),
@@ -20,10 +23,15 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 																	(menuReceiver::menu5)(&MenuEventReceiver::menu5),
 																	(menuReceiver::menu6)(&MenuEventReceiver::menu6)
 		);*/
+
+	//menuCustomCases_1(event, Context.device->getGUIEnvironment(), (menuReceiver::menu1)(&MenuEventReceiver::menu1));
+
+
 	// from here on all logic is about the game, not the menu
 	// this will only be checked if the menu is done.
 	if (!menuDone)
 		return false;
+
 
 	// for gui events - from message boxes mainly
 	if(event.EventType == EET_GUI_EVENT) {
@@ -275,42 +283,40 @@ std::string MenuEventReceiver::getSelectedUnitData(BaseUnit *unit)
 	bool shot = unit->getHasShot();
 	bool moved = unit->getHasMoved();
 
-	//check for the unittype
-	if (distance == 2)
-	{
-		unittype = "Balanced\n";
-	}
-	else if(distance == 3)
-	{
-		unittype = "Mover\n";
-	}
-	else{
-		unittype = "Shooter\n";
-	}
+	////check for the unittype
+	//if (distance == 2)
+	//{
+	//	unittype = "Balanced\n";
+	//}
+	//else if(distance == 3)
+	//{
+	//	unittype = "Mover\n";
+	//}
+	//else{
+	//	unittype = "Shooter\n";
+	//}
 
-	//check for the action performed line
-	if(!shot && !moved)
-	{
-		action = "This Unit has perfomed 0 actions\n";
-	}
-	else if(shot && moved)
-	{
-		action = "This Unit has moved and shot already!\n";
-	}
-	else if(!shot && moved)
-	{
-		action = "This Unit has moved already!\n";
-	}
-	else if(shot && !moved)
-	{
-		action = "This Unit has shot already!\n";
-	}
+	////check for the action performed line
+	//if(!shot && !moved)
+	//{
+	//	action = "This Unit has perfomed 0 actions\n";
+	//}
+	//else if(shot && moved)
+	//{
+	//	action = "This Unit has moved and shot already!\n";
+	//}
+	//else if(!shot && moved)
+	//{
+	//	action = "This Unit has moved already!\n";
+	//}
+	//else if(shot && !moved)
+	//{
+	//	action = "This Unit has shot already!\n";
+	//}
 
 
-	data =	"Unit Type = " + unittype +
-			"Movement Range = " + std::string(std::to_string(static_cast<long double>(distance))) + "\n" +
-			"Shooting Range = " + std::string(std::to_string(static_cast<long double>(shooting))) + "\n" +
-		 action;
+	data =	"\nMovement Range = " + std::string(std::to_string(static_cast<long double>(distance))) + "\n" +
+			"Shooting Range = " + std::string(std::to_string(static_cast<long double>(shooting))) + "\n";
 
 	return data;
 }
@@ -381,11 +387,25 @@ bool MenuEventReceiver::END_GAME()
 	Context.game_->localPlayer->setActionsLeft();
 
 	menuDone = true;
+	
+	init_ingame_buttons();
 
 	return true;
 
 }
 
+void MenuEventReceiver::init_ingame_buttons()
+{
+	IGUIEnvironment* guienv = Context.device->getGUIEnvironment();
+	IVideoDriver *driver = Context.device->getVideoDriver();
+
+	//GUI_ID_PASS_TURN,
+		//GUI_ID_SURRENDER
+
+	button1 = guienv->addButton(rect<s32>((1920 / 7), (1080/ 30) * 3, (1920 / 3), (1080/ 30) * 4), 0, GUI_ID_PASS_TURN, L"Pass Turn", L"Passes the turn");
+	top = driver->getTexture("../media/ant_blue.jpg");
+	button1->setImage(top ,rect<s32>(100, 100, 200, 200));
+}
 
 /**
  * highlight friendly units on mouse over
@@ -500,14 +520,15 @@ void MenuEventReceiver::setDirection(EKEY_CODE keyCode)
 
 bool MenuEventReceiver::menu1()
 {
-	IGUIEnvironment* guienv = Context.device->getGUIEnvironment();
-	guienv->clear();
+	//IGUIEnvironment* guienv = Context.device->getGUIEnvironment();
+	Context.game_->passTurn(false);
+	//button1->setVisible(false);
 	return true;
 }
 bool MenuEventReceiver::menu2()
 {
-	IGUIEnvironment* guienv = Context.device->getGUIEnvironment();
-	guienv->clear();
+	//IGUIEnvironment* guienv = Context.device->getGUIEnvironment();
+	Context.game_->passTurn(true);
 	return true;
 }
 bool MenuEventReceiver::menu3()
