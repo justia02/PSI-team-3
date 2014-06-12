@@ -101,8 +101,8 @@ int game::run(void)
 		// Create obstacles
 		obstacles = new std::vector<Obstacle*>();
 		obstacles->push_back(new Obstacle(type::PYRAMID, context.device));
-		obstacles->push_back(new Obstacle(type::PYRAMID, context.device));
-		obstacles->push_back(new Obstacle(type::PYRAMID, context.device));
+		obstacles->push_back(new Obstacle(type::CAT, context.device));
+		obstacles->push_back(new Obstacle(type::SPIDER, context.device));
 		receiver.setObstacles(obstacles);
 
 		// Get fields
