@@ -92,4 +92,13 @@ public:
 	//menu
 	menu* m;
 
+	const wchar_t *names[6];
+	const wchar_t *sub_names[6];
+	//std::string names[6];
+	//std::string sub_names[6];
+
+	void init_names();
+
+	rect<s32> makeButton(int width, int height, int i);
+
 };

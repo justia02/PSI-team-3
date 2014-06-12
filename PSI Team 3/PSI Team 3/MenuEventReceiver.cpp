@@ -13,6 +13,13 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 																(menuReceiver::JOIN_GAME_SECOND)(&MenuEventReceiver::JOIN_GAME_SECOND), 
 																(menuReceiver::END_GAME)(&MenuEventReceiver::END_GAME));
 
+	/*menuCustomCases_6(event, Context.device->getGUIEnvironment(),	(menuReceiver::menu1)(&MenuEventReceiver::menu1),
+																	(menuReceiver::menu2)(&MenuEventReceiver::menu2),
+																	(menuReceiver::menu3)(&MenuEventReceiver::menu3),
+																	(menuReceiver::menu4)(&MenuEventReceiver::menu4),
+																	(menuReceiver::menu5)(&MenuEventReceiver::menu5),
+																	(menuReceiver::menu6)(&MenuEventReceiver::menu6)
+		);*/
 	// from here on all logic is about the game, not the menu
 	// this will only be checked if the menu is done.
 	if (!menuDone)
@@ -232,7 +239,7 @@ bool MenuEventReceiver::JOIN_GAME_SECOND()
 
 	IGUIEnvironment* guienv = Context.device->getGUIEnvironment();
 	guienv->clear();
-
+	std::cout << ch;
 	Context.game_->startGame(false, ch);
 	Context.game_->init_map(Context.device, obstacles);
 	Context.game_->init_ingame_menu();
@@ -323,4 +330,41 @@ void MenuEventReceiver::setDirection(EKEY_CODE keyCode)
 	this->isUnitSelected = false;
 	Context.game_->m->setUnitText("Click on a unit to see his stats");
 	Context.game_->m->setActionText("Actions left = " + std::string(std::to_string(static_cast<long double>(Context.game_->localPlayer->getActionsLeft()))));
+}
+
+bool MenuEventReceiver::menu1()
+{
+	IGUIEnvironment* guienv = Context.device->getGUIEnvironment();
+	guienv->clear();
+	return true;
+}
+bool MenuEventReceiver::menu2()
+{
+	IGUIEnvironment* guienv = Context.device->getGUIEnvironment();
+	guienv->clear();
+	return true;
+}
+bool MenuEventReceiver::menu3()
+{
+	IGUIEnvironment* guienv = Context.device->getGUIEnvironment();
+	guienv->clear();
+	return true;
+}
+bool MenuEventReceiver::menu4()
+{
+	IGUIEnvironment* guienv = Context.device->getGUIEnvironment();
+	guienv->clear();
+	return true;
+}
+bool MenuEventReceiver::menu5()
+{
+	IGUIEnvironment* guienv = Context.device->getGUIEnvironment();
+	guienv->clear();
+	return true;
+}
+bool MenuEventReceiver::menu6()
+{
+	IGUIEnvironment* guienv = Context.device->getGUIEnvironment();
+	guienv->clear();
+	return true;
 }

@@ -63,6 +63,14 @@ class MenuEventReceiver : public irr::menuReceiver
 		bool JOIN_GAME_SECOND();
 		bool END_GAME();
 
+		//test implementation of the custom buttons
+		bool menu1();
+		bool menu2();
+		bool menu3();
+		bool menu4();
+		bool menu5();
+		bool menu6();
+
 		std::string getSelectedUnitData(BaseUnit *unit);
 
 		int portNo;
