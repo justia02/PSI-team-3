@@ -389,11 +389,13 @@ void * game::updateGameState(void * g){
 
 if(gm->localPlayer->getPlayer1() && gm->gameState->getPlayer1Turn()){
 		gm->localPlayer->resetActionsLeft();
-		gm->m->setActionText("Actions left: 4");
+		gm->m->setActionText("Actions left = ");
+		gm->m->setActionImage(4);
 		gm->m->setTurnText("It is your turn");
 	} else if(!gm->localPlayer->getPlayer1() && !gm->gameState->getPlayer1Turn()){
 		gm->localPlayer->resetActionsLeft();
-		gm->m->setActionText("Actions left: 4");
+		gm->m->setActionText("Actions left = ");
+		gm->m->setActionImage(4);
 		gm->m->setTurnText("It is your turn");
 	}
 	pthread_exit(NULL);

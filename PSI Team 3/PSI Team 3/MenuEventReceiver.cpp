@@ -108,6 +108,16 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 								selectedUnit->attack(unitToBeShot);
 								Context.game_->localPlayer->setActionsLeft();
 								Context.game_->m->setActionText("Actions left = " + std::string(std::to_string(static_cast<long double>(Context.game_->localPlayer->getActionsLeft()))));
+
+								if (Context.game_->localPlayer->getActionsLeft() == 0)
+								{
+									IVideoDriver *driver = Context.device->getVideoDriver();
+									top = driver->getTexture("../media/yellow_passturn.jpg");
+									button1->setImage(top ,rect<s32>(0, 0, 800, 800));
+								}else {
+									button1->setImage(NULL);
+								}
+
 								selectedUnit->SelectUnit();
 								selectedUnit = NULL;
 								clearPossibleMoves();
@@ -144,7 +154,18 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 						selectedUnit->setPosition(hoveredGridNode->position);
 						selectedUnit->setHasMoved(true);
 						Context.game_->localPlayer->setActionsLeft();
-						Context.game_->m->setActionText("Actions left = " + std::string(std::to_string(static_cast<long double>(Context.game_->localPlayer->getActionsLeft()))));
+						Context.game_->m->setActionText("Actions Left = ");
+						Context.game_->m->setActionImage(Context.game_->localPlayer->getActionsLeft());
+
+						if (Context.game_->localPlayer->getActionsLeft() == 0)
+								{
+									IVideoDriver *driver = Context.device->getVideoDriver();
+									top = driver->getTexture("../media/yellow_passturn.jpg");
+									button1->setImage(top ,rect<s32>(0, 0, 800, 800));
+								}else {
+									button1->setImage(NULL);
+								}
+
 						clearPossibleMoves();
 						clearHighlightedEnemies();
 						hoveredGridNode = NULL;
@@ -403,9 +424,13 @@ void MenuEventReceiver::init_ingame_buttons()
 	//GUI_ID_PASS_TURN,
 		//GUI_ID_SURRENDER
 
-	button1 = guienv->addButton(rect<s32>((1920 / 7), (1080/ 30) * 3, (1920 / 3), (1080/ 30) * 4), 0, GUI_ID_PASS_TURN, L"Pass Turn", L"Passes the turn");
-	top = driver->getTexture("../media/ant_blue.jpg");
-	button1->setImage(top ,rect<s32>(100, 100, 200, 200));
+	button1 = guienv->addButton(rect<s32>((1920 / 6) * 4, (1080/ 30) * 1, (1920 / 6) * 5, (1080/ 30) * 4), 0, GUI_ID_PASS_TURN, L"Pass Turn", L"Passes the turn");
+	//top = driver->getTexture("../media/1.png");
+		//("../media/ant_blue.jpg");
+	//button1->setImage(top ,rect<s32>(0, 0, 100, 100));
+	button1->setImage(NULL);
+
+	button2 = guienv->addButton(rect<s32>((1920 / 6) * 5, (1080/ 30) * 1, 1920, (1080/ 30) * 4), 0, GUI_ID_SURRENDER, L"SURRENDER", L"surrenders the game");
 }
 
 /**
@@ -516,7 +541,9 @@ void MenuEventReceiver::setDirection(EKEY_CODE keyCode)
 	// deselect the unit
 	this->isUnitSelected = false;
 	Context.game_->m->setUnitText("Click on a unit to see his stats");
-	Context.game_->m->setActionText("Actions left = " + std::string(std::to_string(static_cast<long double>(Context.game_->localPlayer->getActionsLeft()))));
+	Context.game_->m->setActionText("Actions Left = " + std::string(std::to_string(static_cast<long double>(Context.game_->localPlayer->getActionsLeft()))));
+
+	Context.game_->m->setActionImage(Context.game_->localPlayer->getActionsLeft());
 }
 
 bool MenuEventReceiver::menu1()

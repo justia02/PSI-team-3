@@ -33,6 +33,13 @@ public:
 	IGUIStaticText *unitText;
 	IGUIStaticText *waitText;
 
+	ITexture *action0;
+	ITexture *action1;
+	ITexture *action2;
+	ITexture *action3;
+	ITexture *action4;
+	IGUIImage *action_image;
+
 	int height;
 	int width;
 
@@ -45,5 +52,6 @@ public:
 	void setTurnText(std::string turntext);
 	void setUnitText(std::string unittext);
 	void setWaitText(bool wait);
+	void menu::setActionImage(int number);
 };
 

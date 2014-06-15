@@ -38,6 +38,8 @@ class MenuEventReceiver : public irr::menuReceiver
 		time_t timeSincePassTurn;
 		IGUIEditBox *box;
 		IGUIButton *button1;
+		IGUIButton *button2;
+
 		bool menuDone;
 		wchar_t *text;
 		char *ch;

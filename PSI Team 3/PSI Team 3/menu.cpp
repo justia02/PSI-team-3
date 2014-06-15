@@ -11,6 +11,9 @@ menu::menu(IrrlichtDevice* device, IVideoDriver* driver, ISceneManager* smgr, IG
 	this->smgr = smgr;
 	this->guienv = guienv;
 
+	
+	
+	//driver->draw2DImage("../media/4.jpg");
 
 	width = horizontal;
 	height = vertical;
@@ -36,12 +39,21 @@ void menu::init(void)
 	//playerText = guienv->addStaticText(L"", rect<s32>((width / 7), (height/ 30) * 1, (width / 3) , (height/ 30) * 2), false, false, NULL, 1, true);
 	//playerText->setOverrideFont(Font);
 
-	turnText = guienv->addStaticText(L"It is your turn", rect<s32>((width / 7), (height/ 30) * 1, (width / 3) , (height/ 30) * 2), false, false, NULL, 2, true);
+	turnText = guienv->addStaticText(L"It is your turn", rect<s32>((width / 7), (height/ 30) * 1, (width / 3) , (height/ 30) * 2), false, false, NULL, 1, true);
 	turnText->setOverrideFont(Font);
 
-	actionText = guienv->addStaticText(L"Actions Left:", rect<s32>((width / 7), (height/ 30) * 2, (width / 3), (height/ 30) * 3), false, false, NULL, 3, true);
+	actionText = guienv->addStaticText(L"Actions Left = ", rect<s32>((width / 7), (height/ 30) * 2, (width / 3), (height/ 30) * 4), false, false, NULL, 2, true);
 	actionText->setOverrideFont(Font);
 
+	action0 = driver->getTexture("../media/0.png");
+	action1 = driver->getTexture("../media/1.png");
+	action2 = driver->getTexture("../media/2.png");
+	action3 = driver->getTexture("../media/3.png");
+	action4 = driver->getTexture("../media/4.png");
+	action_image = guienv->addImage(action4, position2d<int>((width / 8) * 2, (height/ 30) * 1));
+	
+
+	//driver->draw2DImage(actions,  rect<s32>(0, 0, 300, 300), rect<s32>(0, 0, 300, 300));
 
 	unitText = guienv->addStaticText(L"Click on a unit to see his stats", rect<s32>((width / 3) , (height/ 30) * 1, (width/ 3) * 2, (height/ 30) * 4), false, false, NULL, 4, true);
 	unitText->setOverrideFont(Font);
@@ -82,4 +94,35 @@ void menu::setWaitText(bool wait)
 	else{
 		waitText->setText(L" ");
 	}
+}
+
+void menu::setActionImage(int number)
+{
+	cout << number << endl;
+	if(number == 0){
+			action_image->setImage(action0);
+			cout << "This happened 0";
+	}
+
+	else if(number == 1){
+			action_image->setImage(action1);
+			cout << "This happened 1";
+	}
+
+	else if(number == 2){
+			action_image->setImage(action2);
+			cout << "This happened 2";
+	}
+
+	else if(number == 3){	
+			action_image->setImage(action3);
+			cout << "This happened 3";
+	}
+
+	else if(number == 4){	
+			action_image->setImage(action4);
+			cout << "This happened 4";
+	}
+	
+	
 }
