@@ -112,7 +112,7 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 								if (Context.game_->localPlayer->getActionsLeft() == 0)
 								{
 									IVideoDriver *driver = Context.device->getVideoDriver();
-									top = driver->getTexture("../media/yellow_passturn.jpg");
+									top = driver->getTexture("../media/red_passturn.png");
 									button1->setImage(top ,rect<s32>(0, 0, 800, 800));
 								}else {
 									button1->setImage(NULL);
@@ -160,7 +160,7 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 						if (Context.game_->localPlayer->getActionsLeft() == 0)
 								{
 									IVideoDriver *driver = Context.device->getVideoDriver();
-									top = driver->getTexture("../media/yellow_passturn.jpg");
+									top = driver->getTexture("../media/red_passturn.png");
 									button1->setImage(top ,rect<s32>(0, 0, 800, 800));
 								}else {
 									button1->setImage(NULL);
