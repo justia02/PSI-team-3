@@ -71,7 +71,6 @@ bool MenuEventReceiver::OnEvent(const SEvent& event)
 			// Not our turn
 			if(!(Context.game_->gameState->getPlayer1Turn() && Context.game_->localPlayer->getPlayer1()) && !(!Context.game_->gameState->getPlayer1Turn() && !Context.game_->localPlayer->getPlayer1()))
 				return false;
-
 			// if the player's mouse is over a unit to select it
 			if(this->isHoveringUnit)
 			{
@@ -424,7 +423,7 @@ void MenuEventReceiver::init_ingame_buttons()
 	//GUI_ID_PASS_TURN,
 		//GUI_ID_SURRENDER
 
-	button1 = guienv->addButton(rect<s32>((1920 / 6) * 4, (1080/ 30) * 1, (1920 / 6) * 5, (1080/ 30) * 4), 0, GUI_ID_PASS_TURN, L"Pass Turn", L"Passes the turn");
+	button1 = guienv->addButton(rect<s32>((1920 / 6) * 4, (1080/ 30) * 1, (1920 / 6) * 5, (1080/ 30) * 4), 0, GUI_ID_PASS_TURN, L"PASS TURN", L"Passes the turn");
 	//top = driver->getTexture("../media/1.png");
 		//("../media/ant_blue.jpg");
 	//button1->setImage(top ,rect<s32>(0, 0, 100, 100));
